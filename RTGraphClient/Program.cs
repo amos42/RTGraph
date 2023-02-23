@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ namespace RTGraph
     static class Program
     {
         /// <summary>
-        /// 해당 애플리케이션의 주 진입점입니다.
+        ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()

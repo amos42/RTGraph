@@ -7,14 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
 using System.Net;
 using System.Net.Sockets;
-using MetroFramework.Forms;
 
 namespace RTGraph
 {
-    public partial class MainForm : MetroForm
+    public partial class MainForm : Form
     {
         private double x = 0;
         UdpClient udpListener;
@@ -27,11 +25,10 @@ namespace RTGraph
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            chart1.Series[0].ChartType = SeriesChartType.Line;
+            //chart1.Series[0].ChartType = SeriesChartType.Line;
 
             // (1) UdpClient 객체 성성
             udpListener = new UdpClient();
-            udpListener.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5555));
 
             //string msg = "안녕하세요";
             //byte[] datagram = Encoding.UTF8.GetBytes(msg);
@@ -48,19 +45,25 @@ namespace RTGraph
             // (4) UdpClient 객체 닫기
             //cli.Close();
 
-            udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
+            // udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
 
         }
 
         private void receiveText(IAsyncResult result)
         {
+            var client = result.AsyncState as UdpClient;
+            if (client?.Client == null) { return;  }
+
+
             if (result.IsCompleted)
             {
-                var client = result.AsyncState as UdpClient;
                 if (client?.Client != null)
                 {
                     var targetIPEndPoint = new IPEndPoint(IPAddress.Any, 8282);
                     var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+
+                    //chart1.ChartAreas[0].AxisX.Minimum = 0;
+                    //chart1.ChartAreas[0].AxisX.Maximum = 20;
 
                     var packet = new RTGraphPacket(byteData);
                     if (packet.Class == PacketClass.CAPTURE)
@@ -83,23 +86,16 @@ namespace RTGraph
                             // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
                             this.Invoke(new Action(() =>
                             {
-                                chart1.BeginInit();
-                                x = new Random().NextDouble();
-                                chart1.Series[0].Points.Clear();
-                                for (int i = 0; i < 100; i++)
-                                {
-                                    chart1.Series[0].Points.AddXY(x, 3 * Math.Sin(5 * x) + 5 * Math.Cos(3 * x));
+                                //chart1.BeginInit();
 
-                                    if (chart1.Series[0].Points.Count > 100)
-                                    {
-                                        chart1.Series[0].Points.RemoveAt(0);
-                                    }
-                                    x += 0.1;
+                                //x = new Random().NextDouble();
+                                //chart1.Series[0].Points.Clear();
+                                //for (int i = 0; i < packet.data.Length; i++)
+                                //{
+                                //    chart1.Series[0].Points.AddXY(i, packet.data[i]);
+                                //}
 
-                                    chart1.ChartAreas[0].AxisX.Minimum = chart1.Series[0].Points[0].XValue;
-                                    chart1.ChartAreas[0].AxisX.Maximum = x;
-                                }
-                                chart1.EndInit();
+                                //chart1.EndInit();
                             }));
                         }
                     }
@@ -107,21 +103,6 @@ namespace RTGraph
 
                 udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
             }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            //chart1.Series[0].Points.AddXY(x, 3 * Math.Sin(5 * x) + 5 * Math.Cos(3 * x));
-
-            //if(chart1.Series[0].Points.Count > 100)
-            //{
-            //    chart1.Series[0].Points.RemoveAt(0);
-            //}
-
-            //chart1.ChartAreas[0].AxisX.Minimum = chart1.Series[0].Points[0].XValue;
-            //chart1.ChartAreas[0].AxisX.Maximum= x;
-
-            //x += 0.1;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -139,7 +120,7 @@ namespace RTGraph
 
         private void button2_Click(object sender, EventArgs e)
         {
-            new ConfigForm().ShowDialog();
+            //new ConfigForm().ShowDialog();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -152,7 +133,24 @@ namespace RTGraph
 
         private void chart1_DoubleClick(object sender, EventArgs e)
         {
-            chart1.Annotations[0].Y = chart1.ChartAreas[0].InnerPlotPosition.Y + 5;
+            //chart1.Annotations[0].Y = chart1.ChartAreas[0].InnerPlotPosition.Y + 5;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (button4.Tag == null)
+            {
+                udpListener.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5555));
+                udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
+                button4.Text = "Disconnect";
+                button4.Tag = udpListener;
+            }
+            else
+            {
+                udpListener.Close();
+                button4.Text = "Cconnect";
+                button4.Tag = null;
+            }
         }
     }
 }
