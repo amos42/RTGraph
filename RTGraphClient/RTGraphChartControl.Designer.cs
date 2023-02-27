@@ -33,11 +33,11 @@ namespace RTGraph
             // 
             // RTGraphChartControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.DoubleBuffered = true;
             this.Name = "RTGraphChartControl";
-            this.Size = new System.Drawing.Size(325, 267);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.RTGraphChartControl_Paint);
+            this.Resize += new System.EventHandler(this.RTGraphChartControl_Resize);
             this.ResumeLayout(false);
 
         }

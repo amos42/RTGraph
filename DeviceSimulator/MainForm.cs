@@ -35,31 +35,7 @@ namespace DeviceSimulator
             udpServer = new UdpClient(5555);
             udpSender = udpServer;
 
-            //var server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //server.Bind(new IPEndPoint(IPAddress.Any, 5555));
-
-            //Console.WriteLine("Server Start");
-
-            //myIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            //var remote = (EndPoint)(sender);
-
-            //byte[] _data = new byte[1024];
-
             udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
-
-            // ReceiveFrom()
-            //server.ReceiveFrom(_data, ref remote);
-            //Console.WriteLine("{0} : \r\nServar Recieve Data : {1}", remote.ToString(),
-            //    Encoding.Default.GetString(_data));
-
-            // string --> byte[]
-            //_data = Encoding.Default.GetBytes("Client SendTo Data");
-
-            // SendTo()
-            //server.SendTo(_data, _data.Length, SocketFlags.None, remote);
-
-            // Close()
-            //server.Close();
         }
 
         private void receiveText(IAsyncResult result)
@@ -119,11 +95,26 @@ namespace DeviceSimulator
 
             foreach (var xx in endPtrDic)
             {
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, new byte[] { 0, 1, 2, 3, 4 });
-                var data = packet.serialize();
+                var data = new byte[1024];
 
-                udpSender.Send(data, data.Length, xx.Value);
-                listBox1.Items.Add("0x1 0x2 0x3 0x4 0x5");
+                int v = trackBar1.Value;
+                for(int i = 0; i < 1024; i++)
+                {
+                    if (v != 0 && Math.Abs(i - v) < 16)
+                    {
+                        data[i] = (byte)(255 - (i - v) * (i - v));
+                    } 
+                    else
+                    {
+                        data[i] = 0;
+                    }
+                }
+
+                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
+                var packetStream = packet.serialize();
+
+                udpSender.Send(packetStream, packetStream.Length, xx.Value);
+                listBox1.Items.Add(BitConverter.ToString(packetStream).Replace("-", " "));
                 listBox1.TopIndex = listBox1.Items.Count - 1;
             }
         }

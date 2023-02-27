@@ -15,8 +15,8 @@ namespace RTGraph
     public partial class MainForm : Form
     {
         private double x = 0;
-        UdpClient udpListener;
-        //IPEndPoint targetIPEndPoint;
+        UdpClient udpClient;
+        IPEndPoint targetIPEndPoint;
 
         public MainForm()
         {
@@ -25,110 +25,83 @@ namespace RTGraph
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //chart1.Series[0].ChartType = SeriesChartType.Line;
-
-            // (1) UdpClient 객체 성성
-            udpListener = new UdpClient();
-
-            //string msg = "안녕하세요";
-            //byte[] datagram = Encoding.UTF8.GetBytes(msg);
-
-            // (2) 데이타 송신
-            //cli.Send(datagram, datagram.Length, "127.0.0.1", 7777);
-            //Console.WriteLine("[Send] 127.0.0.1:7777 로 {0} 바이트 전송", datagram.Length);
-
-            // (3) 데이타 수신
-            //IPEndPoint epRemote = new IPEndPoint(IPAddress.Any, 0);
-            //byte[] bytes = cli.Receive(ref epRemote);
-            //Console.WriteLine("[Receive] {0} 로부터 {1} 바이트 수신", epRemote.ToString(), bytes.Length);
-
-            // (4) UdpClient 객체 닫기
-            //cli.Close();
-
-            // udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
-
         }
 
         private void receiveText(IAsyncResult result)
         {
-            var client = result.AsyncState as UdpClient;
-            if (client?.Client == null) { return;  }
-
-
             if (result.IsCompleted)
             {
-                if (client?.Client != null)
+                var client = result.AsyncState as UdpClient;
+                if (client?.Client == null) { return; }
+
+                var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+
+                //chart1.ChartAreas[0].AxisX.Minimum = 0;
+                //chart1.ChartAreas[0].AxisX.Maximum = 20;
+
+                var packet = new RTGraphPacket(byteData);
+                if (packet.Class == PacketClass.CAPTURE)
                 {
-                    var targetIPEndPoint = new IPEndPoint(IPAddress.Any, 8282);
-                    var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-
-                    //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                    //chart1.ChartAreas[0].AxisX.Maximum = 20;
-
-                    var packet = new RTGraphPacket(byteData);
-                    if (packet.Class == PacketClass.CAPTURE)
+                    if (packet.SubClass == PacketSubClass.RES)
                     {
-                        if (packet.SubClass == PacketSubClass.RES)
+                        if (packet.Option == 0x00)
                         {
-                            if (packet.Option == 0x00)
-                            {
-                                // 캡춰 시작
-                            } 
-                            else if (packet.Option == 0x01)
-                            {
-                                // 캡춰 끝
-
-                            }
-                        } 
-                        else if (packet.SubClass == PacketSubClass.NTY)
-                        {
-                            // 캡춰 데이터.
-                            // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
-                            this.Invoke(new Action(() =>
-                            {
-                                //chart1.BeginInit();
-
-                                //x = new Random().NextDouble();
-                                //chart1.Series[0].Points.Clear();
-                                //for (int i = 0; i < packet.data.Length; i++)
-                                //{
-                                //    chart1.Series[0].Points.AddXY(i, packet.data[i]);
-                                //}
-
-                                //chart1.EndInit();
-                            }));
+                            udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                            // 캡춰 시작
                         }
+                        else if (packet.Option == 0x01)
+                        {
+                            // 캡춰 끝
+
+                        }
+                    } 
+                    else if (packet.SubClass == PacketSubClass.NTY)
+                    {
+                        // 캡춰 데이터.
+                        // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
+                        this.Invoke(new Action(() =>
+                        {
+                            chart1.AddValueLine(packet.data);
+                        }));
+                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                     }
                 }
-
-                udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.serialize();
+            if (button1.Tag == null)
+            {
+                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+                var data = packet.serialize();
+                udpClient.Send(data, data.Length);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, 5555);
+                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
-            udpListener.Send(data, data.Length);
+                button1.Text = "Stop Capture";
+                button1.Tag = "active";
+            } 
+            else
+            {
+                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+                var data = packet.serialize();
+                udpClient.Send(data, data.Length);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, 5555);
+                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
+                button1.Text = "Start Capture";
+                button1.Tag = null;
+            }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            udpListener.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //new ConfigForm().ShowDialog();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.serialize();
-
-            udpListener.Send(data, data.Length);
+            if (udpClient != null)
+            {
+                udpClient.Close();
+                udpClient = null;
+            }
         }
 
         private void chart1_DoubleClick(object sender, EventArgs e)
@@ -140,14 +113,15 @@ namespace RTGraph
         {
             if (button4.Tag == null)
             {
-                udpListener.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5555));
-                udpListener.BeginReceive(new AsyncCallback(receiveText), udpListener);
+                udpClient = new UdpClient();
+                udpClient.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), Int32.Parse(textBox2.Text)));
                 button4.Text = "Disconnect";
-                button4.Tag = udpListener;
+                button4.Tag = udpClient;
             }
             else
             {
-                udpListener.Close();
+                udpClient.Close();
+                udpClient = null;
                 button4.Text = "Cconnect";
                 button4.Tag = null;
             }
