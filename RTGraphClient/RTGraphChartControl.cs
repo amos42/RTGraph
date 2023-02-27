@@ -48,7 +48,15 @@ namespace RTGraph
         //    }
         //}
 
-        public Padding GraphMargin { get; set; } = new Padding(10, 100, 10, 100);
+        Padding graphMargin = new Padding(10, 100, 10, 100);
+        public Padding GraphMargin {
+            get { return graphMargin; }
+            set
+            {
+                graphMargin = value;
+                this.Refresh();
+            } 
+        }
 
         private int startPos = 0;
         public int StartPos
@@ -146,48 +154,52 @@ namespace RTGraph
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.None;
 
-            e.Graphics.FillRectangle(Brushes.Gray, e.ClipRectangle);
+            //e.Graphics.FillRectangle(Brushes.Gray, e.ClipRectangle);
 
-            e.Graphics.DrawRectangle(Pens.Yellow, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+            //e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+
+            int startX = GraphMargin.Left + 1;
+            int startY = GraphMargin.Top + 1;
+            int width = this.Width - (startX + GraphMargin.Right + 1);
+            int height = this.Height - (startY + GraphMargin.Bottom + 1);
+            int graphBaseY = this.Height - GraphMargin.Bottom - 1 - 1;
 
             if (valueCnt > bufferCount)
             {
                 //GraphicsUnit unit = GraphicsUnit.Pixel;
                 //e.Graphics.DrawImage(outBm, e.ClipRectangle, outBm.GetBounds(ref unit), unit);
                 int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
-                e.Graphics.DrawImage(outBm, new Rectangle(GraphMargin.Left, 0, this.Width - (GraphMargin.Left + GraphMargin.Right), this.Height - drawPos),
+                e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height - drawPos),
                                             new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                e.Graphics.DrawImage(outBm, new Rectangle(GraphMargin.Left, this.Height - drawPos, this.Width - (GraphMargin.Left + GraphMargin.Right), drawPos), 
+                e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width, drawPos), 
                                             new Rectangle(0, 0, outBm.Width, validPos + 1), GraphicsUnit.Pixel);
             } 
             else
             {
-                e.Graphics.DrawImage(outBm, new Rectangle(GraphMargin.Left, 0, this.Width - (GraphMargin.Left + GraphMargin.Right), this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
             }
 
-            int width = this.Width - (GraphMargin.Left + GraphMargin.Right);
-            int height = this.Height - (GraphMargin.Top + GraphMargin.Bottom);
 
-            e.Graphics.DrawRectangle(Pens.Red, GraphMargin.Left, GraphMargin.Top, this.Width - (GraphMargin.Left + GraphMargin.Right), this.Height - (GraphMargin.Top + GraphMargin.Bottom));
+            e.Graphics.DrawRectangle(Pens.LightGray, startX, startY, width, height);
 
             if (this.values != null)
             {
-                int oldV = this.Height - GraphMargin.Bottom;
+                int oldV = graphBaseY;
                 for (int i = 0; i < this.values.Length; i++)
                 {
-                    int v = this.Height - GraphMargin.Bottom - this.values[i] * height / 255;
+                    int v = graphBaseY - this.values[i] * height / 255;
                     Pen pen = Pens.Blue;
                     if (triggerValue > 0 && values[i] > triggerValue)
                     {
                         pen = Pens.Red;
                     }
-                    e.Graphics.DrawLine(pen, GraphMargin.Left + i * width / 1024, oldV, GraphMargin.Left + (i + 1) * width / 1024, v);
+                    e.Graphics.DrawLine(pen, startX + i * width / 1024, oldV, startX + (i + 1) * width / 1024, v);
                     oldV = v;
                 }
             }
             if (TriggerValue != 0) {
-                int v2 = this.Height - GraphMargin.Bottom - TriggerValue * height / 255;
-                e.Graphics.DrawLine(Pens.LightGray, GraphMargin.Left, v2, GraphMargin.Left + width, v2);
+                int v2 = graphBaseY - TriggerValue * height / 255;
+                e.Graphics.DrawLine(Pens.Red, startX, v2, startX + width, v2);
             }
 
         }

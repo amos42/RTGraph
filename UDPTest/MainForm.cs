@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 
 namespace RTGraph
 {
@@ -24,10 +25,12 @@ namespace RTGraph
         public MainForm()
         {
             InitializeComponent();
+
+            listView1.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(listView1, true);
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {            
+        {
         }
 
         private void addItem(int direction, byte[] byteData)
@@ -43,7 +46,17 @@ namespace RTGraph
                     }
                 );
 
-                listView1.Items.Add(item);
+                listView1.BeginUpdate();
+                try
+                {
+                    listView1.Items.Add(item);
+                }
+                finally
+                {
+                    listView1.EndUpdate();
+                }
+
+                
                 item.EnsureVisible();
             }));
 

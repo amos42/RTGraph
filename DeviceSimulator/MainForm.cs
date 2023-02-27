@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using RTGraph;
+using System.Reflection;
 
 namespace DeviceSimulator
 {
     public partial class MainForm : Form
     {
+        static string[] dirStr = { "발신", "수신" };
+
         UdpClient udpServer;
         IPEndPoint targetIPEndPoint;
         IPEndPoint myIPEndPoint;
@@ -24,6 +27,8 @@ namespace DeviceSimulator
         public MainForm()
         {
             InitializeComponent();
+
+            listView1.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(listView1, true);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -38,11 +43,31 @@ namespace DeviceSimulator
             udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
         }
 
+        private void addItem(int direction, byte[] byteData)
+        {
+            this.Invoke(new Action(() =>
+            {
+                var item = new ListViewItem(
+                    new string[]
+                    {
+                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                            dirStr[direction],
+                            BitConverter.ToString(byteData).Replace("-", " ")
+                    }
+                );
+
+                listView1.Items.Add(item);
+                item.EnsureVisible();
+            }));
+
+        }
+
         private void receiveText(IAsyncResult result)
         {
             if (result.IsCompleted)
             {
                 var byteData = (result.AsyncState as UdpClient)?.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                addItem(1, byteData);
 
                 var packet = new RTGraphPacket(byteData);
 
@@ -54,7 +79,6 @@ namespace DeviceSimulator
 
                         this.Invoke(new Action(() =>
                         {
-                            listBox1.Items.Add("send start");
                             if (!timer1.Enabled)
                             {
                                 timer1.Start();
@@ -67,8 +91,6 @@ namespace DeviceSimulator
 
                         this.Invoke(new Action(() =>
                         {
-                            listBox1.Items.Add("send stop");
-
                             if (!endPtrDic.Any())
                             {
                                 timer1.Stop();
@@ -114,25 +136,16 @@ namespace DeviceSimulator
                 var packetStream = packet.serialize();
 
                 udpSender.Send(packetStream, packetStream.Length, xx.Value);
-                listBox1.Items.Add(BitConverter.ToString(packetStream).Replace("-", " "));
-                listBox1.TopIndex = listBox1.Items.Count - 1;
+                addItem(0, packetStream);
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (udpSender != null)
-            {
-                udpSender.Send(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5 }, 5);
-            }
-            listBox1.Items.Add("0x1 0x2 0x3 0x4 0x5");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = false;
-            udpSender = null;
-            listBox1.Items.Add("send stop");
         }
     }
 }
