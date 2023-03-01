@@ -17,6 +17,7 @@ namespace RTGraph
     {
         private double x = 0;
         UdpClient udpClient;
+        UdpClient udpSender = null;
         IPEndPoint targetIPEndPoint;
         IAsyncResult asyncResult = null;
 
@@ -49,7 +50,6 @@ namespace RTGraph
                     {
                         if (packet.Option == 0x00)
                         {
-                            asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                             // 캡춰 시작
                         }
                         else if (packet.Option == 0x01)
@@ -66,13 +66,14 @@ namespace RTGraph
                         {
                             chart1.AddValueLine(packet.data);
                         }));
-                        asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                     }
                 }
                 else if (packet.Class == PacketClass.CONN)
                 {
-                    asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
                 }
+
+                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
             }
         }
 
@@ -98,8 +99,9 @@ namespace RTGraph
         {
             if (button4.Tag == null)
             {
-                udpClient = new UdpClient();
-                udpClient.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), Int32.Parse(textBox2.Text)));
+                udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text))); 
+                udpSender = new UdpClient();
+                udpSender.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), Int32.Parse(textBox2.Text)));
 
                 button4.Text = "Socket Close";
                 button4.Tag = udpClient;
@@ -110,6 +112,8 @@ namespace RTGraph
                 {
                     udpClient.EndReceive(asyncResult, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
                 }
+                udpSender.Close();
+                udpSender = null;
                 udpClient.Close();
                 udpClient = null;
                 button4.Text = "Socket Open";
@@ -123,8 +127,10 @@ namespace RTGraph
             {
                 var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
                 var data = packet.serialize();
-                udpClient.Send(data, data.Length);
+                udpSender.Send(data, data.Length);
+
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                //udpClient = new UdpClient(targetIPEndPoint);
                 asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button2.Text = "Disconnect";
@@ -134,8 +140,10 @@ namespace RTGraph
             {
                 var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
                 var data = packet.serialize();
-                udpClient.Send(data, data.Length);
+                udpSender.Send(data, data.Length);
+
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                //udpClient = new UdpClient(targetIPEndPoint);
                 asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button2.Text = "Cconnect";
@@ -149,8 +157,10 @@ namespace RTGraph
             {
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
                 var data = packet.serialize();
-                udpClient.Send(data, data.Length);
+                udpSender.Send(data, data.Length);
+
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                // udpClient = new UdpClient(targetIPEndPoint);
                 asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button1.Text = "Stop Capture";
@@ -160,8 +170,10 @@ namespace RTGraph
             {
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
                 var data = packet.serialize();
-                udpClient.Send(data, data.Length);
+                udpSender.Send(data, data.Length);
+
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                // udpClient = new UdpClient(targetIPEndPoint);
                 asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button1.Text = "Start Capture";

@@ -17,12 +17,12 @@ namespace DeviceSimulator
     public partial class MainForm : Form
     {
         const int listViewCapa = 500;
-        static string[] dirStr = { "발신", "수신" };
+        static string[] dirStr = { "발신", "수신", "정보", "에러" };
 
         UdpClient udpServer;
+        UdpClient udpSender;
         IPEndPoint targetIPEndPoint;
         IPEndPoint myIPEndPoint;
-        UdpClient udpSender = null;
         Dictionary<IPEndPoint, IPEndPoint> endPtrDic;
 
         public MainForm()
@@ -37,10 +37,8 @@ namespace DeviceSimulator
             if (open)
             {
                 udpServer = new UdpClient(Int32.Parse(textBox2.Text));
-                udpSender = udpServer;
 
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-
                 udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
             } 
             else
@@ -58,16 +56,21 @@ namespace DeviceSimulator
             socketOpen(true);
         }
 
-        private void addItem(int direction, byte[] byteData)
+        private void addItem(int direction, string message, byte[] byteData = null)
         {
             this.Invoke(new Action(() =>
             {
+                if(byteData != null)
+                {
+                    message += " " + BitConverter.ToString(byteData).Replace("-", " ");
+                }
+
                 var item = new ListViewItem(
                     new string[]
                     {
                             DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                             dirStr[direction],
-                            BitConverter.ToString(byteData).Replace("-", " ")
+                            message
                     }
                 );
 
@@ -88,7 +91,7 @@ namespace DeviceSimulator
             if (result.IsCompleted)
             {
                 var byteData = (result.AsyncState as UdpClient)?.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                addItem(1, byteData);
+                addItem(1, "", byteData);
 
                 var packet = new RTGraphPacket(byteData);
 
@@ -152,9 +155,17 @@ namespace DeviceSimulator
                 packet.SubClass = PacketSubClass.RES;
                 packet.data = new byte[1] { 0x01 }; // of 0xFF
                 var data = packet.serialize();
+                udpSender = new UdpClient();
                 udpSender.Send(data, data.Length, targetIPEndPoint);
 
-                udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
+                try { 
+                    udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
+                } 
+                catch(Exception ex)
+                {
+                    addItem(3, ex.Message);
+
+                }
             }
         }
 
@@ -188,8 +199,9 @@ namespace DeviceSimulator
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
                 var packetStream = packet.serialize();
 
-                udpSender.Send(packetStream, packetStream.Length, xx.Value);
-                addItem(0, packetStream);
+                var target = new IPEndPoint(xx.Value.Address, Int32.Parse(textBox3.Text));
+                udpSender.Send(packetStream, packetStream.Length, target);
+                addItem(0, "",packetStream);
             }
         }
 
