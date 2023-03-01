@@ -137,7 +137,7 @@ namespace RTGraph
 
             Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
             BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Length);
+            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
             outBm.UnlockBits(bmpData);
             validPos = enqPos;
             enqPos++;
