@@ -37,43 +37,49 @@ namespace RTGraph
                 var client = result.AsyncState as UdpClient;
                 if (client?.Client == null) { return; }
 
-                var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                asyncResult = null;
-
-                //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                //chart1.ChartAreas[0].AxisX.Maximum = 20;
-
-                var packet = new RTGraphPacket(byteData);
-                if (packet.Class == PacketClass.CAPTURE)
+                try
                 {
-                    if (packet.SubClass == PacketSubClass.RES)
-                    {
-                        if (packet.Option == 0x00)
-                        {
-                            // 캡춰 시작
-                        }
-                        else if (packet.Option == 0x01)
-                        {
-                            // 캡춰 끝
+                    var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
 
+                    //chart1.ChartAreas[0].AxisX.Minimum = 0;
+                    //chart1.ChartAreas[0].AxisX.Maximum = 20;
+
+                    var packet = new RTGraphPacket(byteData);
+                    if (packet.Class == PacketClass.CAPTURE)
+                    {
+                        if (packet.SubClass == PacketSubClass.RES)
+                        {
+                            if (packet.Option == 0x00)
+                            {
+                                // 캡춰 시작
+                            }
+                            else if (packet.Option == 0x01)
+                            {
+                                // 캡춰 끝
+
+                            }
+                        }
+                        else if (packet.SubClass == PacketSubClass.NTY)
+                        {
+                            // 캡춰 데이터.
+                            // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
+                            this.Invoke(new Action(() =>
+                            {
+                                chart1.AddValueLine(packet.data);
+                            }));
                         }
                     }
-                    else if (packet.SubClass == PacketSubClass.NTY)
+                    else if (packet.Class == PacketClass.CONN)
                     {
-                        // 캡춰 데이터.
-                        // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
-                        this.Invoke(new Action(() =>
-                        {
-                            chart1.AddValueLine(packet.data);
-                        }));
+
                     }
+
+                    asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                 }
-                else if (packet.Class == PacketClass.CONN)
+                catch (Exception ex)
                 {
-
+                    asyncResult = null;
                 }
-
-                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
             }
         }
 
@@ -108,10 +114,6 @@ namespace RTGraph
             }
             else
             {
-                if (asyncResult != null)
-                {
-                    udpClient.EndReceive(asyncResult, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                }
                 udpSender.Close();
                 udpSender = null;
                 udpClient.Close();
