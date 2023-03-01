@@ -34,13 +34,6 @@ namespace DeviceSimulator
         private void Form1_Load(object sender, EventArgs e)
         {
             endPtrDic = new Dictionary<IPEndPoint, IPEndPoint>();
-
-            targetIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
-            udpServer = new UdpClient(5555);
-            udpSender = udpServer;
-
-            udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
         }
 
         private void addItem(int direction, byte[] byteData)
@@ -142,10 +135,12 @@ namespace DeviceSimulator
 
         private void button1_Click(object sender, EventArgs e)
         {
-        }
+            udpServer = new UdpClient(Int32.Parse(textBox2.Text));
+            udpSender = udpServer;
 
-        private void button2_Click(object sender, EventArgs e)
-        {
+            targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+
+            udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
         }
     }
 }

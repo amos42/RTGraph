@@ -34,6 +34,7 @@ namespace RTGraph
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.chart1 = new RTGraph.RTGraphChartControl();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -54,7 +55,7 @@ namespace RTGraph
             this.button4.Location = new System.Drawing.Point(28, 596);
             this.button4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(200, 40);
+            this.button4.Size = new System.Drawing.Size(281, 40);
             this.button4.TabIndex = 4;
             this.button4.Text = "connect";
             this.button4.UseVisualStyleBackColor = true;
@@ -94,11 +95,21 @@ namespace RTGraph
             this.chart1.TabIndex = 5;
             this.chart1.TriggerValue = 100;
             // 
+            // textBox3
+            // 
+            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox3.Location = new System.Drawing.Point(234, 566);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(70, 25);
+            this.textBox3.TabIndex = 8;
+            this.textBox3.Text = "5555";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 647);
+            this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chart1);
@@ -121,6 +132,7 @@ namespace RTGraph
         private RTGraphChartControl chart1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox3;
     }
 }
 

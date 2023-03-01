@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace RTGraph
 {
@@ -76,7 +77,7 @@ namespace RTGraph
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
                 var data = packet.serialize();
                 udpClient.Send(data, data.Length);
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, 5555);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
                 udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button1.Text = "Stop Capture";
@@ -87,7 +88,7 @@ namespace RTGraph
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
                 var data = packet.serialize();
                 udpClient.Send(data, data.Length);
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, 5555);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
                 udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button1.Text = "Start Capture";
