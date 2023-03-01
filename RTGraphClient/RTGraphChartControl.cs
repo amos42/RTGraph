@@ -126,11 +126,11 @@ namespace RTGraph
             }
         }
 
-        public void AddValueLine(byte[] values)
+        public void AddValueLine(byte[] values, int startIdx, int length)
         {
             if (this.values != null)
             {
-                Array.Copy(values, this.values, values.Length);
+                Array.Copy(values, startIdx, this.values, 0, length);
             }
             valueCnt++;
 

@@ -65,7 +65,7 @@ namespace RTGraph
                             // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
                             this.Invoke(new Action(() =>
                             {
-                                chart1.AddValueLine(packet.data);
+                                chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
                             }));
                         }
                     }
