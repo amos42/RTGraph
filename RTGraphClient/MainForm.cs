@@ -117,14 +117,30 @@ namespace RTGraph
                 udpClient = new UdpClient();
                 udpClient.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), Int32.Parse(textBox2.Text)));
 
+                button4.Text = "Socket Close";
+                button4.Tag = udpClient;
+            }
+            else
+            {
+                udpClient.Close();
+                udpClient = null;
+                button4.Text = "Socket Open";
+                button4.Tag = null;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (button2.Tag == null)
+            {
                 var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
                 var data = packet.serialize();
                 udpClient.Send(data, data.Length);
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
                 udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
-                button4.Text = "Disconnect";
-                button4.Tag = udpClient;
+                button2.Text = "Disconnect";
+                button2.Tag = udpClient;
             }
             else
             {
@@ -134,10 +150,8 @@ namespace RTGraph
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
                 udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
-                udpClient.Close();
-                udpClient = null;
-                button4.Text = "Cconnect";
-                button4.Tag = null;
+                button2.Text = "Cconnect";
+                button2.Tag = null;
             }
         }
     }
