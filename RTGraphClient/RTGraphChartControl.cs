@@ -130,6 +130,7 @@ namespace RTGraph
         {
             if (this.values != null)
             {
+                length = Math.Min(this.values.Length, Math.Min(length, values.Length - startIdx));
                 Array.Copy(values, startIdx, this.values, 0, length);
             }
             valueCnt++;
