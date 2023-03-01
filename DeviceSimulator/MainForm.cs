@@ -32,9 +32,30 @@ namespace DeviceSimulator
             listView1.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(listView1, true);
         }
 
+        private void socketOpen(bool open)
+        {
+            if (open)
+            {
+                udpServer = new UdpClient(Int32.Parse(textBox2.Text));
+                udpSender = udpServer;
+
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+
+                udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
+            } 
+            else
+            {
+                udpServer.Close();
+                udpServer = null;
+                udpSender = null;
+            }
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             endPtrDic = new Dictionary<IPEndPoint, IPEndPoint>();
+
+            socketOpen(true);
         }
 
         private void addItem(int direction, byte[] byteData)
@@ -71,7 +92,35 @@ namespace DeviceSimulator
 
                 var packet = new RTGraphPacket(byteData);
 
-                if (packet.Class == PacketClass.CAPTURE)
+                if (packet.Class == PacketClass.CONN)
+                {
+                    if (packet.Option == 0x01)
+                    {
+                        endPtrDic.Add(targetIPEndPoint, targetIPEndPoint);
+
+                        this.Invoke(new Action(() =>
+                        {
+                            if (!timer1.Enabled)
+                            {
+                                timer1.Start();
+                            }
+                        }));
+                    }
+                    else if (packet.Option == 0x00)
+                    {
+                        endPtrDic.Remove(targetIPEndPoint);
+
+                        this.Invoke(new Action(() =>
+                        {
+                            if (!endPtrDic.Any())
+                            {
+                                timer1.Stop();
+                            }
+                        }));
+                    }
+
+                }
+                else if (packet.Class == PacketClass.CAPTURE)
                 {
                     if (packet.Option == 0x00)
                     {
@@ -146,12 +195,7 @@ namespace DeviceSimulator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            udpServer = new UdpClient(Int32.Parse(textBox2.Text));
-            udpSender = udpServer;
-
-            targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-
-            udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
+            socketOpen(true);
         }
     }
 }

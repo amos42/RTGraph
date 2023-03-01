@@ -18,6 +18,7 @@ namespace RTGraph
         private double x = 0;
         UdpClient udpClient;
         IPEndPoint targetIPEndPoint;
+        IAsyncResult asyncResult = null;
 
         public MainForm()
         {
@@ -36,6 +37,7 @@ namespace RTGraph
                 if (client?.Client == null) { return; }
 
                 var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                asyncResult = null;
 
                 //chart1.ChartAreas[0].AxisX.Minimum = 0;
                 //chart1.ChartAreas[0].AxisX.Maximum = 20;
@@ -47,7 +49,7 @@ namespace RTGraph
                     {
                         if (packet.Option == 0x00)
                         {
-                            udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                            asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                             // 캡춰 시작
                         }
                         else if (packet.Option == 0x01)
@@ -55,7 +57,7 @@ namespace RTGraph
                             // 캡춰 끝
 
                         }
-                    } 
+                    }
                     else if (packet.SubClass == PacketSubClass.NTY)
                     {
                         // 캡춰 데이터.
@@ -64,35 +66,13 @@ namespace RTGraph
                         {
                             chart1.AddValueLine(packet.data);
                         }));
-                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                        asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                     }
                 }
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (button1.Tag == null)
-            {
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-                var data = packet.serialize();
-                udpClient.Send(data, data.Length);
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-
-                button1.Text = "Stop Capture";
-                button1.Tag = "active";
-            } 
-            else
-            {
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-                var data = packet.serialize();
-                udpClient.Send(data, data.Length);
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-
-                button1.Text = "Start Capture";
-                button1.Tag = null;
+                else if (packet.Class == PacketClass.CONN)
+                {
+                    asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                }
             }
         }
 
@@ -100,6 +80,10 @@ namespace RTGraph
         {
             if (udpClient != null)
             {
+                if (asyncResult != null)
+                {
+                    udpClient.EndReceive(asyncResult, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                }
                 udpClient.Close();
                 udpClient = null;
             }
@@ -122,6 +106,10 @@ namespace RTGraph
             }
             else
             {
+                if (asyncResult != null)
+                {
+                    udpClient.EndReceive(asyncResult, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                }
                 udpClient.Close();
                 udpClient = null;
                 button4.Text = "Socket Open";
@@ -137,7 +125,7 @@ namespace RTGraph
                 var data = packet.serialize();
                 udpClient.Send(data, data.Length);
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button2.Text = "Disconnect";
                 button2.Tag = udpClient;
@@ -148,11 +136,38 @@ namespace RTGraph
                 var data = packet.serialize();
                 udpClient.Send(data, data.Length);
                 targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
 
                 button2.Text = "Cconnect";
                 button2.Tag = null;
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (button1.Tag == null)
+            {
+                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+                var data = packet.serialize();
+                udpClient.Send(data, data.Length);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
+                button1.Text = "Stop Capture";
+                button1.Tag = "active";
+            }
+            else
+            {
+                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+                var data = packet.serialize();
+                udpClient.Send(data, data.Length);
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
+                asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
+                button1.Text = "Start Capture";
+                button1.Tag = null;
+            }
+        }
+
     }
 }
