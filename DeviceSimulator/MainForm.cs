@@ -16,6 +16,7 @@ namespace DeviceSimulator
 {
     public partial class MainForm : Form
     {
+        const int listViewCapa = 500;
         static string[] dirStr = { "발신", "수신" };
 
         UdpClient udpServer;
@@ -49,8 +50,14 @@ namespace DeviceSimulator
                     }
                 );
 
+                listView1.BeginUpdate();
+                if(listView1.Items.Count >= listViewCapa)
+                {
+                    listView1.Items.RemoveAt(0);
+                }
                 listView1.Items.Add(item);
                 item.EnsureVisible();
+                listView1.EndUpdate();
             }));
 
         }
@@ -112,12 +119,16 @@ namespace DeviceSimulator
             {
                 var data = new byte[1024];
 
+                int limit = trackBar2.Value;
+                float divder = limit * limit / (float)255;
+
                 int v = trackBar1.Value;
-                for(int i = 0; i < 1024; i++)
+                for (int i = 0; i < 1024; i++)
                 {
-                    if (v != 0 && Math.Abs(i - v) < 16)
+                    int dist = Math.Abs(i - v);
+                    if (v != 0 && dist <= limit)
                     {
-                        data[i] = (byte)(255 - (i - v) * (i - v));
+                        data[i] = (byte)(255 - dist * dist / divder);
                     } 
                     else
                     {

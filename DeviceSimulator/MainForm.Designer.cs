@@ -29,7 +29,8 @@ namespace DeviceSimulator
         /// </summary>
         private void InitializeComponent()
         {
-            this.timer1 = new System.Windows.Forms.Timer();
+            this.components = new System.ComponentModel.Container();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -38,7 +39,9 @@ namespace DeviceSimulator
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // timer1
@@ -51,7 +54,7 @@ namespace DeviceSimulator
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(205, 69);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Connect";
+            this.button1.Text = "Open";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -60,11 +63,12 @@ namespace DeviceSimulator
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 10;
-            this.trackBar1.Location = new System.Drawing.Point(234, 12);
+            this.trackBar1.Location = new System.Drawing.Point(351, 12);
             this.trackBar1.Maximum = 1023;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(848, 56);
+            this.trackBar1.Size = new System.Drawing.Size(731, 56);
             this.trackBar1.TabIndex = 3;
+            this.trackBar1.Value = 100;
             // 
             // listView1
             // 
@@ -107,7 +111,7 @@ namespace DeviceSimulator
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(70, 25);
             this.textBox3.TabIndex = 11;
-            this.textBox3.Text = "5555";
+            this.textBox3.Text = "12000";
             // 
             // textBox2
             // 
@@ -116,22 +120,36 @@ namespace DeviceSimulator
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(70, 25);
             this.textBox2.TabIndex = 10;
-            this.textBox2.Text = "5555";
+            this.textBox2.Text = "11000";
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBar2.Location = new System.Drawing.Point(234, 12);
+            this.trackBar2.Maximum = 100;
+            this.trackBar2.Minimum = 10;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(111, 56);
+            this.trackBar2.TabIndex = 12;
+            this.trackBar2.Value = 40;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1094, 671);
+            this.Controls.Add(this.trackBar2);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.button1);
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Device Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -148,6 +166,7 @@ namespace DeviceSimulator
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TrackBar trackBar2;
     }
 }
 
