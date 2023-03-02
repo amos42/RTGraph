@@ -153,7 +153,7 @@ namespace RTGraph
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            e.Graphics.PixelOffsetMode = PixelOffsetMode.None;
+            e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
 
             //e.Graphics.FillRectangle(Brushes.Gray, e.ClipRectangle);
 
