@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTGraphClient", "RTGraphCli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UDPTest", "UDPTest\UDPTest.csproj", "{02A6B12E-EDAA-47E4-B5C5-038010EB3BF5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTGraphControl", "RTGraphControl\RTGraphControl.csproj", "{6401DDE8-0687-4FE1-88A3-E3DC4149CB11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTGraphTest", "RTGraphTest\RTGraphTest.csproj", "{40DCC0AA-F51A-4844-9BDE-79A61A89AD40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{02A6B12E-EDAA-47E4-B5C5-038010EB3BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02A6B12E-EDAA-47E4-B5C5-038010EB3BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02A6B12E-EDAA-47E4-B5C5-038010EB3BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6401DDE8-0687-4FE1-88A3-E3DC4149CB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6401DDE8-0687-4FE1-88A3-E3DC4149CB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6401DDE8-0687-4FE1-88A3-E3DC4149CB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6401DDE8-0687-4FE1-88A3-E3DC4149CB11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40DCC0AA-F51A-4844-9BDE-79A61A89AD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40DCC0AA-F51A-4844-9BDE-79A61A89AD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40DCC0AA-F51A-4844-9BDE-79A61A89AD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40DCC0AA-F51A-4844-9BDE-79A61A89AD40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,9 +16,6 @@ namespace DeviceSimulator
 {
     public partial class MainForm : Form
     {
-        const int listViewCapa = 500;
-        static string[] dirStr = { "발신", "수신", "정보", "에러" };
-
         UdpClient udpServer;
         UdpClient udpSender;
         IPEndPoint targetIPEndPoint;
@@ -28,8 +25,6 @@ namespace DeviceSimulator
         public MainForm()
         {
             InitializeComponent();
-
-            listView1.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(listView1, true);
         }
 
         private void socketOpen(bool open)
@@ -58,32 +53,9 @@ namespace DeviceSimulator
 
         private void addItem(int direction, string message, byte[] byteData = null)
         {
-            this.Invoke(new Action(() =>
-            {
-                if(byteData != null)
-                {
-                    message += " " + BitConverter.ToString(byteData).Replace("-", " ");
-                }
-
-                var item = new ListViewItem(
-                    new string[]
-                    {
-                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                            dirStr[direction],
-                            message
-                    }
-                );
-
-                listView1.BeginUpdate();
-                if(listView1.Items.Count >= listViewCapa)
-                {
-                    listView1.Items.RemoveAt(0);
-                }
-                listView1.Items.Add(item);
-                item.EnsureVisible();
-                listView1.EndUpdate();
+            this.Invoke(new Action(() => {
+                logControl1.AddItem(direction, message, byteData);
             }));
-
         }
 
         private void receiveText(IAsyncResult result)
