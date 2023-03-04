@@ -85,8 +85,6 @@ namespace DeviceSimulator
             // 
             // trackBar2
             // 
-            this.trackBar2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar2.Location = new System.Drawing.Point(234, 12);
             this.trackBar2.Maximum = 100;
             this.trackBar2.Minimum = 10;
@@ -100,7 +98,9 @@ namespace DeviceSimulator
             this.logControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.logControl1.ListViewCapa = 100;
+            this.logControl1.AutoScroll = true;
+            this.logControl1.ListViewAutoScroll = true;
+            this.logControl1.ListViewCapa = 500;
             this.logControl1.Location = new System.Drawing.Point(233, 74);
             this.logControl1.Name = "logControl1";
             this.logControl1.Size = new System.Drawing.Size(848, 583);

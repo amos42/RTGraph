@@ -19,6 +19,7 @@ namespace RTGraph
         UdpClient udpSender = null;
         IPEndPoint targetIPEndPoint;
         //IAsyncResult asyncResult = null;
+        LogForm logForm = null;
 
         public MainForm()
         {
@@ -39,6 +40,12 @@ namespace RTGraph
                 try
                 {
                     var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                    if (logForm != null)
+                    {
+                        this.Invoke(new Action(() => {
+                            if (logForm != null) logForm.AddItem(0, null, byteData);
+                        }));
+                    }
 
                     //chart1.ChartAreas[0].AxisX.Minimum = 0;
                     //chart1.ChartAreas[0].AxisX.Maximum = 20;
@@ -182,6 +189,24 @@ namespace RTGraph
                 CaptureBtn.Text = "Start Capture";
                 CaptureBtn.Tag = null;
             }
+        }
+
+        private void LogFormDisposed(object sender, EventArgs e)
+        {
+            logForm = null;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (logForm == null)
+            {
+                logForm = new LogForm();
+                logForm.Disposed += LogFormDisposed;
+            }
+            if (!logForm.Visible) logForm.Show(this);
+            if (logForm.WindowState == FormWindowState.Minimized) logForm.WindowState = FormWindowState.Normal;
+            logForm.Top = this.Top;
+            logForm.Left = this.Right;
         }
     }
 }

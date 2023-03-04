@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using RTGraph;
 using System.Reflection;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DeviceSimulator
 {
@@ -23,6 +24,16 @@ namespace DeviceSimulator
             {
                 listViewCapa = value;
                 applyListViewCapa();
+            } 
+        }
+
+        private bool listViewAutoScroll = true;
+        public bool ListViewAutoScroll {
+            get { return listViewAutoScroll; }
+            set
+            {
+                listViewAutoScroll = value;
+                ((ToolStripMenuItem)contextMenuStrip1.Items[1]).Checked = listViewAutoScroll;
             } 
         }
 
@@ -49,9 +60,12 @@ namespace DeviceSimulator
         {
             //this.Invoke(new Action(() =>
             {
-                if(byteData != null)
+                var sb = new StringBuilder();
+                if (message != null) sb.Append(message);
+                if (byteData != null)
                 {
-                    message += " " + BitConverter.ToString(byteData).Replace("-", " ");
+                    if (sb.Length > 0) sb.Append(" ");
+                    sb.Append(BitConverter.ToString(byteData).Replace("-", " "));
                 }
 
                 var item = new ListViewItem(
@@ -59,15 +73,22 @@ namespace DeviceSimulator
                     {
                             DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
                             dirStr[direction],
-                            message
+                            sb.ToString()
                     }
                 );
 
-                listView1.BeginUpdate();
-                applyListViewCapa(true, 1);
-                listView1.Items.Add(item);
-                item.EnsureVisible();
-                listView1.EndUpdate();
+                if (ListViewAutoScroll)
+                {
+                    listView1.BeginUpdate();
+                    applyListViewCapa(true, 1);
+                    listView1.Items.Add(item);
+                    item.EnsureVisible();
+                    listView1.EndUpdate();
+                }
+                else
+                {
+                    listView1.Items.Add(item);
+                }
             }
             //));
         }
@@ -75,6 +96,23 @@ namespace DeviceSimulator
         private void LogControl_Load(object sender, EventArgs e)
         {
             listView1.SetBounds(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width, this.ClientRectangle.Height);
+        }
+
+        private void LogControl_Resize(object sender, EventArgs e)
+        {
+            listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+        }
+
+        private void copyDataToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems?.Count > 0) {
+                Clipboard.SetText(listView1.SelectedItems[0].SubItems[2].Text);
+            }            
+        }
+
+        private void autoScrollToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewAutoScroll = !ListViewAutoScroll;
         }
     }
 }
