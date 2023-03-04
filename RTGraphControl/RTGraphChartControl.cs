@@ -24,7 +24,7 @@ namespace RTGraph
             }
         }
 
-        private int bufferCount = 50;
+        private int bufferCount = 0;
         public int BufferCount
         {
             get { return bufferCount; }
@@ -36,7 +36,6 @@ namespace RTGraph
                 this.Refresh();
             }
         }
-
 
         private int valueCnt = 0;
         private byte[] values = null;
@@ -68,19 +67,26 @@ namespace RTGraph
             }
         }
 
-        private Bitmap outBm;
+        private Bitmap outBm = null;
         private int enqPos = 0;
         private int validPos = 0;
 
         private void genImage()
         {
-            outBm = new Bitmap(1024, bufferCount, PixelFormat.Format8bppIndexed);
-            var pal = outBm.Palette;
-            for (int i = 0; i < pal.Entries.Length; i++)
+            if (bufferCount > 0)
             {
-                pal.Entries[i] = Color.FromArgb(i, i, i);
+                outBm = new Bitmap(1024, bufferCount, PixelFormat.Format8bppIndexed);
+                var pal = outBm.Palette;
+                for (int i = 0; i < pal.Entries.Length; i++)
+                {
+                    pal.Entries[i] = Color.FromArgb(i, i, i);
+                }
+                outBm.Palette = pal;
+            } 
+            else
+            {
+                outBm = null;
             }
-            outBm.Palette = pal;
         }
 
         public RTGraphChartControl()
@@ -135,16 +141,19 @@ namespace RTGraph
             }
             valueCnt++;
 
-            Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-            BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
-            outBm.UnlockBits(bmpData);
-            validPos = enqPos;
-            enqPos++;
-            if(enqPos >= bufferCount)
+            if (outBm != null)
             {
-                enqPos = 0;
-                this.startPos ++;
+                Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
+                outBm.UnlockBits(bmpData);
+                validPos = enqPos;
+                enqPos++;
+                if (enqPos >= bufferCount)
+                {
+                    enqPos = 0;
+                    this.startPos++;
+                }
             }
 
             this.Refresh();
@@ -165,21 +174,23 @@ namespace RTGraph
             int height = this.Height - (startY + GraphMargin.Bottom + 1);
             int graphBaseY = this.Height - GraphMargin.Bottom - 1 - 1;
 
-            if (valueCnt > bufferCount)
+            if (outBm != null)
             {
-                //GraphicsUnit unit = GraphicsUnit.Pixel;
-                //e.Graphics.DrawImage(outBm, e.ClipRectangle, outBm.GetBounds(ref unit), unit);
-                int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
-                e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height - drawPos),
-                                            new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width, drawPos), 
-                                            new Rectangle(0, 0, outBm.Width, validPos + 1), GraphicsUnit.Pixel);
-            } 
-            else
-            {
-                e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                if (valueCnt > bufferCount)
+                {
+                    //GraphicsUnit unit = GraphicsUnit.Pixel;
+                    //e.Graphics.DrawImage(outBm, e.ClipRectangle, outBm.GetBounds(ref unit), unit);
+                    int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height - drawPos),
+                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width, drawPos),
+                                                new Rectangle(0, 0, outBm.Width, validPos + 1), GraphicsUnit.Pixel);
+                }
+                else
+                {
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                }
             }
-
 
             e.Graphics.DrawRectangle(Pens.LightGray, startX, startY, width, height);
 

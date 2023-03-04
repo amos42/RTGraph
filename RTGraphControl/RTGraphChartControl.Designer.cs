@@ -36,6 +36,7 @@ namespace RTGraph
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.DoubleBuffered = true;
             this.Name = "RTGraphChartControl";
+            this.Size = new System.Drawing.Size(622, 371);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.RTGraphChartControl_Paint);
             this.Resize += new System.EventHandler(this.RTGraphChartControl_Resize);
             this.ResumeLayout(false);

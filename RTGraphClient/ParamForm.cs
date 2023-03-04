@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace RTGraph
 {
-    public partial class ConfigForm : Form
+    public partial class ParamForm : Form
     {
-        public ConfigForm()
+        public ParamForm()
         {
             InitializeComponent();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

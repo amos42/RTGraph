@@ -7,18 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
+using RTGraphProtocol;
 
 namespace RTGraph
 {
     public partial class MainForm : Form
     {
-        UdpClient udpClient;
-        UdpClient udpSender = null;
-        IPEndPoint targetIPEndPoint;
-        //IAsyncResult asyncResult = null;
+        RTGraphComm comm = new RTGraphComm();
         LogForm logForm = null;
 
         public MainForm()
@@ -30,101 +25,42 @@ namespace RTGraph
         {
         }
 
-        private void receiveText(IAsyncResult result)
+        private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
-            if (result.IsCompleted)
-            {
-                var client = result.AsyncState as UdpClient;
-                if (client?.Client == null) { return; }
-
-                try
+            this.Invoke(new Action(() => {
+                if (e.Type == 10)
                 {
-                    var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                    if (logForm != null)
-                    {
-                        this.Invoke(new Action(() => {
-                            if (logForm != null) logForm.AddItem(0, null, byteData);
-                        }));
-                    }
-
-                    //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                    //chart1.ChartAreas[0].AxisX.Maximum = 20;
-
-                    var packet = new RTGraphPacket(byteData);
-                    if (packet.Class == PacketClass.CAPTURE)
-                    {
-                        if (packet.SubClass == PacketSubClass.RES)
-                        {
-                            if (packet.Option == 0x00)
-                            {
-                                // 캡춰 시작
-                            }
-                            else if (packet.Option == 0x01)
-                            {
-                                // 캡춰 끝
-
-                            }
-                        }
-                        else if (packet.SubClass == PacketSubClass.NTY)
-                        {
-                            // 캡춰 데이터.
-                            // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
-                            this.Invoke(new Action(() => {
-                                chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
-                            }));
-                        }
-                    }
-                    else if (packet.Class == PacketClass.CONN)
-                    {
-
-                    }
-
-                    if (udpClient.Client != null)
-                    {
-                        //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                    }
+                    chart1.AddValueLine(e.Packet.data, 2, e.Packet.data.Length - 2);
                 }
-                catch (Exception ex)
-                {
-                    //asyncResult = null;
-                }
-            }
+
+                if (logForm != null) logForm.AddItem(1, null, e.Packet.data);
+            }));
+
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (udpClient != null)
-            {
-                //if (asyncResult != null)
-                //{
-                //    udpClient.EndReceive(asyncResult, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                //}
-                udpClient.Close();
-                udpClient = null;
-            }
+            comm.CloseComm();
         }
 
         private void SocketOpenBtn_Click(object sender, EventArgs e)
         {
             if (SocketOpenBtn.Tag == null)
             {
-                udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text))); 
-                udpSender = new UdpClient();
-                udpSender.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), Int32.Parse(textBox2.Text)));
-                //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                comm.HostIP = textBox1.Text;
+                comm.SendPort = Int32.Parse(textBox2.Text);
+                comm.RecvPort = Int32.Parse(textBox3.Text);
+                comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
+                comm.OpenComm();
 
                 SocketOpenBtn.Text = "Socket Close";
-                SocketOpenBtn.Tag = udpClient;
+                SocketOpenBtn.Tag = comm;
                 panel1.Enabled = true;
             }
             else
             {
-                udpSender.Close();
-                udpSender = null;
-                udpClient.Close();
-                udpClient = null;
+                comm.CloseComm();
+                comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
                 SocketOpenBtn.Text = "Socket Open";
                 SocketOpenBtn.Tag = null;
                 panel1.Enabled = false;
@@ -135,26 +71,14 @@ namespace RTGraph
         {
             if (ConnectBtn.Tag == null)
             {
-                var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-                var data = packet.serialize();
-                udpSender.Send(data, data.Length);
-
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                //udpClient = new UdpClient(targetIPEndPoint);
-                //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                comm.Connect();
 
                 ConnectBtn.Text = "Disconnect";
-                ConnectBtn.Tag = udpClient;
+                ConnectBtn.Tag = comm;
             }
             else
             {
-                var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-                var data = packet.serialize();
-                udpSender.Send(data, data.Length);
-
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                //udpClient = new UdpClient(targetIPEndPoint);
-                //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                comm.Disconnect();
 
                 ConnectBtn.Text = "Cconnect";
                 ConnectBtn.Tag = null;
@@ -165,26 +89,14 @@ namespace RTGraph
         {
             if (CaptureBtn.Tag == null)
             {
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-                var data = packet.serialize();
-                udpSender.Send(data, data.Length);
-
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                // udpClient = new UdpClient(targetIPEndPoint);
-                //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                comm.StartCapture();
 
                 CaptureBtn.Text = "Stop Capture";
                 CaptureBtn.Tag = "active";
             }
             else
             {
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-                var data = packet.serialize();
-                udpSender.Send(data, data.Length);
-
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                // udpClient = new UdpClient(targetIPEndPoint);
-                //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                comm.StopCapture();
 
                 CaptureBtn.Text = "Start Capture";
                 CaptureBtn.Tag = null;
@@ -201,7 +113,7 @@ namespace RTGraph
             if (logForm == null)
             {
                 logForm = new LogForm();
-                logForm.Disposed += LogFormDisposed;
+                logForm.Disposed += new EventHandler(LogFormDisposed);
             }
             if (!logForm.Visible) logForm.Show(this);
             if (logForm.WindowState == FormWindowState.Minimized) logForm.WindowState = FormWindowState.Normal;
