@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using RTGraph;
+using System.IO;
 
 namespace RTGraphProtocol
 {
@@ -29,7 +30,8 @@ namespace RTGraphProtocol
         public int SendPort { get; set; } = 0;
         public int RecvPort { get; set; } = 0;
 
-        public event UDPCommEventHandler StreamReceived;
+        public event ErrorEventHandler ErrorEvent;
+        public event UDPCommEventHandler StreamReceivedEvent;
 
         protected UdpClient udpClient;
         protected UdpClient udpSender = null;
@@ -37,9 +39,9 @@ namespace RTGraphProtocol
 
         protected void RaiseEvent(byte[] stream, IPEndPoint targetIPEndPoint = null)
         {
-            if (StreamReceived != null)
+            if (StreamReceivedEvent != null)
             {
-                StreamReceived(this, new UDPCommventArgs(stream, targetIPEndPoint));
+                StreamReceivedEvent(this, new UDPCommventArgs(stream, targetIPEndPoint));
             }
         }
 
@@ -70,6 +72,10 @@ namespace RTGraphProtocol
                 catch (Exception ex)
                 {
                     //asyncResult = null;
+                    if (ErrorEvent != null)
+                    {
+                        ErrorEvent(this, new ErrorEventArgs(ex));
+                    }
                 }
             }
         }
@@ -85,6 +91,8 @@ namespace RTGraphProtocol
             targetIPEndPoint = new IPEndPoint(IPAddress.Any, RecvPort);
 
             udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
+            Opened = true;
         }
 
         public void CloseComm()
@@ -96,14 +104,22 @@ namespace RTGraphProtocol
                 udpClient.Close();
                 udpClient = null;
             }
+
+            Opened = false;
         }
 
         public void SendStream(byte[] stream, IPEndPoint targetIPEndPoint = null)
         {
-            if (targetIPEndPoint == null) targetIPEndPoint = this.targetIPEndPoint;
-            if (SendPort > 0) targetIPEndPoint.Port = SendPort;
-
-            udpSender.Send(stream, stream.Length, targetIPEndPoint);
+            if (HostIP != null)
+            {
+                udpSender.Send(stream, stream.Length);
+            }
+            else
+            {
+                if (targetIPEndPoint == null) targetIPEndPoint = this.targetIPEndPoint;
+                if (SendPort > 0) targetIPEndPoint.Port = SendPort;
+                udpSender.Send(stream, stream.Length, targetIPEndPoint);
+            }
         }
     }
 }

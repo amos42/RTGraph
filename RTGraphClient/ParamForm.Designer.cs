@@ -110,7 +110,7 @@ namespace RTGraph
             this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Location = new System.Drawing.Point(12, 78);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(316, 218);
+            this.groupBox1.Size = new System.Drawing.Size(326, 218);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Camera Setting";
@@ -126,39 +126,39 @@ namespace RTGraph
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(6, 168);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(42, 15);
+            this.label9.Size = new System.Drawing.Size(137, 15);
             this.label9.TabIndex = 11;
             this.label9.Text = "Gane";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(6, 137);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(69, 15);
+            this.label8.Size = new System.Drawing.Size(137, 15);
             this.label8.TabIndex = 10;
             this.label8.Text = "Line Rate";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 106);
+            this.label7.Location = new System.Drawing.Point(6, 106);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(105, 15);
+            this.label7.Size = new System.Drawing.Size(137, 15);
             this.label7.TabIndex = 9;
             this.label7.Text = "Exposure Time";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(6, 76);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(102, 15);
+            this.label6.Size = new System.Drawing.Size(137, 15);
             this.label6.TabIndex = 8;
             this.label6.Text = "Trigger Source";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label5
             // 
@@ -168,31 +168,36 @@ namespace RTGraph
             this.label5.Size = new System.Drawing.Size(137, 15);
             this.label5.TabIndex = 7;
             this.label5.Text = "Test Image Selector";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(151, 165);
+            this.textBox3.Location = new System.Drawing.Point(151, 164);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(60, 25);
             this.textBox3.TabIndex = 6;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(151, 134);
+            this.textBox2.Location = new System.Drawing.Point(151, 133);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(60, 25);
             this.textBox2.TabIndex = 5;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(151, 103);
+            this.textBox1.Location = new System.Drawing.Point(151, 102);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(60, 25);
             this.textBox1.TabIndex = 4;
             // 
             // comboBox2
             // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "Image Trigger",
+            "External Trigger"});
             this.comboBox2.Location = new System.Drawing.Point(151, 73);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(159, 23);
@@ -200,7 +205,12 @@ namespace RTGraph
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Real Image",
+            "Vertical Test Image",
+            "Horizontal Test Image"});
             this.comboBox1.Location = new System.Drawing.Point(151, 44);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(159, 23);
@@ -226,9 +236,9 @@ namespace RTGraph
             this.groupBox2.Controls.Add(this.textBox6);
             this.groupBox2.Controls.Add(this.textBox5);
             this.groupBox2.Controls.Add(this.textBox4);
-            this.groupBox2.Location = new System.Drawing.Point(341, 78);
+            this.groupBox2.Location = new System.Drawing.Point(354, 78);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(199, 218);
+            this.groupBox2.Size = new System.Drawing.Size(186, 218);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Trigger Timing";
@@ -236,7 +246,7 @@ namespace RTGraph
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(138, 183);
+            this.label16.Location = new System.Drawing.Point(123, 183);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(42, 15);
             this.label16.TabIndex = 23;
@@ -245,7 +255,7 @@ namespace RTGraph
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(136, 155);
+            this.label17.Location = new System.Drawing.Point(123, 154);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(42, 15);
             this.label17.TabIndex = 22;
@@ -254,7 +264,7 @@ namespace RTGraph
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(136, 124);
+            this.label18.Location = new System.Drawing.Point(123, 125);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(42, 15);
             this.label18.TabIndex = 21;
@@ -263,7 +273,7 @@ namespace RTGraph
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(138, 93);
+            this.label19.Location = new System.Drawing.Point(123, 96);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(42, 15);
             this.label19.TabIndex = 20;
@@ -272,7 +282,7 @@ namespace RTGraph
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(136, 63);
+            this.label20.Location = new System.Drawing.Point(123, 67);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(42, 15);
             this.label20.TabIndex = 19;
@@ -281,7 +291,7 @@ namespace RTGraph
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(136, 34);
+            this.label21.Location = new System.Drawing.Point(123, 38);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(42, 15);
             this.label21.TabIndex = 18;
@@ -289,96 +299,96 @@ namespace RTGraph
             // 
             // label15
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(35, 183);
+            this.label15.Location = new System.Drawing.Point(20, 187);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(33, 15);
+            this.label15.Size = new System.Drawing.Size(31, 15);
             this.label15.TabIndex = 17;
             this.label15.Text = "Twd";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(33, 155);
+            this.label10.Location = new System.Drawing.Point(20, 159);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(31, 15);
             this.label10.TabIndex = 16;
             this.label10.Text = "Tde";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(33, 124);
+            this.label11.Location = new System.Drawing.Point(20, 128);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(26, 15);
+            this.label11.Size = new System.Drawing.Size(31, 15);
             this.label11.TabIndex = 15;
             this.label11.Text = "Tsl";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label12
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(35, 93);
+            this.label12.Location = new System.Drawing.Point(20, 97);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(35, 15);
+            this.label12.Size = new System.Drawing.Size(31, 15);
             this.label12.TabIndex = 14;
             this.label12.Text = "Tre2";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label13
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(33, 63);
+            this.label13.Location = new System.Drawing.Point(20, 67);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(35, 15);
+            this.label13.Size = new System.Drawing.Size(31, 15);
             this.label13.TabIndex = 13;
             this.label13.Text = "Tre1";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label14
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(33, 34);
+            this.label14.Location = new System.Drawing.Point(20, 38);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(31, 15);
             this.label14.TabIndex = 12;
             this.label14.Text = "Tch";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBox9
             // 
-            this.textBox9.Location = new System.Drawing.Point(70, 180);
+            this.textBox9.Location = new System.Drawing.Point(57, 180);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(60, 25);
             this.textBox9.TabIndex = 10;
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(70, 149);
+            this.textBox8.Location = new System.Drawing.Point(57, 151);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(60, 25);
             this.textBox8.TabIndex = 9;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(70, 121);
+            this.textBox7.Location = new System.Drawing.Point(57, 122);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(60, 25);
             this.textBox7.TabIndex = 8;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(70, 90);
+            this.textBox6.Location = new System.Drawing.Point(57, 93);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(60, 25);
             this.textBox6.TabIndex = 7;
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(70, 60);
+            this.textBox5.Location = new System.Drawing.Point(57, 64);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(60, 25);
             this.textBox5.TabIndex = 6;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(70, 31);
+            this.textBox4.Location = new System.Drawing.Point(57, 35);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(60, 25);
             this.textBox4.TabIndex = 5;
@@ -444,6 +454,7 @@ namespace RTGraph
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(120, 25);
             this.numericUpDown4.TabIndex = 5;
+            this.numericUpDown4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // numericUpDown3
             // 
@@ -451,6 +462,7 @@ namespace RTGraph
             this.numericUpDown3.Name = "numericUpDown3";
             this.numericUpDown3.Size = new System.Drawing.Size(120, 25);
             this.numericUpDown3.TabIndex = 4;
+            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // numericUpDown2
             // 
@@ -458,6 +470,7 @@ namespace RTGraph
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(70, 25);
             this.numericUpDown2.TabIndex = 3;
+            this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // numericUpDown1
             // 
@@ -465,47 +478,53 @@ namespace RTGraph
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(72, 25);
             this.numericUpDown1.TabIndex = 2;
+            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // trackBar2
             // 
+            this.trackBar2.AutoSize = false;
             this.trackBar2.Location = new System.Drawing.Point(82, 80);
             this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(347, 56);
+            this.trackBar2.Size = new System.Drawing.Size(347, 26);
             this.trackBar2.TabIndex = 1;
             // 
             // trackBar1
             // 
+            this.trackBar1.AutoSize = false;
             this.trackBar1.Location = new System.Drawing.Point(82, 33);
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(347, 56);
+            this.trackBar1.Size = new System.Drawing.Size(347, 25);
             this.trackBar1.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(98, 501);
+            this.button1.Location = new System.Drawing.Point(98, 497);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(75, 30);
             this.button1.TabIndex = 5;
             this.button1.Text = "Default";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(198, 501);
+            this.button2.Location = new System.Drawing.Point(189, 497);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(75, 30);
             this.button2.TabIndex = 6;
             this.button2.Text = "Load";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(289, 501);
+            this.button3.Location = new System.Drawing.Point(280, 497);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(75, 30);
             this.button3.TabIndex = 7;
             this.button3.Text = "Save";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox4
             // 
@@ -572,9 +591,9 @@ namespace RTGraph
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(375, 501);
+            this.button4.Location = new System.Drawing.Point(371, 497);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(75, 30);
             this.button4.TabIndex = 9;
             this.button4.Text = "Apply";
             this.button4.UseVisualStyleBackColor = true;
@@ -582,12 +601,13 @@ namespace RTGraph
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(465, 501);
+            this.button5.Location = new System.Drawing.Point(462, 497);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.Size = new System.Drawing.Size(75, 30);
             this.button5.TabIndex = 10;
             this.button5.Text = "Close";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // ParamForm
             // 
@@ -607,6 +627,9 @@ namespace RTGraph
             this.Name = "ParamForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Parameter Setting";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ParamForm_FormClosed);
+            this.Load += new System.EventHandler(this.ParamForm_Load);
+            this.Shown += new System.EventHandler(this.ParamForm_Shown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

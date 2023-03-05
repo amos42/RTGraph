@@ -27,48 +27,77 @@ namespace DeviceSimulator
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
+            bool foward = true;
             RTGraphPacket packet = e.Packet;
             IPEndPoint ep = e.TargetIPEndPoint;
             if (comm.SendPort > 0) ep.Port = comm.SendPort;
 
-            addItem(1, "", packet.serialize());
+            addLogItem(1, "", packet.serialize());
 
             if (packet.Class == PacketClass.CONN)
             {
-                if (packet.Option == 0x01)
+                if (packet.SubClass == PacketSubClass.REQ)
                 {
-                    endPtrDic.Add(ep, true);  // 접속하자마자 바로 캡춰 패킷 전송
-                    applyTimer();
+                    if (packet.Option == 0x01)
+                    {
+                        endPtrDic.Add(ep, true);  // 접속하자마자 바로 캡춰 패킷 전송
+                        applyTimer();
+                    }
+                    else if (packet.Option == 0x00)
+                    {
+                        endPtrDic.Remove(ep);
+                        applyTimer();
+                    }
                 }
-                else if (packet.Option == 0x00)
+            }
+            else if (packet.Class == PacketClass.PARAM)
+            {
+                if (packet.SubClass == PacketSubClass.REQ)
                 {
-                    endPtrDic.Remove(ep);
-                    applyTimer();
+                    if (packet.Option == 0x00)
+                    {
+                    }
+                    else if (packet.Option == 0x01)
+                    {
+                        comm.camParam.image_selector = 2;
+                        comm.camParam.trigger_source = 1;
+                        packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize());
+                        comm.SendPacket(packet, e.TargetIPEndPoint);
+                        //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
+                        addLogItem(0, null, packet.serialize());
+                        foward = false;
+                    }
                 }
             }
             else if (packet.Class == PacketClass.CAPTURE)
             {
-                if (packet.Option == 0x00)
+                if (packet.SubClass == PacketSubClass.REQ)
                 {
-                    if (endPtrDic.TryGetValue(ep, out bool value) && !value)
+                    if (packet.Option == 0x00)
                     {
-                        endPtrDic[ep] = true;
-                        applyTimer();
+                        if (endPtrDic.TryGetValue(ep, out bool value) && !value)
+                        {
+                            endPtrDic[ep] = true;
+                            applyTimer();
+                        }
                     }
-                }
-                else if (packet.Option == 0x01)
-                {
-                    if (endPtrDic.TryGetValue(ep, out bool value) && value)
+                    else if (packet.Option == 0x01)
                     {
-                        endPtrDic[ep] = false;
-                        applyTimer();
+                        if (endPtrDic.TryGetValue(ep, out bool value) && value)
+                        {
+                            endPtrDic[ep] = false;
+                            applyTimer();
+                        }
                     }
                 }
             }
 
-            packet.SubClass = PacketSubClass.RES;
-            packet.data = new byte[1] { 0x01 }; // of 0xFF
-            comm.SendPacket(packet, e.TargetIPEndPoint);
+            if (foward)
+            {
+                packet.SubClass = PacketSubClass.RES;
+                packet.data = new byte[1] { 0x01 }; // of 0xFF
+                comm.SendPacket(packet, e.TargetIPEndPoint);
+            }
         }
 
         private void socketOpen(bool open)
@@ -99,7 +128,7 @@ namespace DeviceSimulator
             socketOpen(true);
         }
 
-        private void addItem(int direction, string message, byte[] byteData = null)
+        private void addLogItem(int direction, string message, byte[] byteData = null)
         {
             this.Invoke(new Action(() => {
                 logControl1.AddItem(direction, message, byteData);
@@ -166,7 +195,7 @@ namespace DeviceSimulator
 
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
                 comm.SendPacket(packet, xx.Key);
-                addItem(0, "", packet.serialize());
+                addLogItem(0, "", packet.serialize());
             }
         }
 

@@ -27,6 +27,7 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
+        public CamParam camParam = new CamParam();
         public event PacketReceivedEventHandler PacketReceived;
         public event EventHandler ParameterChanged;
 
@@ -35,7 +36,53 @@ namespace RTGraphProtocol
             int type = 0;
 
             var packet = new RTGraphPacket(byteData);
-            if (packet.Class == PacketClass.CAPTURE)
+            if (packet.Class == PacketClass.CONN)
+            {
+                if (packet.SubClass == PacketSubClass.RES)
+                {
+                    if (packet.Option == 0x00)
+                    {
+                        // 연결
+                    }
+                    else if (packet.Option == 0x01)
+                    {
+                        // 연결
+
+                    }
+                }
+            }
+            else if (packet.Class == PacketClass.PARAM)
+            {
+                if (packet.SubClass == PacketSubClass.RES)
+                {
+                    if (packet.Option == 0x00)
+                    {
+                        // 
+                    }
+                    else if (packet.Option == 0x01)
+                    {
+                        // Load
+                        camParam.Parse(packet.data);
+                        RaiseParamEvent();
+                    }
+                }
+            }
+            else if (packet.Class == PacketClass.CAL)
+            {
+                if (packet.SubClass == PacketSubClass.RES)
+                {
+                    if (packet.Option == 0x00)
+                    {
+                        // 
+                    }
+                    else if (packet.Option == 0x01)
+                    {
+                        // 
+
+                    }
+                }
+            }
+            else if (packet.Class == PacketClass.CAPTURE)
             {
                 if (packet.SubClass == PacketSubClass.RES)
                 {
@@ -51,21 +98,19 @@ namespace RTGraphProtocol
                 }
                 else if (packet.SubClass == PacketSubClass.NTY)
                 {
-                    // 캡춰 데이터.
-                    // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
-                    //this.Invoke(new Action(() => {
-                    //    chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
-                    //}));
                     type = 10;
                 }
             }
-            else if (packet.Class == PacketClass.CONN)
-            {
-
-            }
 
             RaisePacketReceivedEvent(packet, type, 0, endpt);
+        }
 
+        private void RaiseParamEvent()
+        {
+            if (ParameterChanged != null)
+            {
+                ParameterChanged(this, new EventArgs());
+            }
         }
 
         public void RaisePacketReceivedEvent(RTGraphPacket packet, int type, int result, IPEndPoint targetIPEndPoint = null)
@@ -110,10 +155,15 @@ namespace RTGraphProtocol
             SendStream(data, targetIPEndPoint);
         }
 
-        public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data, IPEndPoint targetIPEndPoint = null)
+        public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data = null, IPEndPoint targetIPEndPoint = null)
         {
             var packet = new RTGraphPacket(cls, subCls, pktBit, opts, data);
             SendPacket(packet, targetIPEndPoint);
+        }
+
+        public void RequestParam()
+        {
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, 0x1);
         }
     }
 }

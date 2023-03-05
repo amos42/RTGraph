@@ -55,7 +55,15 @@ namespace RTGraph
             packet[startIdx + 1] = (byte)(value >> 8);
         }
 
-        public CamParam(ref byte[] packet, int startIdx = 0)
+        public CamParam(byte[] packet = null, int startIdx = 0)
+        {
+            if (packet != null)
+            {
+                Parse(packet, startIdx);
+            }
+        }
+
+        public void Parse(byte[] packet, int startIdx = 0)
         {
             image_selector = packet[startIdx + 0];
             trigger_source = packet[startIdx + 1];
@@ -78,7 +86,7 @@ namespace RTGraph
         {
             if (packet == null)
             {
-                packet = new byte[26];
+                packet = new byte[27];
             }
 
             packet[startIdx + 0] = image_selector;
@@ -108,7 +116,7 @@ namespace RTGraph
         public PacketClassBit Control;
         public int Option;
         public byte[] data = null;
-        public CamParam camParam = null;
+        //public CamParam camParam = null;
 
         public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option, byte[] data = null)
         {
@@ -119,13 +127,13 @@ namespace RTGraph
             this.data = data;
         }
 
-        public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option, CamParam camParam)
+        public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option/*, CamParam camParam*/)
         {
             this.Class = Class;
             this.SubClass = SubClass;
             this.Control = Control;
             this.Option = Option;
-            this.camParam = camParam;
+            //this.camParam = camParam;
         }
 
         public RTGraphPacket(byte[] packet)
@@ -138,18 +146,18 @@ namespace RTGraph
             int len = packet[4] | ((int)packet[5] << 8);
             if (len > 0)
             {
-                if (Class == PacketClass.PARAM)
-                {
-                    camParam = new CamParam(ref data, 6);
-                }
-                else
-                {
+                //if (Class == PacketClass.PARAM)
+                //{
+                //    camParam = new CamParam(data, 6);
+                //}
+                //else
+                //{
                     data = new byte[len];
                     for (int i = 0; i < len; i++)
                     {
                         data[i] = packet[6 + i];
                     }
-                }
+                //}
             } 
         }
 
@@ -160,10 +168,10 @@ namespace RTGraph
             {
                 len += data.Length;
             }
-            if(camParam != null)
-            {
-                len += 26;
-            }
+            //if(camParam != null)
+            //{
+            //    len += 26;
+            //}
 
             if (packet == null)
             {
@@ -184,10 +192,10 @@ namespace RTGraph
                     packet[6 + i] = data[i];
                 }
             }
-            if (camParam != null)
-            {
-                camParam.serialize(packet, 6);
-            }
+            //if (camParam != null)
+            //{
+            //    camParam.serialize(packet, 6);
+            //}
 
             return packet;
         }

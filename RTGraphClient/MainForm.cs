@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,20 @@ namespace RTGraph
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            comm.ErrorEvent += new ErrorEventHandler(CommError);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             comm.CloseComm();
+        }
+
+        private void CommError(object sender, ErrorEventArgs e)
+        {
+            this.Invoke(new Action(() => {
+                MessageBox.Show(e.GetException().Message);
+
+            }));
         }
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
@@ -101,7 +111,7 @@ namespace RTGraph
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new ParamForm().ShowDialog();
+            new ParamForm(comm).ShowDialog();
         }
 
         private void button2_Click(object sender, EventArgs e)

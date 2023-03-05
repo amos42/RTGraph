@@ -37,6 +37,10 @@ namespace DeviceSimulator
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.logControl1 = new DeviceSimulator.LogControl();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
@@ -47,9 +51,9 @@ namespace DeviceSimulator
             // 
             // SocketOpenBtn
             // 
-            this.SocketOpenBtn.Location = new System.Drawing.Point(12, 12);
+            this.SocketOpenBtn.Location = new System.Drawing.Point(12, 11);
             this.SocketOpenBtn.Name = "SocketOpenBtn";
-            this.SocketOpenBtn.Size = new System.Drawing.Size(205, 69);
+            this.SocketOpenBtn.Size = new System.Drawing.Size(205, 42);
             this.SocketOpenBtn.TabIndex = 1;
             this.SocketOpenBtn.Text = "Open";
             this.SocketOpenBtn.UseVisualStyleBackColor = true;
@@ -59,17 +63,19 @@ namespace DeviceSimulator
             // 
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBar1.AutoSize = false;
             this.trackBar1.LargeChange = 10;
-            this.trackBar1.Location = new System.Drawing.Point(351, 12);
+            this.trackBar1.Location = new System.Drawing.Point(350, 36);
             this.trackBar1.Maximum = 1023;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(731, 56);
+            this.trackBar1.Size = new System.Drawing.Size(731, 32);
             this.trackBar1.TabIndex = 3;
+            this.trackBar1.TickFrequency = 20;
             this.trackBar1.Value = 100;
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(147, 141);
+            this.textBox3.Location = new System.Drawing.Point(115, 87);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(70, 25);
             this.textBox3.TabIndex = 11;
@@ -77,7 +83,7 @@ namespace DeviceSimulator
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(147, 110);
+            this.textBox2.Location = new System.Drawing.Point(19, 87);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(70, 25);
             this.textBox2.TabIndex = 10;
@@ -85,12 +91,14 @@ namespace DeviceSimulator
             // 
             // trackBar2
             // 
-            this.trackBar2.Location = new System.Drawing.Point(234, 12);
+            this.trackBar2.AutoSize = false;
+            this.trackBar2.Location = new System.Drawing.Point(233, 36);
             this.trackBar2.Maximum = 100;
             this.trackBar2.Minimum = 10;
             this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(111, 56);
+            this.trackBar2.Size = new System.Drawing.Size(111, 32);
             this.trackBar2.TabIndex = 12;
+            this.trackBar2.TickFrequency = 5;
             this.trackBar2.Value = 40;
             // 
             // logControl1
@@ -103,14 +111,54 @@ namespace DeviceSimulator
             this.logControl1.ListViewCapa = 500;
             this.logControl1.Location = new System.Drawing.Point(233, 74);
             this.logControl1.Name = "logControl1";
-            this.logControl1.Size = new System.Drawing.Size(848, 583);
+            this.logControl1.Size = new System.Drawing.Size(848, 573);
             this.logControl1.TabIndex = 13;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(233, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 15);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "공 반지름";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(347, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 15);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "공 위치";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 67);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(67, 15);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "수신포트";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(112, 67);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 15);
+            this.label4.TabIndex = 17;
+            this.label4.Text = "송신포트";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1094, 671);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.logControl1);
             this.Controls.Add(this.trackBar2);
             this.Controls.Add(this.textBox3);
@@ -136,6 +184,10 @@ namespace DeviceSimulator
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TrackBar trackBar2;
         private LogControl logControl1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
 
