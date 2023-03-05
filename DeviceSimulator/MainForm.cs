@@ -11,42 +11,90 @@ using System.Net;
 using System.Net.Sockets;
 using RTGraph;
 using System.Reflection;
+using RTGraphProtocol;
 
 namespace DeviceSimulator
 {
     public partial class MainForm : Form
     {
-        UdpClient udpServer;
-        UdpClient udpSender;
-        IPEndPoint targetIPEndPoint;
-        IPEndPoint myIPEndPoint;
-        Dictionary<IPEndPoint, IPEndPoint> endPtrDic;
+        RTGraphComm comm = new RTGraphComm();
+        Dictionary<IPEndPoint, bool> endPtrDic;
 
         public MainForm()
         {
             InitializeComponent();
         }
 
+        private void ReceivePacket(object sender, PacketReceivedEventArgs e)
+        {
+            RTGraphPacket packet = e.Packet;
+            IPEndPoint ep = e.TargetIPEndPoint;
+            if (comm.SendPort > 0) ep.Port = comm.SendPort;
+
+            addItem(1, "", packet.serialize());
+
+            if (packet.Class == PacketClass.CONN)
+            {
+                if (packet.Option == 0x01)
+                {
+                    endPtrDic.Add(ep, true);  // 접속하자마자 바로 캡춰 패킷 전송
+                    applyTimer();
+                }
+                else if (packet.Option == 0x00)
+                {
+                    endPtrDic.Remove(ep);
+                    applyTimer();
+                }
+            }
+            else if (packet.Class == PacketClass.CAPTURE)
+            {
+                if (packet.Option == 0x00)
+                {
+                    if (endPtrDic.TryGetValue(ep, out bool value) && !value)
+                    {
+                        endPtrDic[ep] = true;
+                        applyTimer();
+                    }
+                }
+                else if (packet.Option == 0x01)
+                {
+                    if (endPtrDic.TryGetValue(ep, out bool value) && value)
+                    {
+                        endPtrDic[ep] = false;
+                        applyTimer();
+                    }
+                }
+            }
+
+            packet.SubClass = PacketSubClass.RES;
+            packet.data = new byte[1] { 0x01 }; // of 0xFF
+            comm.SendPacket(packet, e.TargetIPEndPoint);
+        }
+
         private void socketOpen(bool open)
         {
             if (open)
             {
-                udpServer = new UdpClient(Int32.Parse(textBox2.Text));
+                comm.RecvPort = Int32.Parse(textBox2.Text);
+                comm.SendPort = Int32.Parse(textBox3.Text);
+                comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
+                comm.OpenComm();
 
-                targetIPEndPoint = new IPEndPoint(IPAddress.Any, Int32.Parse(textBox3.Text));
-                udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
-            } 
+                SocketOpenBtn.Text = "Socket Close";
+                SocketOpenBtn.Tag = comm;
+            }
             else
             {
-                udpServer.Close();
-                udpServer = null;
-                udpSender = null;
+                comm.CloseComm();
+                comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
+                SocketOpenBtn.Text = "Socket Open";
+                SocketOpenBtn.Tag = null;
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            endPtrDic = new Dictionary<IPEndPoint, IPEndPoint>();
+            endPtrDic = new Dictionary<IPEndPoint, bool>();
 
             socketOpen(true);
         }
@@ -58,97 +106,45 @@ namespace DeviceSimulator
             }));
         }
 
-        private void receiveText(IAsyncResult result)
+        private void applyTimer()
         {
-            if (result.IsCompleted)
+            int cnt = 0;
+            if (endPtrDic.Any())
             {
-                var byteData = (result.AsyncState as UdpClient)?.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
-                addItem(1, "", byteData);
-
-                var packet = new RTGraphPacket(byteData);
-
-                if (packet.Class == PacketClass.CONN)
+                foreach(var ena in endPtrDic)
                 {
-                    if (packet.Option == 0x01)
-                    {
-                        endPtrDic.Add(targetIPEndPoint, targetIPEndPoint);
-
-                        this.Invoke(new Action(() =>
-                        {
-                            if (!timer1.Enabled)
-                            {
-                                timer1.Start();
-                            }
-                        }));
-                    }
-                    else if (packet.Option == 0x00)
-                    {
-                        endPtrDic.Remove(targetIPEndPoint);
-
-                        this.Invoke(new Action(() =>
-                        {
-                            if (!endPtrDic.Any())
-                            {
-                                timer1.Stop();
-                            }
-                        }));
-                    }
-
+                    if (ena.Value) cnt++;
                 }
-                else if (packet.Class == PacketClass.CAPTURE)
+            }
+
+            if (cnt > 0)
+            {
+                this.Invoke(new Action(() =>
                 {
-                    if (packet.Option == 0x00)
+                    if (!timer1.Enabled)
                     {
-                        endPtrDic.Add(targetIPEndPoint, targetIPEndPoint);
-
-                        this.Invoke(new Action(() =>
-                        {
-                            if (!timer1.Enabled)
-                            {
-                                timer1.Start();
-                            }
-                        }));
+                        timer1.Start();
                     }
-                    else if (packet.Option == 0x01)
-                    {
-                        endPtrDic.Remove(targetIPEndPoint);
-
-                        this.Invoke(new Action(() =>
-                        {
-                            if (!endPtrDic.Any())
-                            {
-                                timer1.Stop();
-                            }
-                        }));
-                    }
-
-                }
-
-                packet.SubClass = PacketSubClass.RES;
-                packet.data = new byte[1] { 0x01 }; // of 0xFF
-                var data = packet.serialize();
-                udpSender = new UdpClient();
-                udpSender.Send(data, data.Length, targetIPEndPoint);
-
-                try { 
-                    udpServer.BeginReceive(new AsyncCallback(receiveText), udpServer);
-                } 
-                catch(Exception ex)
+                }));
+            }
+            else
+            {
+                this.Invoke(new Action(() =>
                 {
-                    addItem(3, ex.Message);
-
-                }
+                    if (timer1.Enabled)
+                    {
+                        timer1.Stop();
+                    }
+                }));
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            // (2) 데이타 송신
-            //cli.Send(datagram, datagram.Length, "127.0.0.1", 7777);
-            //Console.WriteLine("[Send] 127.0.0.1:7777 로 {0} 바이트 전송", datagram.Length);
-
             foreach (var xx in endPtrDic)
             {
+                if (!xx.Value) continue;
+                
                 var data = new byte[1024];
 
                 int limit = trackBar2.Value;
@@ -169,17 +165,28 @@ namespace DeviceSimulator
                 }
 
                 var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
-                var packetStream = packet.serialize();
-
-                var target = new IPEndPoint(xx.Value.Address, Int32.Parse(textBox3.Text));
-                udpSender.Send(packetStream, packetStream.Length, target);
-                addItem(0, "",packetStream);
+                comm.SendPacket(packet, xx.Key);
+                addItem(0, "", packet.serialize());
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void SocketOpenBtn_Click(object sender, EventArgs e)
         {
-            socketOpen(true);
+            if (!comm.Opened)
+            {
+                socketOpen(true);
+
+                SocketOpenBtn.Text = "Socket Close";
+                SocketOpenBtn.Tag = comm;
+            }
+            else
+            {
+                socketOpen(false);
+
+                SocketOpenBtn.Text = "Socket Open";
+                SocketOpenBtn.Tag = null;
+            }
+
         }
     }
 }

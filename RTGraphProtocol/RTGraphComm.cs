@@ -12,12 +12,14 @@ namespace RTGraphProtocol
         public RTGraphPacket Packet { get; set; }
         public int Type { get; set; } = 0;
         public int Result { get; set; } = 0;
-    
-        public PacketReceivedEventArgs(RTGraphPacket packet, int type, int result = 0) 
+        public IPEndPoint TargetIPEndPoint {get; set;} = null;
+
+        public PacketReceivedEventArgs(RTGraphPacket packet, int type, int result = 0, IPEndPoint targetEP = null) 
         {
             this.Packet = packet;
             this.Type = type;
             this.Result = result;
+            this.TargetIPEndPoint = targetEP;
         }
     }
 
@@ -25,7 +27,9 @@ namespace RTGraphProtocol
 
     public class RTGraphComm
     {
-        public string HostIP { get; set; } = "127.0.0.1";
+        public bool Opened { get; set; } = false;
+
+        public string HostIP { get; set; } = null;
         public int SendPort { get; set; } = 0;
         public int RecvPort { get; set; } = 0;
 
@@ -44,9 +48,12 @@ namespace RTGraphProtocol
                 var client = result.AsyncState as UdpClient;
                 if (client?.Client == null) { return; }
 
+                int type = 0;
+
                 try
                 {
-                    var byteData = client.EndReceive(result, ref targetIPEndPoint); // 버퍼에 있는 데이터 취득
+                    var targetEP = new IPEndPoint(IPAddress.Any, RecvPort);
+                    var byteData = client.EndReceive(result, ref targetEP); // 버퍼에 있는 데이터 취득
 
                     //chart1.ChartAreas[0].AxisX.Minimum = 0;
                     //chart1.ChartAreas[0].AxisX.Maximum = 20;
@@ -73,12 +80,17 @@ namespace RTGraphProtocol
                             //this.Invoke(new Action(() => {
                             //    chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
                             //}));
-                            if (PacketReceived != null) PacketReceived(this, new PacketReceivedEventArgs(packet, 10, 0));
-                        }
+                            type = 10;
+                       }
                     }
                     else if (packet.Class == PacketClass.CONN)
                     {
 
+                    }
+
+                    if (PacketReceived != null)
+                    {
+                        PacketReceived(this, new PacketReceivedEventArgs(packet, type, 0, targetEP));
                     }
 
                     if (udpClient.Client != null)
@@ -100,7 +112,10 @@ namespace RTGraphProtocol
         {
             udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, RecvPort));
             udpSender = new UdpClient();
-            udpSender.Connect(new IPEndPoint(IPAddress.Parse(HostIP), SendPort));
+            if(HostIP != null)
+            {
+                udpSender.Connect(new IPEndPoint(IPAddress.Parse(HostIP), SendPort));
+            }
             targetIPEndPoint = new IPEndPoint(IPAddress.Any, RecvPort);
 
             udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
@@ -145,5 +160,20 @@ namespace RTGraphProtocol
             udpSender.Send(data, data.Length);
         }
 
+        public void SendPacket(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
+        {
+            if (targetIPEndPoint == null) targetIPEndPoint = this.targetIPEndPoint;
+            if (SendPort > 0) targetIPEndPoint.Port = SendPort;
+
+            var data = packet.serialize();
+            udpSender.Send(data, data.Length, targetIPEndPoint);
+        }
+
+        public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data, IPEndPoint targetIPEndPoint = null)
+        {
+            var packet = new RTGraphPacket(cls, subCls, pktBit, opts, data);
+            SendPacket(packet, targetIPEndPoint);
+        }
     }
 }
+

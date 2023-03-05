@@ -31,7 +31,7 @@ namespace DeviceSimulator
         {
             this.components = new System.ComponentModel.Container();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button1 = new System.Windows.Forms.Button();
+            this.SocketOpenBtn = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -45,15 +45,15 @@ namespace DeviceSimulator
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button1
+            // SocketOpenBtn
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(205, 69);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Open";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.SocketOpenBtn.Location = new System.Drawing.Point(12, 12);
+            this.SocketOpenBtn.Name = "SocketOpenBtn";
+            this.SocketOpenBtn.Size = new System.Drawing.Size(205, 69);
+            this.SocketOpenBtn.TabIndex = 1;
+            this.SocketOpenBtn.Text = "Open";
+            this.SocketOpenBtn.UseVisualStyleBackColor = true;
+            this.SocketOpenBtn.Click += new System.EventHandler(this.SocketOpenBtn_Click);
             // 
             // trackBar1
             // 
@@ -116,7 +116,7 @@ namespace DeviceSimulator
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SocketOpenBtn);
             this.Name = "MainForm";
             this.Text = "Device Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -130,7 +130,7 @@ namespace DeviceSimulator
         #endregion
 
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SocketOpenBtn;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
