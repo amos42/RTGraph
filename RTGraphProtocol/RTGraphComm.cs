@@ -25,110 +25,54 @@ namespace RTGraphProtocol
 
     public delegate void PacketReceivedEventHandler(object sender, PacketReceivedEventArgs e);
 
-    public class RTGraphComm
+    public class RTGraphComm : UDPComm
     {
-        public bool Opened { get; set; } = false;
-
-        public string HostIP { get; set; } = null;
-        public int SendPort { get; set; } = 0;
-        public int RecvPort { get; set; } = 0;
-
         public event PacketReceivedEventHandler PacketReceived;
         public event EventHandler ParameterChanged;
 
-        private UdpClient udpClient;
-        private UdpClient udpSender = null;
-        private IPEndPoint targetIPEndPoint;
-
-
-        private void receiveText(IAsyncResult result)
+        protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
-            if (result.IsCompleted)
+            int type = 0;
+
+            var packet = new RTGraphPacket(byteData);
+            if (packet.Class == PacketClass.CAPTURE)
             {
-                var client = result.AsyncState as UdpClient;
-                if (client?.Client == null) { return; }
-
-                int type = 0;
-
-                try
+                if (packet.SubClass == PacketSubClass.RES)
                 {
-                    var targetEP = new IPEndPoint(IPAddress.Any, RecvPort);
-                    var byteData = client.EndReceive(result, ref targetEP); // 버퍼에 있는 데이터 취득
-
-                    //chart1.ChartAreas[0].AxisX.Minimum = 0;
-                    //chart1.ChartAreas[0].AxisX.Maximum = 20;
-
-                    var packet = new RTGraphPacket(byteData);
-                    if (packet.Class == PacketClass.CAPTURE)
+                    if (packet.Option == 0x00)
                     {
-                        if (packet.SubClass == PacketSubClass.RES)
-                        {
-                            if (packet.Option == 0x00)
-                            {
-                                // 캡춰 시작
-                            }
-                            else if (packet.Option == 0x01)
-                            {
-                                // 캡춰 끝
-
-                            }
-                        }
-                        else if (packet.SubClass == PacketSubClass.NTY)
-                        {
-                            // 캡춰 데이터.
-                            // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
-                            //this.Invoke(new Action(() => {
-                            //    chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
-                            //}));
-                            type = 10;
-                       }
+                        // 캡춰 시작
                     }
-                    else if (packet.Class == PacketClass.CONN)
+                    else if (packet.Option == 0x01)
                     {
+                        // 캡춰 끝
 
-                    }
-
-                    if (PacketReceived != null)
-                    {
-                        PacketReceived(this, new PacketReceivedEventArgs(packet, type, 0, targetEP));
-                    }
-
-                    if (udpClient.Client != null)
-                    {
-                        //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
                     }
                 }
-                catch (Exception ex)
+                else if (packet.SubClass == PacketSubClass.NTY)
                 {
-                    //asyncResult = null;
+                    // 캡춰 데이터.
+                    // packet.Option : 0x02 - continu mode, 0x03 - trigger mode
+                    //this.Invoke(new Action(() => {
+                    //    chart1.AddValueLine(packet.data, 2, packet.data.Length - 2);
+                    //}));
+                    type = 10;
                 }
             }
+            else if (packet.Class == PacketClass.CONN)
+            {
 
+            }
+
+            RaisePacketReceivedEvent(packet, type, 0, endpt);
 
         }
 
-        public void OpenComm()
+        public void RaisePacketReceivedEvent(RTGraphPacket packet, int type, int result, IPEndPoint targetIPEndPoint = null)
         {
-            udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, RecvPort));
-            udpSender = new UdpClient();
-            if(HostIP != null)
+            if (PacketReceived != null)
             {
-                udpSender.Connect(new IPEndPoint(IPAddress.Parse(HostIP), SendPort));
-            }
-            targetIPEndPoint = new IPEndPoint(IPAddress.Any, RecvPort);
-
-            udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-        }
-
-        public void CloseComm()
-        {
-            if (udpClient != null)
-            {
-                udpSender.Close();
-                udpSender = null;
-                udpClient.Close();
-                udpClient = null;
+                PacketReceived(this, new PacketReceivedEventArgs(packet, type, result, targetIPEndPoint));
             }
         }
 
@@ -162,11 +106,8 @@ namespace RTGraphProtocol
 
         public void SendPacket(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
         {
-            if (targetIPEndPoint == null) targetIPEndPoint = this.targetIPEndPoint;
-            if (SendPort > 0) targetIPEndPoint.Port = SendPort;
-
             var data = packet.serialize();
-            udpSender.Send(data, data.Length, targetIPEndPoint);
+            SendStream(data, targetIPEndPoint);
         }
 
         public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data, IPEndPoint targetIPEndPoint = null)
@@ -176,4 +117,3 @@ namespace RTGraphProtocol
         }
     }
 }
-
