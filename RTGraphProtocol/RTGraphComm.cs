@@ -28,8 +28,11 @@ namespace RTGraphProtocol
     public class RTGraphComm : UDPComm
     {
         public CamParam camParam = new CamParam();
+        public byte[] calData = new byte[1024];
+
         public event PacketReceivedEventHandler PacketReceived;
         public event EventHandler ParameterChanged;
+        public event EventHandler CalibrationChanged;
 
         protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
@@ -73,7 +76,8 @@ namespace RTGraphProtocol
                 {
                     if (packet.Option == 0x00)
                     {
-                        // 
+                        Array.Copy(packet.data, calData, 1024);
+                        RaiseCalEvent();
                     }
                     else if (packet.Option == 0x01)
                     {
@@ -110,6 +114,14 @@ namespace RTGraphProtocol
             if (ParameterChanged != null)
             {
                 ParameterChanged(this, new EventArgs());
+            }
+        }
+
+        private void RaiseCalEvent()
+        {
+            if (CalibrationChanged != null)
+            {
+                CalibrationChanged(this, new EventArgs());
             }
         }
 
@@ -164,6 +176,11 @@ namespace RTGraphProtocol
         public void RequestParam()
         {
             SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, 0x1);
+        }
+
+        public void RequesCalibration()
+        {
+            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 0x0);
         }
     }
 }

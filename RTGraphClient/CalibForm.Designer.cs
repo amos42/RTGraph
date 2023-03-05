@@ -48,7 +48,7 @@ namespace RTGraph
             this.rtGraphChartControl1.GraphMargin = new System.Windows.Forms.Padding(10);
             this.rtGraphChartControl1.Location = new System.Drawing.Point(1, 2);
             this.rtGraphChartControl1.Name = "rtGraphChartControl1";
-            this.rtGraphChartControl1.Size = new System.Drawing.Size(866, 262);
+            this.rtGraphChartControl1.Size = new System.Drawing.Size(866, 271);
             this.rtGraphChartControl1.StartPos = 0;
             this.rtGraphChartControl1.TabIndex = 0;
             this.rtGraphChartControl1.TriggerValue = 0;
@@ -56,9 +56,9 @@ namespace RTGraph
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Location = new System.Drawing.Point(779, 283);
+            this.button5.Location = new System.Drawing.Point(749, 279);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.Size = new System.Drawing.Size(103, 34);
             this.button5.TabIndex = 15;
             this.button5.Text = "Close";
             this.button5.UseVisualStyleBackColor = true;
@@ -66,9 +66,9 @@ namespace RTGraph
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(689, 283);
+            this.button4.Location = new System.Drawing.Point(645, 279);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(103, 34);
             this.button4.TabIndex = 14;
             this.button4.Text = "Apply";
             this.button4.UseVisualStyleBackColor = true;
@@ -76,9 +76,9 @@ namespace RTGraph
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(603, 283);
+            this.button3.Location = new System.Drawing.Point(541, 279);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(103, 34);
             this.button3.TabIndex = 13;
             this.button3.Text = "Save";
             this.button3.UseVisualStyleBackColor = true;
@@ -86,9 +86,9 @@ namespace RTGraph
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(512, 283);
+            this.button2.Location = new System.Drawing.Point(437, 279);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(103, 34);
             this.button2.TabIndex = 12;
             this.button2.Text = "Load";
             this.button2.UseVisualStyleBackColor = true;
@@ -96,9 +96,9 @@ namespace RTGraph
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(350, 281);
+            this.button1.Location = new System.Drawing.Point(229, 279);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(103, 34);
             this.button1.TabIndex = 11;
             this.button1.Text = "Default";
             this.button1.UseVisualStyleBackColor = true;
@@ -106,18 +106,19 @@ namespace RTGraph
             // button6
             // 
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Location = new System.Drawing.Point(431, 283);
+            this.button6.Location = new System.Drawing.Point(333, 279);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.Size = new System.Drawing.Size(103, 34);
             this.button6.TabIndex = 16;
             this.button6.Text = "Cal";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // CalibForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(864, 316);
+            this.ClientSize = new System.Drawing.Size(864, 325);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -129,6 +130,8 @@ namespace RTGraph
             this.Name = "CalibForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Calibration";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CalibForm_FormClosed);
+            this.Load += new System.EventHandler(this.CalibForm_Load);
             this.ResumeLayout(false);
 
         }
