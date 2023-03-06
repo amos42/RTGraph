@@ -33,6 +33,9 @@ namespace RTGraph
             if (!String.IsNullOrEmpty(hostIP)) comm.HostIP = hostIP;
             if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
             if (!String.IsNullOrEmpty(recvPort)) comm.RecvPort = Int32.Parse(recvPort);
+
+            SocketOpenBtn_Click(this, new EventArgs());
+            //comm.OpenComm();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -44,14 +47,21 @@ namespace RTGraph
         {
             this.Invoke(new Action(() => {
                 MessageBox.Show(e.GetException().Message);
-
             }));
         }
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
             this.Invoke(new Action(() => {
-                if (e.Type == 10)
+                if (e.Type == 1)
+                {
+                    panel1.Enabled = true;
+                }
+                else if (e.Type == 2)
+                {
+                    panel1.Enabled = false;
+                }
+                else if (e.Type == 10)
                 {
                     chart1.AddValueLine(e.Packet.data, 2, e.Packet.data.Length - 2);
                 }
@@ -65,16 +75,19 @@ namespace RTGraph
                 comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
                 comm.OpenComm();
 
-                SocketOpenBtn.Text = "Socket Close";
+                SocketOpenBtn.Text = "Close";
                 SocketOpenBtn.Tag = comm;
-                panel1.Enabled = true;
+
+                ConnectBtn.Enabled = true;
+                //panel1.Enabled = true;
             }
             else
             {
                 comm.CloseComm();
                 comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
-                SocketOpenBtn.Text = "Socket Open";
+                SocketOpenBtn.Text = "Open";
                 SocketOpenBtn.Tag = null;
+                ConnectBtn.Enabled = false;
                 panel1.Enabled = false;
             }
         }

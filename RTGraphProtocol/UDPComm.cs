@@ -93,27 +93,42 @@ namespace RTGraphProtocol
 
         public void OpenComm()
         {
-            udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, RecvPort));
-            udpSender = new UdpClient();
-            if(HostIP != null)
+            try
             {
-                udpSender.Connect(new IPEndPoint(IPAddress.Parse(HostIP), SendPort));
+                udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, RecvPort));
+                udpSender = new UdpClient();
+                if (HostIP != null)
+                {
+                    udpSender.Connect(new IPEndPoint(IPAddress.Parse(HostIP), SendPort));
+                }
+                targetIPEndPoint = new IPEndPoint(IPAddress.Any, RecvPort);
+
+                udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+
+                Opened = true;
             }
-            targetIPEndPoint = new IPEndPoint(IPAddress.Any, RecvPort);
-
-            udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-
-            Opened = true;
+            catch (Exception ex)
+            {
+                CloseComm();
+                //asyncResult = null;
+                if (ErrorEvent != null)
+                {
+                    ErrorEvent(this, new ErrorEventArgs(ex));
+                }
+            }
         }
 
         public void CloseComm()
         {
             if (udpClient != null)
             {
-                udpSender.Close();
-                udpSender = null;
                 udpClient.Close();
                 udpClient = null;
+            }
+            if (udpSender != null)
+            {
+                udpSender.Close();
+                udpSender = null;
             }
 
             Opened = false;

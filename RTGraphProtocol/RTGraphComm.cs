@@ -53,12 +53,13 @@ namespace RTGraphProtocol
             {
                 if (packet.SubClass == PacketSubClass.RES)
                 {
-                    if (packet.Option == 0x00)
+                    if (packet.Option == 0x01)
                     {
                         // 연결
                         bool result = packet.data[0] == 0;
                         if (result)
                         {
+                            type = 1;
                             connected = true;
                             RaiseStateEvent();
 
@@ -66,12 +67,13 @@ namespace RTGraphProtocol
                             RaiseParamEvent();
                         }
                     }
-                    else if (packet.Option == 0x01)
+                    else if (packet.Option == 0x00)
                     {
                         // 연결 종료
                         bool result = packet.data[0] == 0;
                         if (result)
                         {
+                            type = 2;
                             connected = false;
                             RaiseStateEvent();
                         }

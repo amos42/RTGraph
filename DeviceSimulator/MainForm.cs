@@ -54,6 +54,12 @@ namespace DeviceSimulator
                     {
                         endPtrDic.Remove(ep);
                         applyTimer();
+
+                        var data = new byte[1] { 0x0 };
+                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
+                        comm.SendPacket(packet, e.TargetIPEndPoint);
+                        addLogItem(0, null, packet.serialize());
+                        foward = false;
                     }
                 }
             }
