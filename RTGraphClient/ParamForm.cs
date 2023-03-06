@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -43,14 +45,40 @@ namespace RTGraph
 
         private void ParamToUI()
         {
-            comboBox1.SelectedIndex = comm.camParam.image_selector;
-            comboBox2.SelectedIndex = comm.camParam.trigger_source;
+            comboBox1.SelectedIndex = comm.camParam.ImageSelector;
+            comboBox2.SelectedIndex = comm.camParam.TriggerSource;
+            numExposureTime.Value = comm.camParam.ExposureTime;
+            numLineRate.Value = comm.camParam.LineRate;
+            numGain.Value = comm.camParam.Gain;
+            numRch.Value = comm.camParam.RCH;
+            numTre1.Value = comm.camParam.TRE1;
+            numTre2.Value = comm.camParam.TRE2;
+            numTsl.Value = comm.camParam.TSL;
+            numTde.Value = comm.camParam.TDE;
+            numTwd.Value = comm.camParam.TWD;
+            numStart.Value = comm.camParam.Start;
+            numSize.Value = comm.camParam.Size;
+            numLevel.Value = comm.camParam.Level;
+            numMinSize.Value = comm.camParam.MinSize;
         }
 
         private void UIToParam()
         {
-            comm.camParam.image_selector = (byte)comboBox1.SelectedIndex;
-            comm.camParam.trigger_source = (byte)comboBox2.SelectedIndex;
+            comm.camParam.ImageSelector = (byte)comboBox1.SelectedIndex;
+            comm.camParam.TriggerSource = (byte)comboBox2.SelectedIndex;
+            comm.camParam.ExposureTime = (byte)numExposureTime.Value;
+            comm.camParam.LineRate = (short)numLineRate.Value;
+            comm.camParam.Gain = (short)numGain.Value;
+            comm.camParam.RCH = (short)numRch.Value;
+            comm.camParam.TRE1 = (short)numTre1.Value;
+            comm.camParam.TRE2 = (short)numTre2.Value;
+            comm.camParam.TSL = (short)numTsl.Value;
+            comm.camParam.TDE = (short)numTde.Value;
+            comm.camParam.TWD = (short)numTwd.Value;
+            comm.camParam.Start = (short)numStart.Value;
+            comm.camParam.Size = (short)numSize.Value;
+            comm.camParam.Level = (short)numLevel.Value;
+            comm.camParam.MinSize = (short)numMinSize.Value;
         }
 
         private void ParameterChanged(object sender, EventArgs e)

@@ -6,65 +6,193 @@ namespace RTGraph
 {
     public class RTGraphParameter : INotifyPropertyChanged
     {
-        private byte _image_selector = 0;
-        private byte _trigger_source = 0;
-        private byte _exposure_time = 0;
-        private short _line_rate = 0;
+        // camera setting			
+        private byte image_selector = 0;
+        private byte trigger_source = 0;
+        private byte exposure_time = 0;
+        private short line_rate = 0;
+        private short gain = 0;  // 감도			
+
+        // trigger timing
+        private short rch = 0;
+        private short tre1 = 0;
+        private short tre2 = 0;
+        private short tsl = 0;
+        private short tde = 0;
+        private short twd = 0;
+
+        // detect condition			
+        private short start = 0;
+        private short size = 0;
+        private short level = 0;
+        private short min_size = 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         // camera setting			
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("real, vertical test image or horizontal test image")]
         [RefreshProperties(RefreshProperties.All)]
-        public byte image_selector { 
-            get { return _image_selector; }
+        public byte ImageSelector { 
+            get { return image_selector; }
             set {
-                _image_selector = value;
+                image_selector = value;
                 OnPropertyChanged();
             } 
         }
 
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("image tirgger or external trigger")]
         [RefreshProperties(RefreshProperties.All)]
-        public byte trigger_source
+        public byte TriggerSource
         {
-            get { return _trigger_source; }
+            get { return trigger_source; }
             set {
-                _trigger_source = value;
+                trigger_source = value;
                 OnPropertyChanged();
             }
         }
 
         [CategoryAttribute("Camera Setting")]
-        public byte exposure_time { get; set; }      //	
+        public byte ExposureTime
+        {
+            get { return exposure_time; }
+            set
+            {
+                exposure_time = value;
+                OnPropertyChanged();
+            }
+        }
+
         [CategoryAttribute("Camera Setting")]
-        public short line_rate { get; set; }
+        public short LineRate
+        {
+            get { return line_rate; }
+            set
+            {
+                line_rate = value;
+                OnPropertyChanged();
+            }
+        }
+
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("감도")]
-        public short gain { get; set; }  // 감도			
+        public short Gain
+        {
+            get { return gain; }
+            set
+            {
+                gain = value;
+                OnPropertyChanged();
+            }
+        }
 
-        // trigger_timing		
         [CategoryAttribute("Trigger Timing")]
-        public short rch { get; set; }
-        [CategoryAttribute("Trigger Timing")]
-        public short tre1 { get; set; }
-        [CategoryAttribute("Trigger Timing")]
-        public short tre2 { get; set; }
-        [CategoryAttribute("Trigger Timing")]
-        public short tsl { get; set; }
-        [CategoryAttribute("Trigger Timing")]
-        public short tde { get; set; }
-        [CategoryAttribute("Trigger Timing")]
-        public short twd { get; set; }
+        public short RCH
+        {
+            get { return rch; }
+            set
+            {
+                rch = value;
+                OnPropertyChanged();
+            }
+        }
 
-        // detect condition			
-        [CategoryAttribute("Detect Condition")]
-        public short start { get; set; }
-        [CategoryAttribute("Detect Condition")]
-        public short size { get; set; }
-        [CategoryAttribute("Detect Condition")]
-        public short level { get; set; }
-        [CategoryAttribute("Detect Condition")]
-        public short min_size { get; set; }
+        [CategoryAttribute("Trigger Timing")]
+        public short TRE1
+        {
+            get { return tre1; }
+            set
+            {
+                tre1 = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        [CategoryAttribute("Trigger Timing")]
+        public short TRE2
+        {
+            get { return tre2; }
+            set
+            {
+                tre2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public short TSL
+        {
+            get { return tsl; }
+            set
+            {
+                tsl = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public short TDE
+        {
+            get { return tde; }
+            set
+            {
+                tde = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public short TWD
+        {
+            get { return twd; }
+            set
+            {
+                twd = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Detect Condition")]
+        public short Start
+        {
+            get { return start; }
+            set
+            {
+                start = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Detect Condition")]
+        public short Size
+        {
+            get { return size; }
+            set
+            {
+                size = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Detect Condition")]
+        public short Level
+        {
+            get { return level; }
+            set
+            {
+                level = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [CategoryAttribute("Detect Condition")]
+        public short MinSize
+        {
+            get { return min_size; }
+            set
+            {
+                min_size = value;
+                OnPropertyChanged();
+            }
+        }
 
         private static short getShortValu(byte[] packet, int startIdx)
         {
@@ -87,21 +215,21 @@ namespace RTGraph
 
         public void Parse(byte[] packet, int startIdx = 0)
         {
-            image_selector = packet[startIdx + 0];
-            trigger_source = packet[startIdx + 1];
-            exposure_time = packet[startIdx + 2];
-            line_rate = getShortValu(packet, 3);
-            gain = getShortValu(packet, 5);
-            rch = getShortValu(packet, 7);
-            tre1 = getShortValu(packet, 9);
-            tre2 = getShortValu(packet, 11);
-            tsl = getShortValu(packet, 13);
-            tde = getShortValu(packet, 15);
-            twd = getShortValu(packet, 17);
-            start = getShortValu(packet, 19);
-            size = getShortValu(packet, 21);
-            level = getShortValu(packet, 23);
-            min_size = getShortValu(packet, 25);
+            ImageSelector = packet[startIdx + 0];
+            TriggerSource = packet[startIdx + 1];
+            ExposureTime = packet[startIdx + 2];
+            LineRate = getShortValu(packet, 3);
+            Gain = getShortValu(packet, 5);
+            RCH = getShortValu(packet, 7);
+            TRE1 = getShortValu(packet, 9);
+            TRE2 = getShortValu(packet, 11);
+            TSL = getShortValu(packet, 13);
+            TDE = getShortValu(packet, 15);
+            TWD = getShortValu(packet, 17);
+            Start = getShortValu(packet, 19);
+            Size = getShortValu(packet, 21);
+            Level = getShortValu(packet, 23);
+            MinSize = getShortValu(packet, 25);
         }
 
         public byte[] serialize(byte[] packet = null, int startIdx = 0)

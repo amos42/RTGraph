@@ -17,10 +17,8 @@ namespace RTGraph
     {
         static string[] dirStr = { "발신", "수신" };
 
-        private double x = 0;
         UdpClient udpClient = null;
         IPEndPoint targetIPEndPoint;
-        //IPEndPoint targetIPEndPoint;
 
         public MainForm()
         {
