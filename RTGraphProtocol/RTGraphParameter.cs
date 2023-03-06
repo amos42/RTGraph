@@ -237,18 +237,18 @@ namespace RTGraph
                 ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
                 TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
                 ExposureTime = packet[startIdx + 2];
-                LineRate = getShortValu(packet, 3);
-                Gain = getShortValu(packet, 5);
-                RCH = getShortValu(packet, 7);
-                TRE1 = getShortValu(packet, 9);
-                TRE2 = getShortValu(packet, 11);
-                TSL = getShortValu(packet, 13);
-                TDE = getShortValu(packet, 15);
-                TWD = getShortValu(packet, 17);
-                Start = getShortValu(packet, 19);
-                Size = getShortValu(packet, 21);
-                Level = getShortValu(packet, 23);
-                MinSize = getShortValu(packet, 25);
+                LineRate = getShortValu(packet, startIdx + 3);
+                Gain = getShortValu(packet, startIdx + 5);
+                RCH = getShortValu(packet, startIdx + 7);
+                TRE1 = getShortValu(packet, startIdx + 9);
+                TRE2 = getShortValu(packet, startIdx + 11);
+                TSL = getShortValu(packet, startIdx + 13);
+                TDE = getShortValu(packet, startIdx + 15);
+                TWD = getShortValu(packet, startIdx + 17);
+                Start = getShortValu(packet, startIdx + 19);
+                Size = getShortValu(packet, startIdx + 21);
+                Level = getShortValu(packet, startIdx + 23);
+                MinSize = getShortValu(packet, startIdx + 25);
             }
         }
 
