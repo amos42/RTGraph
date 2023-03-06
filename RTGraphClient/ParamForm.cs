@@ -41,37 +41,50 @@ namespace RTGraph
             comm.RequestParam();
         }
 
+        private void ParamToUI()
+        {
+            comboBox1.SelectedIndex = comm.camParam.image_selector;
+            comboBox2.SelectedIndex = comm.camParam.trigger_source;
+        }
+
+        private void UIToParam()
+        {
+            comm.camParam.image_selector = (byte)comboBox1.SelectedIndex;
+            comm.camParam.trigger_source = (byte)comboBox2.SelectedIndex;
+        }
+
         private void ParameterChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(() => {
-                comboBox1.SelectedIndex = comm.camParam.image_selector;
-                comboBox2.SelectedIndex = comm.camParam.trigger_source;
+                ParamToUI();
             }));
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            comm.RequestParam(true);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            comm.RequestParam(false);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            UIToParam();
+            comm.ApplyParam(true);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-
+            UIToParam();
+            comm.ApplyParam(false);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-
+            Close();
         }
     }
 }

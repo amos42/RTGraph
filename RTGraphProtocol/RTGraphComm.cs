@@ -27,7 +27,7 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
-        public CamParam camParam = new CamParam();
+        public RTGraphParameter camParam = new RTGraphParameter();
         public byte[] calData = new byte[1024];
 
         public event PacketReceivedEventHandler PacketReceived;
@@ -173,14 +173,19 @@ namespace RTGraphProtocol
             SendPacket(packet, targetIPEndPoint);
         }
 
-        public void RequestParam()
+        public void RequestParam(bool isDefault = false)
         {
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, 0x1);
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isDefault? 0x0 : 0x1);
         }
 
         public void RequesCalibration()
         {
             SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 0x0);
+        }
+
+        public void ApplyParam(bool isSave = false)
+        {
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, camParam.serialize());
         }
     }
 }

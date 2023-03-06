@@ -54,18 +54,17 @@ namespace DeviceSimulator
             {
                 if (packet.SubClass == PacketSubClass.REQ)
                 {
-                    if (packet.Option == 0x00)
+                    if (packet.Option == 0x01 || packet.Option == 0x00)
                     {
-                    }
-                    else if (packet.Option == 0x01)
-                    {
-                        comm.camParam.image_selector = 2;
-                        comm.camParam.trigger_source = 1;
                         packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize());
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
                         foward = false;
+                    }
+                    else if (packet.Option == 0x02 || packet.Option == 0x03)
+                    {
+                        comm.camParam.Parse(packet.data);
                     }
                 }
             }
@@ -145,6 +144,9 @@ namespace DeviceSimulator
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            propertyGrid1.SelectedObject = comm.camParam;
+            comm.camParam.PropertyChanged += new PropertyChangedEventHandler(propertyGrid1_SelectedGridPropertyChanged);
+
             endPtrDic = new Dictionary<IPEndPoint, bool>();
 
             socketOpen(true);
@@ -238,6 +240,18 @@ namespace DeviceSimulator
                 SocketOpenBtn.Tag = null;
             }
 
+        }
+
+        private void propertyGrid1_SelectedGridPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.Invoke(new Action(() => {
+                propertyGrid1.Refresh();
+            }));
+        }
+
+        private void propertyGrid1_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            // propertyGrid1.Refresh();
         }
     }
 }
