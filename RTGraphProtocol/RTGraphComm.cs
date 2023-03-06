@@ -214,9 +214,9 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isDefault? 0x0 : 0x1);
         }
 
-        public void RequesCalibration()
+        public void RequesCalibration(int opts = 0)
         {
-            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 0x0);
+            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, opts);
         }
 
         public void ApplyParam(bool isSave = false)

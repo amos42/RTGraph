@@ -52,5 +52,15 @@ namespace RTGraph
         {
             comm.ApplyCalibration(false, checkBox1.Checked);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // comm.RequesCalibration(-1); // default
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            comm.RequesCalibration(1); // load
+        }
     }
 }

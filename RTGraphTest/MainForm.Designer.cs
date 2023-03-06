@@ -140,7 +140,7 @@ namespace RTGraph
             this.chart1.Size = new System.Drawing.Size(1013, 487);
             this.chart1.StartPos = 0;
             this.chart1.TabIndex = 5;
-            this.chart1.TriggerValue = 100;
+            this.chart1.TriggerValue = -1;
             // 
             // MainForm
             // 

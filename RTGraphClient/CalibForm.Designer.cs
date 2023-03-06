@@ -29,7 +29,6 @@ namespace RTGraph
         /// </summary>
         private void InitializeComponent()
         {
-            this.rtGraphChartControl1 = new RTGraph.RTGraphChartControl();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -37,22 +36,8 @@ namespace RTGraph
             this.button1 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.rtGraphChartControl1 = new RTGraph.RTGraphChartControl();
             this.SuspendLayout();
-            // 
-            // rtGraphChartControl1
-            // 
-            this.rtGraphChartControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtGraphChartControl1.BackColor = System.Drawing.Color.Black;
-            this.rtGraphChartControl1.BufferCount = 0;
-            this.rtGraphChartControl1.GraphMargin = new System.Windows.Forms.Padding(10);
-            this.rtGraphChartControl1.Location = new System.Drawing.Point(1, 2);
-            this.rtGraphChartControl1.Name = "rtGraphChartControl1";
-            this.rtGraphChartControl1.Size = new System.Drawing.Size(866, 271);
-            this.rtGraphChartControl1.StartPos = 0;
-            this.rtGraphChartControl1.TabIndex = 0;
-            this.rtGraphChartControl1.TriggerValue = 0;
             // 
             // button5
             // 
@@ -97,6 +82,7 @@ namespace RTGraph
             this.button2.TabIndex = 12;
             this.button2.Text = "Load";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
@@ -107,6 +93,7 @@ namespace RTGraph
             this.button1.TabIndex = 11;
             this.button1.Text = "Default";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button6
             // 
@@ -128,6 +115,21 @@ namespace RTGraph
             this.checkBox1.TabIndex = 17;
             this.checkBox1.Text = "Calibration Enable";
             this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // rtGraphChartControl1
+            // 
+            this.rtGraphChartControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtGraphChartControl1.BackColor = System.Drawing.Color.Black;
+            this.rtGraphChartControl1.BufferCount = 0;
+            this.rtGraphChartControl1.GraphMargin = new System.Windows.Forms.Padding(10);
+            this.rtGraphChartControl1.Location = new System.Drawing.Point(1, 2);
+            this.rtGraphChartControl1.Name = "rtGraphChartControl1";
+            this.rtGraphChartControl1.Size = new System.Drawing.Size(866, 271);
+            this.rtGraphChartControl1.StartPos = 0;
+            this.rtGraphChartControl1.TabIndex = 0;
+            this.rtGraphChartControl1.TriggerValue = 0;
             // 
             // CalibForm
             // 

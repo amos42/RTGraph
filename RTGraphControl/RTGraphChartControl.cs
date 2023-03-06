@@ -200,16 +200,20 @@ namespace RTGraph
                 for (int i = 0; i < this.values.Length; i++)
                 {
                     int v = graphBaseY - this.values[i] * height / 255;
-                    Pen pen = Pens.Blue;
+                    Pen pen;
                     if (triggerValue > 0 && values[i] > triggerValue)
                     {
                         pen = Pens.Red;
+                    } 
+                    else
+                    {
+                        pen = Pens.Blue;
                     }
                     e.Graphics.DrawLine(pen, startX + i * width / 1024, oldV, startX + (i + 1) * width / 1024, v);
                     oldV = v;
                 }
             }
-            if (TriggerValue != 0) {
+            if (TriggerValue > 0) {
                 int v2 = graphBaseY - TriggerValue * height / 255;
                 e.Graphics.DrawLine(Pens.Red, startX, v2, startX + width, v2);
             }
