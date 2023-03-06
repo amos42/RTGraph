@@ -27,12 +27,14 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
+        public bool connected = false;
         public RTGraphParameter camParam = new RTGraphParameter();
         public byte[] calData = new byte[1024];
 
         public event PacketReceivedEventHandler PacketReceived;
         public event EventHandler ParameterChanged;
         public event EventHandler CalibrationChanged;
+        public event EventHandler StateChanged;
 
         public RTGraphComm()
         {
@@ -54,11 +56,25 @@ namespace RTGraphProtocol
                     if (packet.Option == 0x00)
                     {
                         // 연결
+                        bool result = packet.data[0] == 0;
+                        if (result)
+                        {
+                            connected = true;
+                            RaiseStateEvent();
+
+                            camParam.Parse(packet.data, 1);
+                            RaiseParamEvent();
+                        }
                     }
                     else if (packet.Option == 0x01)
                     {
-                        // 연결
-
+                        // 연결 종료
+                        bool result = packet.data[0] == 0;
+                        if (result)
+                        {
+                            connected = false;
+                            RaiseStateEvent();
+                        }
                     }
                 }
             }
@@ -68,7 +84,9 @@ namespace RTGraphProtocol
                 {
                     if (packet.Option == 0x00)
                     {
-                        // 
+                        // default
+                        camParam.Parse(packet.data);
+                        RaiseParamEvent();
                     }
                     else if (packet.Option == 0x01)
                     {
@@ -89,8 +107,8 @@ namespace RTGraphProtocol
                     }
                     else if (packet.Option == 0x01)
                     {
-                        // 
-
+                        Array.Copy(packet.data, calData, 1024);
+                        RaiseCalEvent();
                     }
                 }
             }
@@ -115,6 +133,14 @@ namespace RTGraphProtocol
             }
 
             RaisePacketReceivedEvent(packet, type, 0, endpt);
+        }
+
+        private void RaiseStateEvent()
+        {
+            if (StateChanged != null)
+            {
+                StateChanged(this, new EventArgs());
+            }
         }
 
         private void RaiseParamEvent()
@@ -194,6 +220,13 @@ namespace RTGraphProtocol
         public void ApplyParam(bool isSave = false)
         {
             SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, camParam.serialize());
+        }
+
+        public void ApplyCalibration(bool isSave, bool calEnable)
+        {
+            var data = new byte[1];
+            data[0] = (byte)(calEnable ? 0x1 : 0x0);
+            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
         }
     }
 }

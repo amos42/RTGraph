@@ -42,5 +42,15 @@ namespace RTGraph
                 rtGraphChartControl1.AddValueLine(comm.calData, 0, 1024);
             }));
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            comm.ApplyCalibration(true, checkBox1.Checked);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            comm.ApplyCalibration(false, checkBox1.Checked);
+        }
     }
 }

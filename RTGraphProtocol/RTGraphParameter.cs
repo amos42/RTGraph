@@ -232,21 +232,24 @@ namespace RTGraph
 
         public void Parse(byte[] packet, int startIdx = 0)
         {
-            ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
-            TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
-            ExposureTime = packet[startIdx + 2];
-            LineRate = getShortValu(packet, 3);
-            Gain = getShortValu(packet, 5);
-            RCH = getShortValu(packet, 7);
-            TRE1 = getShortValu(packet, 9);
-            TRE2 = getShortValu(packet, 11);
-            TSL = getShortValu(packet, 13);
-            TDE = getShortValu(packet, 15);
-            TWD = getShortValu(packet, 17);
-            Start = getShortValu(packet, 19);
-            Size = getShortValu(packet, 21);
-            Level = getShortValu(packet, 23);
-            MinSize = getShortValu(packet, 25);
+            if (packet.Length - startIdx >= 27)
+            {
+                ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
+                TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
+                ExposureTime = packet[startIdx + 2];
+                LineRate = getShortValu(packet, 3);
+                Gain = getShortValu(packet, 5);
+                RCH = getShortValu(packet, 7);
+                TRE1 = getShortValu(packet, 9);
+                TRE2 = getShortValu(packet, 11);
+                TSL = getShortValu(packet, 13);
+                TDE = getShortValu(packet, 15);
+                TWD = getShortValu(packet, 17);
+                Start = getShortValu(packet, 19);
+                Size = getShortValu(packet, 21);
+                Level = getShortValu(packet, 23);
+                MinSize = getShortValu(packet, 25);
+            }
         }
 
         public byte[] serialize(byte[] packet = null, int startIdx = 0)
@@ -256,21 +259,24 @@ namespace RTGraph
                 packet = new byte[27];
             }
 
-            packet[startIdx + 0] = (byte)image_selector;
-            packet[startIdx + 1] = (byte)trigger_source;
-            packet[startIdx + 2] = exposure_time;
-            setShortValue(packet, startIdx + 3, line_rate);
-            setShortValue(packet, startIdx + 5, gain);
-            setShortValue(packet, startIdx + 7, rch);
-            setShortValue(packet, startIdx + 9, tre1);
-            setShortValue(packet, startIdx + 11, tre2);
-            setShortValue(packet, startIdx + 13, tsl);
-            setShortValue(packet, startIdx + 15, tde);
-            setShortValue(packet, startIdx + 17, twd);
-            setShortValue(packet, startIdx + 19, start);
-            setShortValue(packet, startIdx + 21, size);
-            setShortValue(packet, startIdx + 23, level);
-            setShortValue(packet, startIdx + 25, min_size);
+            if (packet.Length - startIdx >= 27)
+            {
+                packet[startIdx + 0] = (byte)image_selector;
+                packet[startIdx + 1] = (byte)trigger_source;
+                packet[startIdx + 2] = exposure_time;
+                setShortValue(packet, startIdx + 3, line_rate);
+                setShortValue(packet, startIdx + 5, gain);
+                setShortValue(packet, startIdx + 7, rch);
+                setShortValue(packet, startIdx + 9, tre1);
+                setShortValue(packet, startIdx + 11, tre2);
+                setShortValue(packet, startIdx + 13, tsl);
+                setShortValue(packet, startIdx + 15, tde);
+                setShortValue(packet, startIdx + 17, twd);
+                setShortValue(packet, startIdx + 19, start);
+                setShortValue(packet, startIdx + 21, size);
+                setShortValue(packet, startIdx + 23, level);
+                setShortValue(packet, startIdx + 25, min_size);
+            }
 
             return packet;
         }

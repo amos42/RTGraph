@@ -36,6 +36,7 @@ namespace RTGraph
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // rtGraphChartControl1
@@ -73,6 +74,7 @@ namespace RTGraph
             this.button4.TabIndex = 14;
             this.button4.Text = "Apply";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -84,6 +86,7 @@ namespace RTGraph
             this.button3.TabIndex = 13;
             this.button3.Text = "Save";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -116,11 +119,22 @@ namespace RTGraph
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(15, 291);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(146, 19);
+            this.checkBox1.TabIndex = 17;
+            this.checkBox1.Text = "Calibration Enable";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // CalibForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(864, 325);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -135,6 +149,7 @@ namespace RTGraph
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CalibForm_FormClosed);
             this.Load += new System.EventHandler(this.CalibForm_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -147,5 +162,6 @@ namespace RTGraph
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

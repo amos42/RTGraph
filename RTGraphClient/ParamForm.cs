@@ -31,6 +31,7 @@ namespace RTGraph
         private void ParamForm_Load(object sender, EventArgs e)
         {
             this.comm.ParameterChanged += new EventHandler(ParameterChanged);
+            ParamToUI();
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -40,7 +41,7 @@ namespace RTGraph
 
         private void ParamForm_Shown(object sender, EventArgs e)
         {
-            comm.RequestParam();
+            // comm.RequestParam();
         }
 
         private void ParamToUI()

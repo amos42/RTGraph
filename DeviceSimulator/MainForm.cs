@@ -42,6 +42,13 @@ namespace DeviceSimulator
                     {
                         endPtrDic.Add(ep, false);  // 접속하자마자 바로 캡춰 패킷 전송하려면 true로
                         applyTimer();
+
+                        var data = new byte[27 + 1];
+                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(data, 1));
+                        comm.SendPacket(packet, e.TargetIPEndPoint);
+                        //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
+                        addLogItem(0, null, packet.serialize());
+                        foward = false;
                     }
                     else if (packet.Option == 0x00)
                     {
@@ -93,6 +100,20 @@ namespace DeviceSimulator
                     }
                     else if (packet.Option == 0x01)
                     {
+                        var data = new byte[1024];
+                        var cfg = new ConfigUtil("calibration");
+                        packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
+                        comm.SendPacket(packet, e.TargetIPEndPoint);
+                        addLogItem(0, null, packet.serialize());
+                        foward = false;
+                    }
+                    else if (packet.Option == 0x02)
+                    {
+
+                    }
+                    else if (packet.Option == 0x03)
+                    {
+
                     }
                 }
             }
