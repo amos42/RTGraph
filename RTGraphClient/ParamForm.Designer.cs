@@ -73,13 +73,6 @@ namespace RTGraph
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.textBox12 = new System.Windows.Forms.TextBox();
-            this.textBox13 = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
@@ -100,7 +93,6 @@ namespace RTGraph
             ((System.ComponentModel.ISupportInitialize)(this.numSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -117,7 +109,7 @@ namespace RTGraph
             this.groupBox1.Controls.Add(this.numExposureTime);
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.comboBox1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 78);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(326, 218);
             this.groupBox1.TabIndex = 2;
@@ -273,7 +265,7 @@ namespace RTGraph
             this.groupBox2.Controls.Add(this.numTre2);
             this.groupBox2.Controls.Add(this.numTre1);
             this.groupBox2.Controls.Add(this.numRch);
-            this.groupBox2.Location = new System.Drawing.Point(354, 78);
+            this.groupBox2.Location = new System.Drawing.Point(354, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(186, 218);
             this.groupBox2.TabIndex = 3;
@@ -478,7 +470,7 @@ namespace RTGraph
             this.groupBox3.Controls.Add(this.numStart);
             this.groupBox3.Controls.Add(this.trackBar2);
             this.groupBox3.Controls.Add(this.trackBar1);
-            this.groupBox3.Location = new System.Drawing.Point(12, 302);
+            this.groupBox3.Location = new System.Drawing.Point(12, 236);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(528, 183);
             this.groupBox3.TabIndex = 4;
@@ -587,7 +579,7 @@ namespace RTGraph
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(98, 497);
+            this.button1.Location = new System.Drawing.Point(98, 431);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 30);
             this.button1.TabIndex = 5;
@@ -597,7 +589,7 @@ namespace RTGraph
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(189, 497);
+            this.button2.Location = new System.Drawing.Point(189, 431);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 30);
             this.button2.TabIndex = 6;
@@ -607,7 +599,7 @@ namespace RTGraph
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(280, 497);
+            this.button3.Location = new System.Drawing.Point(280, 431);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 30);
             this.button3.TabIndex = 7;
@@ -615,72 +607,9 @@ namespace RTGraph
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.label24);
-            this.groupBox4.Controls.Add(this.label23);
-            this.groupBox4.Controls.Add(this.label22);
-            this.groupBox4.Controls.Add(this.textBox11);
-            this.groupBox4.Controls.Add(this.textBox12);
-            this.groupBox4.Controls.Add(this.textBox13);
-            this.groupBox4.Location = new System.Drawing.Point(12, 12);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(528, 60);
-            this.groupBox4.TabIndex = 8;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Network Setting";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(383, 30);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(50, 15);
-            this.label24.TabIndex = 10;
-            this.label24.Text = "In Port";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(224, 30);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(63, 15);
-            this.label23.TabIndex = 9;
-            this.label23.Text = "Out Port";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(14, 27);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(70, 15);
-            this.label22.TabIndex = 8;
-            this.label22.Text = "Device IP";
-            // 
-            // textBox11
-            // 
-            this.textBox11.Location = new System.Drawing.Point(439, 24);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(68, 25);
-            this.textBox11.TabIndex = 7;
-            // 
-            // textBox12
-            // 
-            this.textBox12.Location = new System.Drawing.Point(293, 24);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(66, 25);
-            this.textBox12.TabIndex = 6;
-            // 
-            // textBox13
-            // 
-            this.textBox13.Location = new System.Drawing.Point(90, 24);
-            this.textBox13.Name = "textBox13";
-            this.textBox13.Size = new System.Drawing.Size(93, 25);
-            this.textBox13.TabIndex = 5;
-            // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(371, 497);
+            this.button4.Location = new System.Drawing.Point(371, 431);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 30);
             this.button4.TabIndex = 9;
@@ -690,7 +619,7 @@ namespace RTGraph
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(462, 497);
+            this.button5.Location = new System.Drawing.Point(462, 431);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 30);
             this.button5.TabIndex = 10;
@@ -712,10 +641,9 @@ namespace RTGraph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(552, 536);
+            this.ClientSize = new System.Drawing.Size(552, 468);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -749,8 +677,6 @@ namespace RTGraph
             ((System.ComponentModel.ISupportInitialize)(this.numSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
 
@@ -780,10 +706,6 @@ namespace RTGraph
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox textBox11;
-        private System.Windows.Forms.TextBox textBox12;
-        private System.Windows.Forms.TextBox textBox13;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label2;
@@ -808,9 +730,6 @@ namespace RTGraph
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label25;
     }
 }
