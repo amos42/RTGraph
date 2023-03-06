@@ -65,6 +65,12 @@ namespace DeviceSimulator
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
                         comm.camParam.Parse(packet.data);
+                        if (packet.Option == 0x02)
+                        {
+                            var cfg = new ConfigUtil("camParam");
+                            cfg.SetAllValues(comm.camParam);
+                            cfg.Save();
+                        }
                     }
                 }
             }
@@ -150,6 +156,9 @@ namespace DeviceSimulator
             endPtrDic = new Dictionary<IPEndPoint, bool>();
 
             socketOpen(true);
+
+            var cfg = new ConfigUtil("camParam");
+            cfg.GetAllValues(comm.camParam);
         }
 
         private void addLogItem(int direction, string message, byte[] byteData = null)

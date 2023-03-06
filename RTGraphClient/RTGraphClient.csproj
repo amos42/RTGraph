@@ -12,8 +12,4 @@
     <ProjectReference Include="..\RTGraphProtocol\RTGraphProtocol.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
-
 </Project>

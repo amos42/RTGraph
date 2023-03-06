@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -26,9 +25,10 @@ namespace RTGraph
         {
             comm.ErrorEvent += new ErrorEventHandler(CommError);
 
-            var hostIP = ConfigurationManager.AppSettings["HostIP"];
-            var sendPort = ConfigurationManager.AppSettings["SendPort"];
-            var recvPort = ConfigurationManager.AppSettings["RecvPort"];
+            var cfg = new ConfigUtil("network");
+            var hostIP = cfg.GetValue("HostIP");
+            var sendPort = cfg.GetValue("SendPort");
+            var recvPort = cfg.GetValue("RecvPort");
 
             if (!String.IsNullOrEmpty(hostIP)) comm.HostIP = hostIP;
             if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
