@@ -37,6 +37,17 @@ namespace RTGraphProtocol
         protected UdpClient udpSender = null;
         protected IPEndPoint targetIPEndPoint;
 
+        public UDPComm()
+        {
+        }
+
+        public UDPComm(string hostIP, int sendPort, int recvPort)
+        {
+            this.HostIP = hostIP;
+            this.SendPort = sendPort;
+            this.RecvPort = recvPort;
+        }
+
         protected void RaiseEvent(byte[] stream, IPEndPoint targetIPEndPoint = null)
         {
             if (StreamReceivedEvent != null)

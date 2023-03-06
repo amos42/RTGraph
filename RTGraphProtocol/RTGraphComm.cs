@@ -34,6 +34,14 @@ namespace RTGraphProtocol
         public event EventHandler ParameterChanged;
         public event EventHandler CalibrationChanged;
 
+        public RTGraphComm()
+        {
+        }
+
+        public RTGraphComm(string hostIP, int sendPort, int recvPort) : base(hostIP, sendPort, recvPort)
+        {
+        }
+
         protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
             int type = 0;

@@ -31,14 +31,12 @@ namespace RTGraph
         {
             this.CaptureBtn = new System.Windows.Forms.Button();
             this.SocketOpenBtn = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
             this.ConnectBtn = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chart1 = new RTGraph.RTGraphChartControl();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.chart1 = new RTGraph.RTGraphChartControl();
+            this.button3 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,41 +55,14 @@ namespace RTGraph
             // SocketOpenBtn
             // 
             this.SocketOpenBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SocketOpenBtn.Location = new System.Drawing.Point(28, 596);
+            this.SocketOpenBtn.Location = new System.Drawing.Point(14, 579);
             this.SocketOpenBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SocketOpenBtn.Name = "SocketOpenBtn";
-            this.SocketOpenBtn.Size = new System.Drawing.Size(281, 40);
+            this.SocketOpenBtn.Size = new System.Drawing.Size(124, 57);
             this.SocketOpenBtn.TabIndex = 4;
             this.SocketOpenBtn.Text = "Socket Open";
             this.SocketOpenBtn.UseVisualStyleBackColor = true;
             this.SocketOpenBtn.Click += new System.EventHandler(this.SocketOpenBtn_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox1.Location = new System.Drawing.Point(28, 566);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(124, 25);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "127.0.0.1";
-            // 
-            // textBox2
-            // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox2.Location = new System.Drawing.Point(158, 566);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(70, 25);
-            this.textBox2.TabIndex = 7;
-            this.textBox2.Text = "11000";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox3.Location = new System.Drawing.Point(234, 566);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(70, 25);
-            this.textBox3.TabIndex = 8;
-            this.textBox3.Text = "12000";
             // 
             // ConnectBtn
             // 
@@ -118,22 +89,6 @@ namespace RTGraph
             this.panel1.Size = new System.Drawing.Size(665, 56);
             this.panel1.TabIndex = 10;
             // 
-            // chart1
-            // 
-            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.chart1.BackColor = System.Drawing.Color.Black;
-            this.chart1.BufferCount = 100;
-            this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
-            this.chart1.Location = new System.Drawing.Point(14, 15);
-            this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.chart1.Name = "chart1";
-            this.chart1.Size = new System.Drawing.Size(1013, 544);
-            this.chart1.StartPos = 0;
-            this.chart1.TabIndex = 5;
-            this.chart1.TriggerValue = 100;
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(407, 7);
@@ -154,15 +109,39 @@ namespace RTGraph
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // chart1
+            // 
+            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chart1.BackColor = System.Drawing.Color.Black;
+            this.chart1.BufferCount = 100;
+            this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
+            this.chart1.Location = new System.Drawing.Point(14, 15);
+            this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.chart1.Name = "chart1";
+            this.chart1.Size = new System.Drawing.Size(1013, 544);
+            this.chart1.StartPos = 0;
+            this.chart1.TabIndex = 5;
+            this.chart1.TriggerValue = 100;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(135, 581);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(41, 53);
+            this.button3.TabIndex = 11;
+            this.button3.Text = "...";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 647);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.SocketOpenBtn);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -172,7 +151,6 @@ namespace RTGraph
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -181,13 +159,11 @@ namespace RTGraph
         private System.Windows.Forms.Button CaptureBtn;
         private System.Windows.Forms.Button SocketOpenBtn;
         private RTGraphChartControl chart1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Button ConnectBtn;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }
 

@@ -14,7 +14,7 @@ namespace RTGraph
 {
     public partial class MainForm : Form
     {
-        RTGraphComm comm = new RTGraphComm();
+        RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
 
         public MainForm()
         {
@@ -53,9 +53,6 @@ namespace RTGraph
         {
             if (SocketOpenBtn.Tag == null)
             {
-                comm.HostIP = textBox1.Text;
-                comm.SendPort = Int32.Parse(textBox2.Text);
-                comm.RecvPort = Int32.Parse(textBox3.Text);
                 comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
                 comm.OpenComm();
 
@@ -117,6 +114,15 @@ namespace RTGraph
         private void button2_Click(object sender, EventArgs e)
         {
             new CalibForm(comm).ShowDialog();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (new NetworkSettingForm(comm).ShowDialog() == DialogResult.OK)
+            {
+                if (comm.Opened) comm.CloseComm();
+                comm.OpenComm();
+            }
         }
     }
 }

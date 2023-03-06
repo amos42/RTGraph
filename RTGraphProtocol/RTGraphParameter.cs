@@ -44,7 +44,7 @@ namespace RTGraph
         public event PropertyChangedEventHandler PropertyChanged;
 
         // camera setting			
-        [CategoryAttribute("Camera Setting"), DescriptionAttribute("real, vertical test image or horizontal test image")]
+        [CategoryAttribute("Camera Setting"), DescriptionAttribute("real image, vertical test image, horizontal test image")]
         [RefreshProperties(RefreshProperties.All)]
         public RTGraphParameterImageSelector ImageSelector { 
             get { return image_selector; }
@@ -65,7 +65,7 @@ namespace RTGraph
             }
         }
 
-        [CategoryAttribute("Camera Setting")]
+        [CategoryAttribute("Camera Setting"), DescriptionAttribute("100 <= time <= 255")]
         public byte ExposureTime
         {
             get { return exposure_time; }
