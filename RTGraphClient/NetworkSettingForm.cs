@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -34,6 +35,19 @@ namespace RTGraph
             comm.HostIP = textBox1.Text;
             comm.SendPort = Int32.Parse(textBox2.Text);
             comm.RecvPort = Int32.Parse(textBox3.Text);
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            KeyValueConfigurationCollection cfgCollection = config.AppSettings.Settings;
+
+            cfgCollection.Remove("HostIP");
+            cfgCollection.Add("HostIP", comm.HostIP);
+            cfgCollection.Remove("SendPort");
+            cfgCollection.Add("SendPort", comm.SendPort.ToString());
+            cfgCollection.Remove("RecvPort");
+            cfgCollection.Add("RecvPort", comm.RecvPort.ToString());
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
         }
     }
 }

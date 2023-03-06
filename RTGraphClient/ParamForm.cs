@@ -117,11 +117,6 @@ namespace RTGraph
             comm.ApplyParam(false);
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void numStart_ValueChanged(object sender, EventArgs e)
         {
             trackBar1.Value = (int)numStart.Value;

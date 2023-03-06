@@ -56,6 +56,7 @@ namespace RTGraph
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button5.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button5.Location = new System.Drawing.Point(749, 279);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(103, 34);
@@ -76,6 +77,7 @@ namespace RTGraph
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button3.Location = new System.Drawing.Point(541, 279);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(103, 34);

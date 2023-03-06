@@ -70,12 +70,12 @@ namespace RTGraph
             this.numSize = new System.Windows.Forms.NumericUpDown();
             this.numStart = new System.Windows.Forms.NumericUpDown();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLineRate)).BeginInit();
@@ -577,6 +577,16 @@ namespace RTGraph
             this.trackBar2.TabIndex = 1;
             this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.AutoSize = false;
+            this.trackBar1.Location = new System.Drawing.Point(82, 33);
+            this.trackBar1.Maximum = 1023;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(347, 25);
+            this.trackBar1.TabIndex = 0;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(98, 431);
@@ -599,6 +609,7 @@ namespace RTGraph
             // 
             // button3
             // 
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button3.Location = new System.Drawing.Point(280, 431);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 30);
@@ -619,23 +630,13 @@ namespace RTGraph
             // 
             // button5
             // 
+            this.button5.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button5.Location = new System.Drawing.Point(462, 431);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 30);
             this.button5.TabIndex = 10;
             this.button5.Text = "Close";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.AutoSize = false;
-            this.trackBar1.Location = new System.Drawing.Point(82, 33);
-            this.trackBar1.Maximum = 1023;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(347, 25);
-            this.trackBar1.TabIndex = 0;
-            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // ParamForm
             // 

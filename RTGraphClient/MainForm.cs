@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -14,7 +15,7 @@ namespace RTGraph
 {
     public partial class MainForm : Form
     {
-        RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
+        private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
 
         public MainForm()
         {
@@ -24,6 +25,14 @@ namespace RTGraph
         private void Form1_Load(object sender, EventArgs e)
         {
             comm.ErrorEvent += new ErrorEventHandler(CommError);
+
+            var hostIP = ConfigurationManager.AppSettings["HostIP"];
+            var sendPort = ConfigurationManager.AppSettings["SendPort"];
+            var recvPort = ConfigurationManager.AppSettings["RecvPort"];
+
+            if (!String.IsNullOrEmpty(hostIP)) comm.HostIP = hostIP;
+            if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
+            if (!String.IsNullOrEmpty(recvPort)) comm.RecvPort = Int32.Parse(recvPort);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
