@@ -45,27 +45,34 @@ namespace RTGraph
 
         private void ParamToUI()
         {
-            comboBox1.SelectedIndex = comm.camParam.ImageSelector;
-            comboBox2.SelectedIndex = comm.camParam.TriggerSource;
-            numExposureTime.Value = comm.camParam.ExposureTime;
-            numLineRate.Value = comm.camParam.LineRate;
-            numGain.Value = comm.camParam.Gain;
-            numRch.Value = comm.camParam.RCH;
-            numTre1.Value = comm.camParam.TRE1;
-            numTre2.Value = comm.camParam.TRE2;
-            numTsl.Value = comm.camParam.TSL;
-            numTde.Value = comm.camParam.TDE;
-            numTwd.Value = comm.camParam.TWD;
-            numStart.Value = comm.camParam.Start;
-            numSize.Value = comm.camParam.Size;
-            numLevel.Value = comm.camParam.Level;
-            numMinSize.Value = comm.camParam.MinSize;
+            try
+            {
+                comboBox1.SelectedIndex = (int)comm.camParam.ImageSelector;
+                comboBox2.SelectedIndex = (int)comm.camParam.TriggerSource;
+                numExposureTime.Value = comm.camParam.ExposureTime;
+                numLineRate.Value = comm.camParam.LineRate;
+                numGain.Value = comm.camParam.Gain;
+                numRch.Value = comm.camParam.RCH;
+                numTre1.Value = comm.camParam.TRE1;
+                numTre2.Value = comm.camParam.TRE2;
+                numTsl.Value = comm.camParam.TSL;
+                numTde.Value = comm.camParam.TDE;
+                numTwd.Value = comm.camParam.TWD;
+                numStart.Value = comm.camParam.Start;
+                numSize.Value = comm.camParam.Size;
+                numLevel.Value = comm.camParam.Level;
+                numMinSize.Value = comm.camParam.MinSize;
+            } 
+            catch(Exception ex)
+            {
+
+            }
         }
 
         private void UIToParam()
         {
-            comm.camParam.ImageSelector = (byte)comboBox1.SelectedIndex;
-            comm.camParam.TriggerSource = (byte)comboBox2.SelectedIndex;
+            comm.camParam.ImageSelector = (RTGraphParameterImageSelector)comboBox1.SelectedIndex;
+            comm.camParam.TriggerSource = (RTGraphParameterTriggerSource)comboBox2.SelectedIndex;
             comm.camParam.ExposureTime = (byte)numExposureTime.Value;
             comm.camParam.LineRate = (short)numLineRate.Value;
             comm.camParam.Gain = (short)numGain.Value;

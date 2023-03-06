@@ -1,14 +1,28 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RTGraph
 {
+    public enum RTGraphParameterImageSelector
+    {
+        RealImage,
+        VerticalTestImage,
+        HorizontalTestImage
+    }
+
+    public enum RTGraphParameterTriggerSource
+    {
+        ImageTrigger,
+        ExternalTrigger
+    }
+
     public class RTGraphParameter : INotifyPropertyChanged
     {
         // camera setting			
-        private byte image_selector = 0;
-        private byte trigger_source = 0;
+        private RTGraphParameterImageSelector image_selector = RTGraphParameterImageSelector.RealImage;
+        private RTGraphParameterTriggerSource trigger_source = RTGraphParameterTriggerSource.ImageTrigger;
         private byte exposure_time = 100;
         private short line_rate = 0;
         private short gain = 0;  // 감도			
@@ -32,7 +46,7 @@ namespace RTGraph
         // camera setting			
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("real, vertical test image or horizontal test image")]
         [RefreshProperties(RefreshProperties.All)]
-        public byte ImageSelector { 
+        public RTGraphParameterImageSelector ImageSelector { 
             get { return image_selector; }
             set {
                 image_selector = value;
@@ -42,7 +56,7 @@ namespace RTGraph
 
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("image tirgger or external trigger")]
         [RefreshProperties(RefreshProperties.All)]
-        public byte TriggerSource
+        public RTGraphParameterTriggerSource TriggerSource
         {
             get { return trigger_source; }
             set {
@@ -57,8 +71,11 @@ namespace RTGraph
             get { return exposure_time; }
             set
             {
-                exposure_time = value;
-                OnPropertyChanged();
+                if (value >= 100 && value <= 255)
+                {
+                    exposure_time = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -215,8 +232,8 @@ namespace RTGraph
 
         public void Parse(byte[] packet, int startIdx = 0)
         {
-            ImageSelector = packet[startIdx + 0];
-            TriggerSource = packet[startIdx + 1];
+            ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
+            TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
             ExposureTime = packet[startIdx + 2];
             LineRate = getShortValu(packet, 3);
             Gain = getShortValu(packet, 5);
@@ -239,8 +256,8 @@ namespace RTGraph
                 packet = new byte[27];
             }
 
-            packet[startIdx + 0] = image_selector;
-            packet[startIdx + 1] = trigger_source;
+            packet[startIdx + 0] = (byte)image_selector;
+            packet[startIdx + 1] = (byte)trigger_source;
             packet[startIdx + 2] = exposure_time;
             setShortValue(packet, startIdx + 3, line_rate);
             setShortValue(packet, startIdx + 5, gain);
