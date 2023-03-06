@@ -9,7 +9,7 @@ namespace RTGraph
         // camera setting			
         private byte image_selector = 0;
         private byte trigger_source = 0;
-        private byte exposure_time = 0;
+        private byte exposure_time = 100;
         private short line_rate = 0;
         private short gain = 0;  // 감도			
 

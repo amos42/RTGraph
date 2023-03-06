@@ -114,5 +114,25 @@ namespace RTGraph
         {
             Close();
         }
+
+        private void numStart_ValueChanged(object sender, EventArgs e)
+        {
+            trackBar1.Value = (int)numStart.Value;
+        }
+
+        private void numSize_ValueChanged(object sender, EventArgs e)
+        {
+            trackBar2.Value = (int)numSize.Value;
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            numStart.Value = trackBar1.Value;
+        }
+
+        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        {
+            numSize.Value = trackBar2.Value;
+        }
     }
 }

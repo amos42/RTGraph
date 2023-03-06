@@ -70,7 +70,6 @@ namespace RTGraph
             this.numSize = new System.Windows.Forms.NumericUpDown();
             this.numStart = new System.Windows.Forms.NumericUpDown();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -83,6 +82,7 @@ namespace RTGraph
             this.textBox13 = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numLineRate)).BeginInit();
@@ -100,8 +100,8 @@ namespace RTGraph
             ((System.ComponentModel.ISupportInitialize)(this.numSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -182,6 +182,11 @@ namespace RTGraph
             // numGain
             // 
             this.numGain.Location = new System.Drawing.Point(151, 164);
+            this.numGain.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numGain.Name = "numGain";
             this.numGain.Size = new System.Drawing.Size(60, 25);
             this.numGain.TabIndex = 6;
@@ -190,6 +195,11 @@ namespace RTGraph
             // numLineRate
             // 
             this.numLineRate.Location = new System.Drawing.Point(151, 133);
+            this.numLineRate.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numLineRate.Name = "numLineRate";
             this.numLineRate.Size = new System.Drawing.Size(60, 25);
             this.numLineRate.TabIndex = 5;
@@ -198,10 +208,25 @@ namespace RTGraph
             // numExposureTime
             // 
             this.numExposureTime.Location = new System.Drawing.Point(151, 102);
+            this.numExposureTime.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numExposureTime.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numExposureTime.Name = "numExposureTime";
             this.numExposureTime.Size = new System.Drawing.Size(60, 25);
             this.numExposureTime.TabIndex = 4;
             this.numExposureTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numExposureTime.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // comboBox2
             // 
@@ -366,6 +391,11 @@ namespace RTGraph
             // numTwd
             // 
             this.numTwd.Location = new System.Drawing.Point(67, 180);
+            this.numTwd.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numTwd.Name = "numTwd";
             this.numTwd.Size = new System.Drawing.Size(60, 25);
             this.numTwd.TabIndex = 10;
@@ -374,6 +404,11 @@ namespace RTGraph
             // numTde
             // 
             this.numTde.Location = new System.Drawing.Point(67, 151);
+            this.numTde.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numTde.Name = "numTde";
             this.numTde.Size = new System.Drawing.Size(60, 25);
             this.numTde.TabIndex = 9;
@@ -382,6 +417,11 @@ namespace RTGraph
             // numTsl
             // 
             this.numTsl.Location = new System.Drawing.Point(67, 122);
+            this.numTsl.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numTsl.Name = "numTsl";
             this.numTsl.Size = new System.Drawing.Size(60, 25);
             this.numTsl.TabIndex = 8;
@@ -390,6 +430,11 @@ namespace RTGraph
             // numTre2
             // 
             this.numTre2.Location = new System.Drawing.Point(67, 93);
+            this.numTre2.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numTre2.Name = "numTre2";
             this.numTre2.Size = new System.Drawing.Size(60, 25);
             this.numTre2.TabIndex = 7;
@@ -398,6 +443,11 @@ namespace RTGraph
             // numTre1
             // 
             this.numTre1.Location = new System.Drawing.Point(67, 64);
+            this.numTre1.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numTre1.Name = "numTre1";
             this.numTre1.Size = new System.Drawing.Size(60, 25);
             this.numTre1.TabIndex = 6;
@@ -406,6 +456,11 @@ namespace RTGraph
             // numRch
             // 
             this.numRch.Location = new System.Drawing.Point(67, 35);
+            this.numRch.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numRch.Name = "numRch";
             this.numRch.Size = new System.Drawing.Size(60, 25);
             this.numRch.TabIndex = 5;
@@ -469,6 +524,11 @@ namespace RTGraph
             // numMinSize
             // 
             this.numMinSize.Location = new System.Drawing.Point(329, 142);
+            this.numMinSize.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numMinSize.Name = "numMinSize";
             this.numMinSize.Size = new System.Drawing.Size(120, 25);
             this.numMinSize.TabIndex = 5;
@@ -477,6 +537,11 @@ namespace RTGraph
             // numLevel
             // 
             this.numLevel.Location = new System.Drawing.Point(82, 142);
+            this.numLevel.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
             this.numLevel.Name = "numLevel";
             this.numLevel.Size = new System.Drawing.Size(120, 25);
             this.numLevel.TabIndex = 4;
@@ -485,34 +550,40 @@ namespace RTGraph
             // numSize
             // 
             this.numSize.Location = new System.Drawing.Point(435, 80);
+            this.numSize.Maximum = new decimal(new int[] {
+            1023,
+            0,
+            0,
+            0});
             this.numSize.Name = "numSize";
             this.numSize.Size = new System.Drawing.Size(70, 25);
             this.numSize.TabIndex = 3;
             this.numSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numSize.ValueChanged += new System.EventHandler(this.numSize_ValueChanged);
             // 
             // numStart
             // 
             this.numStart.Location = new System.Drawing.Point(435, 33);
+            this.numStart.Maximum = new decimal(new int[] {
+            1023,
+            0,
+            0,
+            0});
             this.numStart.Name = "numStart";
             this.numStart.Size = new System.Drawing.Size(72, 25);
             this.numStart.TabIndex = 2;
             this.numStart.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numStart.ValueChanged += new System.EventHandler(this.numStart_ValueChanged);
             // 
             // trackBar2
             // 
             this.trackBar2.AutoSize = false;
             this.trackBar2.Location = new System.Drawing.Point(82, 80);
+            this.trackBar2.Maximum = 1023;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(347, 26);
             this.trackBar2.TabIndex = 1;
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.AutoSize = false;
-            this.trackBar1.Location = new System.Drawing.Point(82, 33);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(347, 25);
-            this.trackBar1.TabIndex = 0;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
             // button1
             // 
@@ -627,6 +698,16 @@ namespace RTGraph
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.AutoSize = false;
+            this.trackBar1.Location = new System.Drawing.Point(82, 33);
+            this.trackBar1.Maximum = 1023;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(347, 25);
+            this.trackBar1.TabIndex = 0;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
             // ParamForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -668,9 +749,9 @@ namespace RTGraph
             ((System.ComponentModel.ISupportInitialize)(this.numSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
 
         }
