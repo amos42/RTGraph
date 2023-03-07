@@ -24,6 +24,7 @@ namespace RTGraph
         private void Form1_Load(object sender, EventArgs e)
         {
             comm.ErrorEvent += new ErrorEventHandler(CommError);
+            comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
             comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
 
             var cfg = new ConfigUtil("network");
@@ -35,7 +36,8 @@ namespace RTGraph
             if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
             if (!String.IsNullOrEmpty(recvPort)) comm.RecvPort = Int32.Parse(recvPort);
 
-            SocketOpenBtn_Click(this, new EventArgs());
+            //SocketOpenBtn_Click(this, new EventArgs());
+            openToolStripMenuItem_Click(this, new EventArgs());
             //comm.OpenComm();
         }
 
@@ -63,17 +65,32 @@ namespace RTGraph
             }
         }
 
+        private void ConnectProcess(bool connected)
+        {
+            if (connected)
+            {
+                toolStripSplitButton1.Enabled = true;
+                toolStripDropDownButton2.Enabled = true;
+            } 
+            else
+            {
+                toolStripSplitButton1.Enabled = false;
+                toolStripDropDownButton2.Enabled = false;
+            }
+
+        }
+
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
             this.Invoke(new Action(() => {
                 if (e.Type == 1)
                 {
                     timer1.Stop();
-                    panel1.Enabled = true;
+                    ConnectProcess(true);
                 }
                 else if (e.Type == 2)
                 {
-                    panel1.Enabled = false;
+                    ConnectProcess(false);
                 }
                 else if (e.Type == 10)
                 {
@@ -82,79 +99,40 @@ namespace RTGraph
             }));
         }
 
-        private void SocketOpenBtn_Click(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            if (SocketOpenBtn.Tag == null)
+            timer1.Stop();
+            if (!comm.connected)
             {
-                comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
+                MessageBox.Show("장치로부터 응답이 없습니다.");
+                toolStripButton3_Click(this, new EventArgs());
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!openToolStripMenuItem.Checked)
+            {
                 comm.OpenComm();
 
-                SocketOpenBtn.Text = "Close";
-                SocketOpenBtn.Tag = comm;
+                toolStripButton3.Enabled = true;
 
-                ConnectBtn.Enabled = true;
-                //panel1.Enabled = true;
+                toolStripDropDownButton1.Image = Properties.Resources.on;
+                openToolStripMenuItem.Checked = true;
             }
             else
             {
                 comm.CloseComm();
-                comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
-                SocketOpenBtn.Text = "Open";
-                SocketOpenBtn.Tag = null;
-                ConnectBtn.Enabled = false;
-                panel1.Enabled = false;
+
+                toolStripButton3.Enabled = false;
+                ConnectProcess(false);
+
+                toolStripDropDownButton1.Image = Properties.Resources.off;
+                openToolStripMenuItem.Checked = false;
             }
         }
 
-        private void ConnectBtn_Click(object sender, EventArgs e)
-        {
-            if (ConnectBtn.Tag == null)
-            {
-                comm.Connect();
-
-                ConnectBtn.Text = "Disconnect";
-                ConnectBtn.Tag = comm;
-
-                timer1.Start();
-            }
-            else
-            {
-                comm.Disconnect();
-
-                ConnectBtn.Text = "Cconnect";
-                ConnectBtn.Tag = null;
-            }
-        }
-
-        private void CaptureBtn_Click(object sender, EventArgs e)
-        {
-            if (CaptureBtn.Tag == null)
-            {
-                comm.StartCapture();
-
-                CaptureBtn.Text = "Stop Capture";
-                CaptureBtn.Tag = "active";
-            }
-            else
-            {
-                comm.StopCapture();
-
-                CaptureBtn.Text = "Start Capture";
-                CaptureBtn.Tag = null;
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            new ParamForm(comm).ShowDialog();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            new CalibForm(comm).ShowDialog();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
+        private void settingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (new NetworkSettingForm(comm).ShowDialog() == DialogResult.OK)
             {
@@ -163,14 +141,52 @@ namespace RTGraph
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            timer1.Stop();
-            if (!comm.connected)
+            if (!toolStripButton3.Checked)
             {
-                MessageBox.Show("장치로부터 응답이 없습니다.");
-                ConnectBtn_Click(this, e);
+                comm.Connect();
+
+                toolStripButton3.Text = "Disconnect";
+                toolStripButton3.Checked = true;
+
+                timer1.Start();
             }
+            else
+            {
+                comm.Disconnect();
+
+                toolStripButton3.Text = "Connect";
+                toolStripButton3.Checked = false;
+            }
+        }
+
+        private void startCaptureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!startCaptureToolStripMenuItem.Checked)
+            {
+                comm.StartCapture();
+
+                startCaptureToolStripMenuItem.Text = "Stop Capture";
+                startCaptureToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                comm.StopCapture();
+
+                startCaptureToolStripMenuItem.Text = "Start Capture";
+                startCaptureToolStripMenuItem.Checked = false;
+            }
+        }
+
+        private void parametersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ParamForm(comm).ShowDialog();
+        }
+
+        private void calibrationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new CalibForm(comm).ShowDialog();
         }
     }
 }
