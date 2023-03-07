@@ -15,12 +15,29 @@ namespace RTGraph
 {
     public partial class RTGraphChartControl : UserControl
     {
+        private int graphAreaMinHeight = 100;
+        public int GraphAreaMinHeight
+        {
+            get { return graphAreaMinHeight; }
+            set
+            {
+                if (graphAreaMinHeight != value && value >= 100)
+                {
+                    graphAreaMinHeight = value;
+                    this.Refresh();
+                }
+            }
+        }
+
         private int triggerValue = 0;
         public int TriggerValue {
             get { return triggerValue; }
-            set { 
-                triggerValue = value;
-                this.Refresh();
+            set {
+                if (triggerValue != value)
+                {
+                    triggerValue = value;
+                    this.Refresh();
+                }
             }
         }
 
@@ -28,12 +45,15 @@ namespace RTGraph
         public int BufferCount
         {
             get { return bufferCount; }
-            set { 
-                bufferCount = value;
-                enqPos = 0;
-                startPos = 0;
-                genImage();
-                this.Refresh();
+            set {
+                if (bufferCount != value)
+                {
+                    bufferCount = value;
+                    enqPos = 0;
+                    startPos = 0;
+                    genImage();
+                    this.Refresh();
+                }
             }
         }
 
@@ -61,9 +81,12 @@ namespace RTGraph
         public int StartPos
         {
             get { return startPos; }
-            set { 
-                    startPos = value; 
-                    this.Refresh(); 
+            set {
+                if (startPos != value)
+                {
+                    startPos = value;
+                    this.Refresh();
+                }
             }
         }
 
@@ -172,7 +195,16 @@ namespace RTGraph
             int startY = GraphMargin.Top + 1;
             int width = this.Width - (startX + GraphMargin.Right + 1);
             int height = this.Height - (startY + GraphMargin.Bottom + 1);
-            int graphBaseY = this.Height - GraphMargin.Bottom - 1 - 1;
+            if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
+            {
+                height = graphAreaMinHeight;
+                if (startY + height > this.Height)
+                {
+                    startY = this.Height - height;
+                }
+            }
+
+            int graphBaseY = startY + height - 1;
 
             if (outBm != null)
             {
