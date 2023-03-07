@@ -234,7 +234,7 @@ namespace DeviceSimulator
             {
                 if (!xx.Value) continue;
                 
-                var data = new byte[1024];
+                var data = new byte[1024 + 2];
 
                 int limit = trackBar2.Value;
                 float divder = limit * limit / (float)255;
@@ -245,11 +245,11 @@ namespace DeviceSimulator
                     int dist = Math.Abs(i - v);
                     if (v != 0 && dist <= limit)
                     {
-                        data[i] = (byte)(255 - dist * dist / divder);
+                        data[2 + i] = (byte)(255 - dist * dist / divder);
                     } 
                     else
                     {
-                        data[i] = 0;
+                        data[2 + i] = 0;
                     }
                 }
 

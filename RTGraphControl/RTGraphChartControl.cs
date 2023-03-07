@@ -193,14 +193,14 @@ namespace RTGraph
 
             int startX = GraphMargin.Left + 1;
             int startY = GraphMargin.Top + 1;
-            int width = this.Width - (startX + GraphMargin.Right + 1);
-            int height = this.Height - (startY + GraphMargin.Bottom + 1);
+            int width = this.Width - GraphMargin.Right - startX - 1;
+            int height = this.Height - GraphMargin.Bottom - startY - 1;
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
             {
                 height = graphAreaMinHeight;
-                if (startY + height > this.Height)
+                if (startY + height >= this.Height)
                 {
-                    startY = this.Height - height;
+                    startY = this.Height - 1 - height;
                 }
             }
 
@@ -210,17 +210,15 @@ namespace RTGraph
             {
                 if (valueCnt > bufferCount)
                 {
-                    //GraphicsUnit unit = GraphicsUnit.Pixel;
-                    //e.Graphics.DrawImage(outBm, e.ClipRectangle, outBm.GetBounds(ref unit), unit);
                     int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height - drawPos),
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width - 1, this.Height - drawPos),
                                                 new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width, drawPos),
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width - 1, drawPos),
                                                 new Rectangle(0, 0, outBm.Width, validPos + 1), GraphicsUnit.Pixel);
                 }
                 else
                 {
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width - 1, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
 
@@ -228,8 +226,9 @@ namespace RTGraph
 
             if (this.values != null)
             {
-                int oldV = graphBaseY;
-                for (int i = 0; i < this.values.Length; i++)
+                int oldV = graphBaseY - this.values[0] * height / 255;
+                int cnt = this.values.Length;
+                for (int i = 1; i < cnt; i++)
                 {
                     int v = graphBaseY - this.values[i] * height / 255;
                     Pen pen;
@@ -241,7 +240,7 @@ namespace RTGraph
                     {
                         pen = Pens.Blue;
                     }
-                    e.Graphics.DrawLine(pen, startX + i * width / 1024, oldV, startX + (i + 1) * width / 1024, v);
+                    e.Graphics.DrawLine(pen, startX + (i - 1) * (width - 1) / (cnt - 1), oldV, startX + i * (width - 1) / (cnt - 1), v);
                     oldV = v;
                 }
             }
