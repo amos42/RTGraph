@@ -55,14 +55,25 @@ namespace RTGraphProtocol
                     if (packet.Option == 0x01)
                     {
                         // 연결
-                        bool result = packet.data[0] == 0;
+                        bool result;
+                        if (packet.data?.Length > 0)
+                        {
+                            result = packet.data[0] == 0;
+                        } else
+                        {
+                            result = true;
+                        }
+
                         if (result)
                         {
                             type = 1;
                             connected = true;
                             RaiseStateEvent();
 
-                            camParam.Parse(packet.data, 1);
+                            if (packet.data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
+                            {
+                                camParam.Parse(packet.data, 1);
+                            }
                         }
                     }
                     else if (packet.Option == 0x00)

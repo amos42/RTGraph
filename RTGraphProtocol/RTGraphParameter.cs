@@ -20,6 +20,8 @@ namespace RTGraph
 
     public class RTGraphParameter : INotifyPropertyChanged
     {
+        public const int PARAMETERS_PACKET_SIZE = 27;
+
         // camera setting			
         private RTGraphParameterImageSelector image_selector = RTGraphParameterImageSelector.RealImage;
         private RTGraphParameterTriggerSource trigger_source = RTGraphParameterTriggerSource.ImageTrigger;
@@ -268,7 +270,7 @@ namespace RTGraph
 
         public void Parse(byte[] packet, int startIdx = 0)
         {
-            if (packet.Length - startIdx >= 27)
+            if (packet.Length - startIdx >= PARAMETERS_PACKET_SIZE)
             {
                 ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
                 TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
@@ -292,10 +294,10 @@ namespace RTGraph
         {
             if (packet == null)
             {
-                packet = new byte[27];
+                packet = new byte[PARAMETERS_PACKET_SIZE];
             }
 
-            if (packet.Length - startIdx >= 27)
+            if (packet.Length - startIdx >= PARAMETERS_PACKET_SIZE)
             {
                 packet[startIdx + 0] = (byte)image_selector;
                 packet[startIdx + 1] = (byte)trigger_source;

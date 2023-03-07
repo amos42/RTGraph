@@ -21,11 +21,6 @@ namespace RTGraph
             InitializeComponent();
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            comm.RequesCalibration();
-        }
-
         private void CalibForm_Load(object sender, EventArgs e)
         {
             comm.CalibrationChanged += new EventHandler(CalChanged);
@@ -43,6 +38,21 @@ namespace RTGraph
             }));
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // comm.RequesCalibration(-1); // default
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            comm.RequesCalibration();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            comm.RequesCalibration(1); // load
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
             comm.ApplyCalibration(true, checkBox1.Checked);
@@ -53,14 +63,5 @@ namespace RTGraph
             comm.ApplyCalibration(false, checkBox1.Checked);
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // comm.RequesCalibration(-1); // default
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            comm.RequesCalibration(1); // load
-        }
     }
 }

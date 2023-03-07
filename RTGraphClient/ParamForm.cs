@@ -39,11 +39,6 @@ namespace RTGraph
             this.comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
         }
 
-        private void ParamForm_Shown(object sender, EventArgs e)
-        {
-            // comm.RequestParam();
-        }
-
         private void ParamToUI()
         {
             try
