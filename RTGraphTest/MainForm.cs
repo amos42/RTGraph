@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace RTGraph
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            comm.ErrorEvent += new ErrorEventHandler(CommError);
         }
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
@@ -65,6 +67,13 @@ namespace RTGraph
                 SocketOpenBtn.Tag = null;
                 panel1.Enabled = false;
             }
+        }
+
+        private void CommError(object sender, ErrorEventArgs e)
+        {
+            this.Invoke(new Action(() => {
+                MessageBox.Show(e.GetException().Message);
+            }));
         }
 
         private void ConnectBtn_Click(object sender, EventArgs e)

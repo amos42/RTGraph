@@ -29,6 +29,7 @@ namespace RTGraph
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.chart1 = new RTGraph.RTGraphChartControl();
             this.button3 = new System.Windows.Forms.Button();
             this.SocketOpenBtn = new System.Windows.Forms.Button();
@@ -37,6 +38,7 @@ namespace RTGraph
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,6 +136,11 @@ namespace RTGraph
             this.panel1.Size = new System.Drawing.Size(425, 37);
             this.panel1.TabIndex = 10;
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 5000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -163,6 +170,7 @@ namespace RTGraph
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

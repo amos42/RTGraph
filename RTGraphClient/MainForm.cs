@@ -68,6 +68,7 @@ namespace RTGraph
             this.Invoke(new Action(() => {
                 if (e.Type == 1)
                 {
+                    timer1.Stop();
                     panel1.Enabled = true;
                 }
                 else if (e.Type == 2)
@@ -113,6 +114,8 @@ namespace RTGraph
 
                 ConnectBtn.Text = "Disconnect";
                 ConnectBtn.Tag = comm;
+
+                timer1.Start();
             }
             else
             {
@@ -157,6 +160,16 @@ namespace RTGraph
             {
                 if (comm.Opened) comm.CloseComm();
                 comm.OpenComm();
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            if (!comm.connected)
+            {
+                MessageBox.Show("장치로부터 응답이 없습니다.");
+                ConnectBtn_Click(this, e);
             }
         }
     }
