@@ -236,7 +236,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX-2, START_COORD_POS, width+2, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX-errorTerm, START_COORD_POS, width+errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
 
