@@ -15,6 +15,23 @@ namespace RTGraph
 {
     public partial class RTGraphChartControl : UserControl
     {
+        // half 모드에서 시작 좌표
+        public const float START_COORD_POS = 0.5f;
+
+        private int borderLineWidth = 1;
+        public int BorderLineWidth
+        {
+            get { return borderLineWidth; }
+            set
+            {
+                if (borderLineWidth != value)
+                {
+                    borderLineWidth = value;
+                    this.Refresh();
+                }
+            }
+        }
+
         private int graphAreaMinHeight = 100;
         public int GraphAreaMinHeight
         {
@@ -184,69 +201,75 @@ namespace RTGraph
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            // half 모드에서는 시작 좌표가 0.5이다.
             e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
+            e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-            //e.Graphics.FillRectangle(Brushes.Gray, e.ClipRectangle);
+            float borderStartX = START_COORD_POS + GraphMargin.Left + borderLineWidth / 2;
+            float borderStartY = START_COORD_POS + GraphMargin.Top + borderLineWidth / 2;
+            int borderWidth = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - borderLineWidth;
+            int borderHeight = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top) - borderLineWidth;
 
-            //e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
-
-            int startX = GraphMargin.Left + 1;
-            int startY = GraphMargin.Top + 1;
-            int width = this.Width - GraphMargin.Right - startX - 1;
-            int height = this.Height - GraphMargin.Bottom - startY - 1;
+            float startX = START_COORD_POS + GraphMargin.Left + borderLineWidth;
+            float startY = START_COORD_POS + GraphMargin.Top + borderLineWidth;
+            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - borderLineWidth * 2;
+            int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top) - borderLineWidth * 2;
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
             {
                 height = graphAreaMinHeight;
                 if (startY + height >= this.Height)
                 {
-                    startY = this.Height - 1 - height;
+                    startY = this.ClientSize.Height - height;
                 }
             }
-
-            int graphBaseY = startY + height - 1;
 
             if (outBm != null)
             {
                 if (valueCnt > bufferCount)
                 {
                     int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width - 1, this.Height - drawPos),
-                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, this.Height - drawPos, width - 1, drawPos),
-                                                new Rectangle(0, 0, outBm.Width, validPos + 1), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX, START_COORD_POS, width, this.ClientSize.Height - drawPos),
+                                                new Rectangle(0, validPos, outBm.Width, outBm.Height - validPos), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX, this.ClientSize.Height - drawPos, width, drawPos),
+                                                new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
                 }
                 else
                 {
-                    e.Graphics.DrawImage(outBm, new Rectangle(startX, 0, width - 1, this.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX, START_COORD_POS, width, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
 
-            e.Graphics.DrawRectangle(Pens.LightGray, startX, startY, width, height);
+            var areaPen = new Pen(Color.LightGray, borderLineWidth);
+            e.Graphics.DrawRectangle(areaPen, borderStartX, borderStartY, borderWidth, borderHeight);
+
+            width--; height--;
+            float graphBaseY = startY + height;
 
             if (this.values != null)
             {
-                int oldV = graphBaseY - this.values[0] * height / 255;
+                float oldV = graphBaseY - this.values[0] * height / 255;
                 int cnt = this.values.Length;
                 for (int i = 1; i < cnt; i++)
                 {
-                    int v = graphBaseY - this.values[i] * height / 255;
+                    float v = graphBaseY - this.values[i] * height / 255;
                     Pen pen;
                     if (triggerValue > 0 && values[i] > triggerValue)
                     {
-                        pen = Pens.Red;
+                        pen = Pens.Lime;
                     } 
                     else
                     {
                         pen = Pens.Blue;
                     }
-                    e.Graphics.DrawLine(pen, startX + (i - 1) * (width - 1) / (cnt - 1), oldV, startX + i * (width - 1) / (cnt - 1), v);
+                    e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
                     oldV = v;
                 }
             }
             if (TriggerValue > 0) {
-                int v2 = graphBaseY - TriggerValue * height / 255;
-                e.Graphics.DrawLine(Pens.Red, startX, v2, startX + width, v2);
+                float v2 = graphBaseY - TriggerValue * height / 255;
+                var trigPen = new Pen(Color.Red, 1);
+                trigPen.DashStyle = DashStyle.Dash;
+                e.Graphics.DrawLine(trigPen, startX, v2, startX + width - 1, v2);
             }
 
         }
