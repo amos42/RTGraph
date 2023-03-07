@@ -225,17 +225,18 @@ namespace RTGraph
 
             if (outBm != null)
             {
+                const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
                 if (valueCnt > bufferCount)
                 {
-                    int drawPos = this.Height * (validPos + 1) / (bufferCount - 1);
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX, START_COORD_POS, width, this.ClientSize.Height - drawPos),
-                                                new Rectangle(0, validPos, outBm.Width, outBm.Height - validPos), GraphicsUnit.Pixel);
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX, this.ClientSize.Height - drawPos, width, drawPos),
+                    int drawPos = this.ClientSize.Height * validPos / outBm.Height;
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX-errorTerm, START_COORD_POS, width+errorTerm, this.ClientSize.Height - drawPos),
+                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX- errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width+errorTerm, drawPos),
                                                 new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
                 }
                 else
                 {
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX, START_COORD_POS, width, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX-2, START_COORD_POS, width+2, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
 
