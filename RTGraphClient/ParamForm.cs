@@ -30,13 +30,13 @@ namespace RTGraph
 
         private void ParamForm_Load(object sender, EventArgs e)
         {
-            this.comm.ParameterChanged += new EventHandler(ParameterChanged);
+            this.comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
             ParamToUI();
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.comm.ParameterChanged -= new EventHandler(ParameterChanged);
+            this.comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
         }
 
         private void ParamForm_Shown(object sender, EventArgs e)
@@ -89,7 +89,7 @@ namespace RTGraph
             comm.camParam.MinSize = (short)numMinSize.Value;
         }
 
-        private void ParameterChanged(object sender, EventArgs e)
+        private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Invoke(new Action(() => {
                 ParamToUI();

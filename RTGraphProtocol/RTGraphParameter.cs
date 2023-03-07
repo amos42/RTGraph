@@ -49,8 +49,11 @@ namespace RTGraph
         public RTGraphParameterImageSelector ImageSelector { 
             get { return image_selector; }
             set {
-                image_selector = value;
-                OnPropertyChanged();
+                if (image_selector != value)
+                {
+                    image_selector = value;
+                    OnPropertyChanged();
+                }
             } 
         }
 
@@ -60,8 +63,10 @@ namespace RTGraph
         {
             get { return trigger_source; }
             set {
-                trigger_source = value;
-                OnPropertyChanged();
+                if (trigger_source != value) {
+                    trigger_source = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -71,7 +76,7 @@ namespace RTGraph
             get { return exposure_time; }
             set
             {
-                if (value >= 100 && value <= 255)
+                if (exposure_time != value && value >= 100 && value <= 255)
                 {
                     exposure_time = value;
                     OnPropertyChanged();
@@ -85,8 +90,10 @@ namespace RTGraph
             get { return line_rate; }
             set
             {
-                line_rate = value;
-                OnPropertyChanged();
+                if (line_rate != value) {
+                    line_rate = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -96,8 +103,10 @@ namespace RTGraph
             get { return gain; }
             set
             {
-                gain = value;
-                OnPropertyChanged();
+                if (gain != value) {
+                    gain = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -107,8 +116,10 @@ namespace RTGraph
             get { return rch; }
             set
             {
-                rch = value;
-                OnPropertyChanged();
+                if (rch != value) {
+                    rch = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -118,8 +129,10 @@ namespace RTGraph
             get { return tre1; }
             set
             {
-                tre1 = value;
-                OnPropertyChanged();
+                if (tre1 != value) {
+                    tre1 = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -129,8 +142,10 @@ namespace RTGraph
             get { return tre2; }
             set
             {
-                tre2 = value;
-                OnPropertyChanged();
+                if (tre2 != value) {
+                    tre2 = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -140,8 +155,11 @@ namespace RTGraph
             get { return tsl; }
             set
             {
-                tsl = value;
-                OnPropertyChanged();
+                if (tsl != value)
+                {
+                    tsl = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -151,8 +169,11 @@ namespace RTGraph
             get { return tde; }
             set
             {
-                tde = value;
-                OnPropertyChanged();
+                if (tde != value)
+                {
+                    tde = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -162,8 +183,11 @@ namespace RTGraph
             get { return twd; }
             set
             {
-                twd = value;
-                OnPropertyChanged();
+                if (twd != value)
+                {
+                    twd = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -173,8 +197,11 @@ namespace RTGraph
             get { return start; }
             set
             {
-                start = value;
-                OnPropertyChanged();
+                if (start != value)
+                {
+                    start = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -184,8 +211,11 @@ namespace RTGraph
             get { return size; }
             set
             {
-                size = value;
-                OnPropertyChanged();
+                if (size != value)
+                {
+                    size = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -195,8 +225,11 @@ namespace RTGraph
             get { return level; }
             set
             {
-                level = value;
-                OnPropertyChanged();
+                if (level != value)
+                {
+                    level = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -206,8 +239,11 @@ namespace RTGraph
             get { return min_size; }
             set
             {
-                min_size = value;
-                OnPropertyChanged();
+                if (min_size != value)
+                {
+                    min_size = value;
+                    OnPropertyChanged();
+                }
             }
         }
 

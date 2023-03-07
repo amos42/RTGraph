@@ -24,7 +24,7 @@ namespace RTGraph
         private void Form1_Load(object sender, EventArgs e)
         {
             comm.ErrorEvent += new ErrorEventHandler(CommError);
-            comm.ParameterChanged += new EventHandler(ParameterChanged);
+            comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
 
             var cfg = new ConfigUtil("network");
             var hostIP = cfg.GetValue("HostIP");
@@ -42,7 +42,7 @@ namespace RTGraph
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             comm.ErrorEvent -= new ErrorEventHandler(CommError);
-            comm.ParameterChanged -= new EventHandler(ParameterChanged);
+            comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
             comm.CloseComm();
         }
 
@@ -53,11 +53,14 @@ namespace RTGraph
             }));
         }
 
-        private void ParameterChanged(object sender, EventArgs e)
+        private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Invoke(new Action(() => {
-                chart1.TriggerValue = comm.camParam.Level;
-            }));
+            if (e.PropertyName == "Level") {
+                this.Invoke(new Action(() =>
+                {
+                    chart1.TriggerValue = comm.camParam.Level;
+                }));
+            }
         }
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)

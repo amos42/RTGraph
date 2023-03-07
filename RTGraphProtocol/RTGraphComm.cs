@@ -32,7 +32,6 @@ namespace RTGraphProtocol
         public byte[] calData = new byte[1024];
 
         public event PacketReceivedEventHandler PacketReceived;
-        public event EventHandler ParameterChanged;
         public event EventHandler CalibrationChanged;
         public event EventHandler StateChanged;
 
@@ -64,7 +63,6 @@ namespace RTGraphProtocol
                             RaiseStateEvent();
 
                             camParam.Parse(packet.data, 1);
-                            RaiseParamEvent();
                         }
                     }
                     else if (packet.Option == 0x00)
@@ -75,7 +73,6 @@ namespace RTGraphProtocol
                         {
                             type = 2;
                             connected = false;
-                            RaiseStateEvent();
                         }
                     }
                 }
@@ -88,13 +85,11 @@ namespace RTGraphProtocol
                     {
                         // default
                         camParam.Parse(packet.data);
-                        RaiseParamEvent();
                     }
                     else if (packet.Option == 0x01)
                     {
                         // Load
                         camParam.Parse(packet.data);
-                        RaiseParamEvent();
                     }
                 }
             }
@@ -142,14 +137,6 @@ namespace RTGraphProtocol
             if (StateChanged != null)
             {
                 StateChanged(this, new EventArgs());
-            }
-        }
-
-        private void RaiseParamEvent()
-        {
-            if (ParameterChanged != null)
-            {
-                ParameterChanged(this, new EventArgs());
             }
         }
 
