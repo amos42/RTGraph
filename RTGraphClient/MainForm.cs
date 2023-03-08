@@ -15,6 +15,7 @@ namespace RTGraph
     public partial class MainForm : Form
     {
         private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
+        private bool continusMode = true;
 
         public MainForm()
         {
@@ -69,11 +70,15 @@ namespace RTGraph
         {
             if (connected)
             {
+                toolStripButton3.Text = "Disconnect";
+                toolStripButton3.Checked = true;
                 toolStripSplitButton1.Enabled = true;
                 toolStripDropDownButton2.Enabled = true;
             } 
             else
             {
+                toolStripButton3.Text = "Cconnect";
+                toolStripButton3.Checked = false;
                 toolStripSplitButton1.Enabled = false;
                 toolStripDropDownButton2.Enabled = false;
             }
@@ -143,12 +148,12 @@ namespace RTGraph
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            if (!toolStripButton3.Checked)
+            if (toolStripButton3.CheckState == CheckState.Unchecked)
             {
                 comm.Connect();
 
-                toolStripButton3.Text = "Disconnect";
-                toolStripButton3.Checked = true;
+                toolStripButton3.Text = "Cconnecting...";
+                toolStripButton3.CheckState = CheckState.Indeterminate;
 
                 timer1.Start();
             }
