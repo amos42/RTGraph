@@ -245,12 +245,15 @@ namespace RTGraph
             float startY = START_COORD_POS + GraphMargin.Top + borderLineWidth;
             int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - borderLineWidth * 2;
             int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top) - borderLineWidth * 2;
+
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
             {
                 height = graphAreaMinHeight;
-                if (startY + height >= this.Height)
+                borderHeight = graphAreaMinHeight - borderLineWidth;
+                if (startY + height >= this.ClientSize.Height)
                 {
                     startY = this.ClientSize.Height - height;
+                    borderStartY = this.ClientSize.Height - borderHeight + borderLineWidth / 2;
                 }
             }
 
