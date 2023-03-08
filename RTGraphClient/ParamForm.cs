@@ -31,7 +31,7 @@ namespace RTGraph
         private void ParamForm_Load(object sender, EventArgs e)
         {
             this.comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
-            ParamToUI();
+            ParamToUI(this.comm.camParam);
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -39,25 +39,25 @@ namespace RTGraph
             this.comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
         }
 
-        private void ParamToUI()
+        private void ParamToUI(RTGraphParameter camParam)
         {
             try
             {
-                comboBox1.SelectedIndex = (int)comm.camParam.ImageSelector;
-                comboBox2.SelectedIndex = (int)comm.camParam.TriggerSource;
-                numExposureTime.Value = comm.camParam.ExposureTime;
-                numLineRate.Value = comm.camParam.LineRate;
-                numGain.Value = comm.camParam.Gain;
-                numRch.Value = comm.camParam.RCH;
-                numTre1.Value = comm.camParam.TRE1;
-                numTre2.Value = comm.camParam.TRE2;
-                numTsl.Value = comm.camParam.TSL;
-                numTde.Value = comm.camParam.TDE;
-                numTwd.Value = comm.camParam.TWD;
-                numStart.Value = comm.camParam.Start;
-                numSize.Value = comm.camParam.Size;
-                numLevel.Value = comm.camParam.Level;
-                numMinSize.Value = comm.camParam.MinSize;
+                comboBox1.SelectedIndex = (int)camParam.ImageSelector;
+                comboBox2.SelectedIndex = (int)camParam.TriggerSource;
+                numExposureTime.Value = camParam.ExposureTime;
+                numLineRate.Value = camParam.LineRate;
+                numGain.Value = camParam.Gain;
+                numRch.Value = camParam.RCH;
+                numTre1.Value = camParam.TRE1;
+                numTre2.Value = camParam.TRE2;
+                numTsl.Value = camParam.TSL;
+                numTde.Value = camParam.TDE;
+                numTwd.Value = camParam.TWD;
+                numStart.Value = camParam.Start;
+                numSize.Value = camParam.Size;
+                numLevel.Value = camParam.Level;
+                numMinSize.Value = camParam.MinSize;
             } 
             catch(Exception ex)
             {
@@ -65,29 +65,29 @@ namespace RTGraph
             }
         }
 
-        private void UIToParam()
+        private void UIToParam(RTGraphParameter camParam)
         {
-            comm.camParam.ImageSelector = (RTGraphParameterImageSelector)comboBox1.SelectedIndex;
-            comm.camParam.TriggerSource = (RTGraphParameterTriggerSource)comboBox2.SelectedIndex;
-            comm.camParam.ExposureTime = (byte)numExposureTime.Value;
-            comm.camParam.LineRate = (short)numLineRate.Value;
-            comm.camParam.Gain = (short)numGain.Value;
-            comm.camParam.RCH = (short)numRch.Value;
-            comm.camParam.TRE1 = (short)numTre1.Value;
-            comm.camParam.TRE2 = (short)numTre2.Value;
-            comm.camParam.TSL = (short)numTsl.Value;
-            comm.camParam.TDE = (short)numTde.Value;
-            comm.camParam.TWD = (short)numTwd.Value;
-            comm.camParam.Start = (short)numStart.Value;
-            comm.camParam.Size = (short)numSize.Value;
-            comm.camParam.Level = (short)numLevel.Value;
-            comm.camParam.MinSize = (short)numMinSize.Value;
+            camParam.ImageSelector = (RTGraphParameterImageSelector)comboBox1.SelectedIndex;
+            camParam.TriggerSource = (RTGraphParameterTriggerSource)comboBox2.SelectedIndex;
+            camParam.ExposureTime = (byte)numExposureTime.Value;
+            camParam.LineRate = (short)numLineRate.Value;
+            camParam.Gain = (short)numGain.Value;
+            camParam.RCH = (short)numRch.Value;
+            camParam.TRE1 = (short)numTre1.Value;
+            camParam.TRE2 = (short)numTre2.Value;
+            camParam.TSL = (short)numTsl.Value;
+            camParam.TDE = (short)numTde.Value;
+            camParam.TWD = (short)numTwd.Value;
+            camParam.Start = (short)numStart.Value;
+            camParam.Size = (short)numSize.Value;
+            camParam.Level = (short)numLevel.Value;
+            camParam.MinSize = (short)numMinSize.Value;
         }
 
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Invoke(new Action(() => {
-                ParamToUI();
+                ParamToUI(comm.camParam);
             }));
         }
 
@@ -103,14 +103,16 @@ namespace RTGraph
 
         private void button3_Click(object sender, EventArgs e)
         {
-            UIToParam();
-            comm.ApplyParam(true);
+            var camParam = new RTGraphParameter();
+            UIToParam(camParam);
+            comm.ApplyParam(camParam, true);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            UIToParam();
-            comm.ApplyParam(false);
+            var camParam = new RTGraphParameter();
+            UIToParam(camParam);
+            comm.ApplyParam(camParam, false);
         }
 
         private void numStart_ValueChanged(object sender, EventArgs e)

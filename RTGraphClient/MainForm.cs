@@ -73,13 +73,38 @@ namespace RTGraph
 
         private void setGraphDrawMode(RTGraphParameterTriggerSource triggerSource)
         {
-            if (triggerSource == RTGraphParameterTriggerSource.ImageTrigger)
+            if (!continusMode && triggerSource == RTGraphParameterTriggerSource.ImageTrigger)
             {
-
+                continusMode = true;
+                continueModeToolStripMenuItem.Checked = true;
+                triggerModeToolStripMenuItem.Checked = false;
+                var modestr = continusMode ? "Cont." : "Trig.";
+                var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
+                if (v == CheckState.Unchecked)
+                {
+                    toolStripSplitButton1.Text = $"Start Capture ({modestr})";
+                }
+                else
+                {
+                    toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
+                }
             }
-            else
+            else if (continusMode && triggerSource == RTGraphParameterTriggerSource.ExternalTrigger)
             {
-
+                continusMode = false;
+                continueModeToolStripMenuItem.Checked = false;
+                triggerModeToolStripMenuItem.Checked = true;
+                var modestr = continusMode ? "Cont." : "Trig.";
+                var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
+                if (v == CheckState.Unchecked)
+                {
+                    toolStripSplitButton1.Text = $"Start Capture ({modestr})";
+                }
+                else
+                {
+                    toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
+                }
+                chart1.Clear();
             }
         }
 
@@ -196,10 +221,6 @@ namespace RTGraph
             }
         }
 
-        private void startCaptureToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
         private void parametersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ParamForm(comm).ShowDialog();
@@ -232,37 +253,21 @@ namespace RTGraph
 
         private void continueModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            continusMode = true;
-            continueModeToolStripMenuItem.Checked = true;
-            triggerModeToolStripMenuItem.Checked = false;
-            var modestr = continusMode ? "Cont." : "Trig.";
-            var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
-            if (v == CheckState.Unchecked)
-            {
-                toolStripSplitButton1.Text = $"Start Capture ({modestr})";
-            }
-            else
-            {
-                toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
+            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger) { 
+                var param = comm.camParam.Clone() as RTGraphParameter;
+                param.TriggerSource = RTGraphParameterTriggerSource.ImageTrigger;
+                comm.ApplyParam(param);
             }
         }
 
         private void triggerModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            continusMode = false;
-            continueModeToolStripMenuItem.Checked = false;
-            triggerModeToolStripMenuItem.Checked = true;
-            var modestr = continusMode ? "Cont." : "Trig.";
-            var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
-            if (v == CheckState.Unchecked)
+            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ExternalTrigger)
             {
-                toolStripSplitButton1.Text = $"Start Capture ({modestr})";
+                var param = comm.camParam.Clone() as RTGraphParameter;
+                param.TriggerSource = RTGraphParameterTriggerSource.ExternalTrigger;
+                comm.ApplyParam(param);
             }
-            else
-            {
-                toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
-            }
-            chart1.Clear();
         }
     }
 }

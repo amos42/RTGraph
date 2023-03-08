@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -18,7 +19,7 @@ namespace RTGraph
         ExternalTrigger
     }
 
-    public class RTGraphParameter : INotifyPropertyChanged
+    public class RTGraphParameter : INotifyPropertyChanged, ICloneable
     {
         public const int PARAMETERS_PACKET_SIZE = 27;
 
@@ -260,12 +261,36 @@ namespace RTGraph
             packet[startIdx + 1] = (byte)(value >> 8);
         }
 
+        public RTGraphParameter(RTGraphParameter src)
+        {
+            Assign(src);
+        }
+
         public RTGraphParameter(byte[] packet = null, int startIdx = 0)
         {
             if (packet != null)
             {
                 Parse(packet, startIdx);
             }
+        }
+
+        public void Assign(RTGraphParameter src)
+        {
+            ImageSelector = src.image_selector;
+            TriggerSource = src.trigger_source;
+            ExposureTime = src.exposure_time;
+            LineRate = src.line_rate;
+            Gain = src.gain;
+            RCH = src.rch;
+            TRE1 = src.tre1;
+            TRE2 = src.tre2;
+            TSL = src.tsl;
+            TDE = src.tde;
+            TWD = src.twd;
+            Start = src.start;
+            Size = src.size;
+            Level = src.level;
+            MinSize = src.min_size;
         }
 
         public void Parse(byte[] packet, int startIdx = 0)
@@ -317,6 +342,11 @@ namespace RTGraph
             }
 
             return packet;
+        }
+
+        public object Clone()
+        {
+            return new RTGraphParameter(this);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

@@ -149,7 +149,7 @@ namespace DeviceSimulator
             if (foward)
             {
                 packet.SubClass = PacketSubClass.RES;
-                packet.data = new byte[1] { 0x01 }; // of 0xFF
+                packet.data = new byte[1] { 0x00 }; // of 0xFF
                 comm.SendPacket(packet, e.TargetIPEndPoint);
             }
         }

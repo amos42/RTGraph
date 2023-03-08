@@ -28,6 +28,7 @@ namespace RTGraphProtocol
     public class RTGraphComm : UDPComm
     {
         public bool connected = false;
+        public RTGraphParameter tempCamParam = null;
         public RTGraphParameter camParam = new RTGraphParameter();
         public byte[] calData = new byte[1024];
 
@@ -101,6 +102,14 @@ namespace RTGraphProtocol
                     {
                         // Load
                         camParam.Parse(packet.data);
+                    }
+                    else if (packet.Option == 0x02 || packet.Option == 0x03)
+                    {
+                        // apply, save success
+                        if (packet.data?[0] == 0)
+                        {
+                            camParam.Assign(tempCamParam);
+                        }
                     }
                 }
             }
@@ -217,9 +226,10 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, opts);
         }
 
-        public void ApplyParam(bool isSave = false)
+        public void ApplyParam(RTGraphParameter camParam, bool isSave = false)
         {
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, camParam.serialize());
+            tempCamParam = camParam.Clone() as RTGraphParameter;
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, tempCamParam.serialize());
         }
 
         public void ApplyCalibration(bool isSave, bool calEnable)
