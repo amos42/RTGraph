@@ -191,6 +191,8 @@ namespace RTGraph
                 validPos = enqPos;
                 enqPos = 0;
                 this.startPos = 0;
+
+                this.Refresh();
             }
         }
 
@@ -223,9 +225,9 @@ namespace RTGraph
                     }
                 }
                 outBm.UnlockBits(bmpData);
-            }
 
-            this.Refresh();
+                this.Refresh();
+            }
         }
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
