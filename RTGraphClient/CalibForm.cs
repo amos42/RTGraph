@@ -34,7 +34,7 @@ namespace RTGraph
         private void CalChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(() => {
-                rtGraphChartControl1.AddValueLine(comm.calData, 0, 1024);
+                rtGraphChartControl1.AddValueLine(-1, comm.calData, 0, 1024);
             }));
         }
 

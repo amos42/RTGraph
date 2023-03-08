@@ -32,7 +32,7 @@ namespace RTGraph
             this.Invoke(new Action(() => {
                 if (e.Type == 10)
                 {
-                    chart1.AddValueLine(e.Packet.data, 2, e.Packet.data.Length - 2);
+                    chart1.AddValueLine(-1, e.Packet.data, 2, e.Packet.data.Length - 2);
                 }
 
                 if (logForm != null) logForm.AddItem(1, null, e.Packet.data);

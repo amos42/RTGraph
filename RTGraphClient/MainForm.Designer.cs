@@ -45,7 +45,6 @@ namespace RTGraph
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.parametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startCaptureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chart1 = new RTGraph.RTGraphChartControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +66,7 @@ namespace RTGraph
             this.toolStripDropDownButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1040, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1040, 31);
             this.toolStrip1.TabIndex = 12;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -80,7 +79,7 @@ namespace RTGraph
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 24);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 28);
             this.toolStripDropDownButton1.Text = "Open";
             // 
             // openToolStripMenuItem
@@ -128,35 +127,37 @@ namespace RTGraph
             this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
             this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSplitButton1.Name = "toolStripSplitButton1";
-            this.toolStripSplitButton1.Size = new System.Drawing.Size(136, 24);
-            this.toolStripSplitButton1.Text = "Continue Mode";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(169, 28);
+            this.toolStripSplitButton1.Text = "Start Capture (Cont.)";
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // continueModeToolStripMenuItem
             // 
             this.continueModeToolStripMenuItem.Checked = true;
             this.continueModeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continueModeToolStripMenuItem.Name = "continueModeToolStripMenuItem";
-            this.continueModeToolStripMenuItem.Size = new System.Drawing.Size(200, 26);
+            this.continueModeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.continueModeToolStripMenuItem.Text = "Continue Mode";
+            this.continueModeToolStripMenuItem.Click += new System.EventHandler(this.continueModeToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem
             // 
             this.triggerModeToolStripMenuItem.Name = "triggerModeToolStripMenuItem";
-            this.triggerModeToolStripMenuItem.Size = new System.Drawing.Size(200, 26);
+            this.triggerModeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.triggerModeToolStripMenuItem.Text = "Trigger Mode";
+            this.triggerModeToolStripMenuItem.Click += new System.EventHandler(this.triggerModeToolStripMenuItem_Click);
             // 
             // toolStripDropDownButton2
             // 
             this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.parametersToolStripMenuItem,
-            this.calibrationToolStripMenuItem,
-            this.startCaptureToolStripMenuItem});
+            this.calibrationToolStripMenuItem});
             this.toolStripDropDownButton2.Enabled = false;
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 24);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 28);
             this.toolStripDropDownButton2.Text = "More Actions...";
             // 
             // parametersToolStripMenuItem
@@ -173,13 +174,6 @@ namespace RTGraph
             this.calibrationToolStripMenuItem.Text = "Calibration";
             this.calibrationToolStripMenuItem.Click += new System.EventHandler(this.calibrationToolStripMenuItem_Click);
             // 
-            // startCaptureToolStripMenuItem
-            // 
-            this.startCaptureToolStripMenuItem.Name = "startCaptureToolStripMenuItem";
-            this.startCaptureToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
-            this.startCaptureToolStripMenuItem.Text = "Start Capture";
-            this.startCaptureToolStripMenuItem.Click += new System.EventHandler(this.startCaptureToolStripMenuItem_Click);
-            // 
             // chart1
             // 
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -187,7 +181,7 @@ namespace RTGraph
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.Color.Black;
             this.chart1.BorderLineWidth = 2;
-            this.chart1.BufferCount = 100;
+            this.chart1.BufferCount = 80;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
             this.chart1.Location = new System.Drawing.Point(6, 32);
@@ -234,7 +228,6 @@ namespace RTGraph
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem parametersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem startCaptureToolStripMenuItem;
     }
 }
 

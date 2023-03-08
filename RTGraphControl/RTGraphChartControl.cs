@@ -172,7 +172,29 @@ namespace RTGraph
             }
         }
 
-        public void AddValueLine(byte[] values, int startIdx, int length)
+        public void Clear()
+        {
+            if (outBm != null)
+            {
+                Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                for (int i = 0; i < outBm.Height; i++)
+                {
+                    var ptr = IntPtr.Add(bmpData.Scan0, bmpData.Stride * i);
+                    for (int j = 0; j < outBm.Height; j++)
+                    {
+                        Marshal.WriteByte(ptr, j, 0);
+                    }
+                }
+                outBm.UnlockBits(bmpData);
+
+                validPos = enqPos;
+                enqPos = 0;
+                this.startPos = 0;
+            }
+        }
+
+        public void AddValueLine(int idx, byte[] values, int startIdx, int length)
         {
             if (this.values != null)
             {
@@ -185,15 +207,22 @@ namespace RTGraph
             {
                 Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
                 BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
-                outBm.UnlockBits(bmpData);
-                validPos = enqPos;
-                enqPos++;
-                if (enqPos >= bufferCount)
+                if (idx >= 0)
                 {
-                    enqPos = 0;
-                    this.startPos++;
+                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * idx), length);
+                } 
+                else
+                {
+                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
+                    validPos = enqPos;
+                    enqPos++;
+                    if (enqPos >= bufferCount)
+                    {
+                        enqPos = 0;
+                        this.startPos++;
+                    }
                 }
+                outBm.UnlockBits(bmpData);
             }
 
             this.Refresh();
