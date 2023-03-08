@@ -181,7 +181,7 @@ namespace RTGraph
                 for (int i = 0; i < outBm.Height; i++)
                 {
                     var ptr = IntPtr.Add(bmpData.Scan0, bmpData.Stride * i);
-                    for (int j = 0; j < outBm.Height; j++)
+                    for (int j = 0; j < outBm.Width; j++)
                     {
                         Marshal.WriteByte(ptr, j, 0);
                     }
@@ -190,6 +190,7 @@ namespace RTGraph
 
                 validPos = enqPos;
                 enqPos = 0;
+                valueCnt = 0;
                 this.startPos = 0;
 
                 this.Refresh();
@@ -203,7 +204,6 @@ namespace RTGraph
                 length = Math.Min(this.values.Length, Math.Min(length, values.Length - startIdx));
                 Array.Copy(values, startIdx, this.values, 0, length);
             }
-            valueCnt++;
 
             if (outBm != null)
             {
@@ -215,6 +215,7 @@ namespace RTGraph
                 } 
                 else
                 {
+                    valueCnt++;
                     Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
                     validPos = enqPos;
                     enqPos++;
@@ -236,24 +237,17 @@ namespace RTGraph
             e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-            float borderStartX = START_COORD_POS + GraphMargin.Left + borderLineWidth / 2;
-            float borderStartY = START_COORD_POS + GraphMargin.Top + borderLineWidth / 2;
-            int borderWidth = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - borderLineWidth;
-            int borderHeight = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top) - borderLineWidth;
-
-            float startX = START_COORD_POS + GraphMargin.Left + borderLineWidth;
-            float startY = START_COORD_POS + GraphMargin.Top + borderLineWidth;
-            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - borderLineWidth * 2;
-            int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top) - borderLineWidth * 2;
+            float startX = START_COORD_POS + GraphMargin.Left;
+            float startY = START_COORD_POS + GraphMargin.Top;
+            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right);
+            int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top);
 
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
             {
                 height = graphAreaMinHeight;
-                borderHeight = graphAreaMinHeight - borderLineWidth;
                 if (startY + height >= this.ClientSize.Height)
                 {
-                    startY = this.ClientSize.Height - height;
-                    borderStartY = this.ClientSize.Height - borderHeight + borderLineWidth / 2;
+                    startY = this.ClientSize.Height - height - borderLineWidth * 2;
                 }
             }
 
@@ -273,6 +267,11 @@ namespace RTGraph
                     e.Graphics.DrawImage(outBm, new RectangleF(startX-errorTerm, START_COORD_POS, width+errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
+
+            float borderStartX = startX - borderLineWidth / 2;
+            float borderStartY = startY - borderLineWidth / 2;
+            int borderWidth = width + borderLineWidth;
+            int borderHeight = height + borderLineWidth;
 
             var areaPen = new Pen(Color.LightGray, borderLineWidth);
             e.Graphics.DrawRectangle(areaPen, borderStartX, borderStartY, borderWidth, borderHeight);

@@ -116,7 +116,20 @@ namespace RTGraph
                 }
                 else if (e.Type == 10)
                 {
-                    chart1.AddValueLine(-1, e.Packet.data, 2, e.Packet.data.Length - 2);
+                    if (continusMode)
+                    {
+                        if (e.Packet.Option == 0x2) { 
+                            chart1.AddValueLine(-1, e.Packet.data, 2, e.Packet.data.Length - 2);
+                        }
+                    } 
+                    else
+                    {
+                        if (e.Packet.Option == 0x3)
+                        {
+                            int idx = (short)(e.Packet.data[0] | ((int)e.Packet.data[1] << 8));
+                            chart1.AddValueLine(idx, e.Packet.data, 2, e.Packet.data.Length - 2);
+                        }
+                    }
                 }
             }));
         }
@@ -249,6 +262,7 @@ namespace RTGraph
             {
                 toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
             }
+            chart1.Clear();
         }
     }
 }
