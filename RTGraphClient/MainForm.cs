@@ -15,7 +15,7 @@ namespace RTGraph
     public partial class MainForm : Form
     {
         private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
-        private bool continusMode = true;
+        private int continusMode = 0;
 
         public MainForm()
         {
@@ -73,37 +73,19 @@ namespace RTGraph
 
         private void setGraphDrawMode(RTGraphParameterTriggerSource triggerSource)
         {
-            if (!continusMode && triggerSource == RTGraphParameterTriggerSource.ImageTrigger)
+            if (continusMode != 0 && triggerSource == RTGraphParameterTriggerSource.ImageTrigger)
             {
-                continusMode = true;
-                continueModeToolStripMenuItem.Checked = true;
-                triggerModeToolStripMenuItem.Checked = false;
-                var modestr = continusMode ? "Cont." : "Trig.";
-                var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
-                if (v == CheckState.Unchecked)
-                {
-                    toolStripSplitButton1.Text = $"Start Capture ({modestr})";
-                }
-                else
-                {
-                    toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
-                }
+                continusMode = 0;
+                continuesToolStripMenuItem.Checked = true;
+                triggerModeToolStripMenuItem1.Checked = false;
+                toolStripDropDownButton4.Text = "Continues Mode";
             }
-            else if (continusMode && triggerSource == RTGraphParameterTriggerSource.ExternalTrigger)
+            else if (continusMode != 1 && triggerSource == RTGraphParameterTriggerSource.ExternalTrigger)
             {
-                continusMode = false;
-                continueModeToolStripMenuItem.Checked = false;
-                triggerModeToolStripMenuItem.Checked = true;
-                var modestr = continusMode ? "Cont." : "Trig.";
-                var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
-                if (v == CheckState.Unchecked)
-                {
-                    toolStripSplitButton1.Text = $"Start Capture ({modestr})";
-                }
-                else
-                {
-                    toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
-                }
+                continusMode = 1;
+                continuesToolStripMenuItem.Checked = false;
+                triggerModeToolStripMenuItem1.Checked = true;
+                toolStripDropDownButton4.Text = "Trigger Mode";
                 chart1.Clear();
             }
         }
@@ -114,15 +96,17 @@ namespace RTGraph
             {
                 toolStripButton3.Text = "Disconnect";
                 toolStripButton3.Checked = true;
-                toolStripSplitButton1.Enabled = true;
                 toolStripDropDownButton2.Enabled = true;
-            } 
+                toolStripDropDownButton3.Enabled = true;
+                toolStripDropDownButton4.Enabled = true;
+            }
             else
             {
                 toolStripButton3.Text = "Cconnect";
                 toolStripButton3.Checked = false;
-                toolStripSplitButton1.Enabled = false;
                 toolStripDropDownButton2.Enabled = false;
+                toolStripDropDownButton3.Enabled = false;
+                toolStripDropDownButton4.Enabled = false;
             }
 
         }
@@ -141,13 +125,13 @@ namespace RTGraph
                 }
                 else if (e.Type == 10)
                 {
-                    if (continusMode)
+                    if (continusMode == 0)
                     {
                         if (e.Packet.Option == 0x2) { 
                             chart1.AddValueLine(-1, e.Packet.data, 2, e.Packet.data.Length - 2);
                         }
                     } 
-                    else
+                    else if (continusMode == 1)
                     {
                         if (e.Packet.Option == 0x3)
                         {
@@ -231,36 +215,27 @@ namespace RTGraph
             new CalibForm(comm).ShowDialog();
         }
 
-        private void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
+        private void startGrabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var v = (toolStripSplitButton1.Tag != null) ? (CheckState)toolStripSplitButton1.Tag : CheckState.Unchecked;
-            var modestr = continusMode ? "Cont." : "Trig.";
-            if (v == CheckState.Unchecked)
-            {
-                comm.StartCapture();
-
-                toolStripSplitButton1.Text = $"Stop Capture ({modestr})";
-                toolStripSplitButton1.Tag = CheckState.Checked;
-            }
-            else
-            {
-                comm.StopCapture();
-
-                toolStripSplitButton1.Text = $"Start Capture ({modestr})";
-                toolStripSplitButton1.Tag = CheckState.Unchecked;
-            }
+            comm.StartCapture();
         }
 
-        private void continueModeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void stopGrabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger) { 
+            comm.StopCapture();
+        }
+
+        private void continuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger)
+            {
                 var param = comm.camParam.Clone() as RTGraphParameter;
                 param.TriggerSource = RTGraphParameterTriggerSource.ImageTrigger;
                 comm.ApplyParam(param);
             }
         }
 
-        private void triggerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void triggerModeToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ExternalTrigger)
             {
