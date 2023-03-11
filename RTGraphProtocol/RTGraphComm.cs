@@ -27,13 +27,18 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
-        public bool connected = false;
-        public RTGraphParameter tempCamParam = null;
-        public RTGraphParameter camParam = new RTGraphParameter();
-        public byte[] calData = new byte[1024];
+        public bool Connected { get; set; } = false;
+        public RTGraphParameter DeviceParameter { get; set; } = new RTGraphParameter();
+        public byte[] CalibrationData { get; set; } = new byte[1024];
 
+        // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
+        private RTGraphParameter pendingParam = null;
+
+        // 패킷을 받았을 때 발생
         public event PacketReceivedEventHandler PacketReceived;
+        // Calibration 값이 변경되었을 때 발생
         public event EventHandler CalibrationChanged;
+        // 통신 상태가 변경되었을 때 발생
         public event EventHandler StateChanged;
 
         public RTGraphComm()
@@ -68,12 +73,12 @@ namespace RTGraphProtocol
                         if (result)
                         {
                             type = 1;
-                            connected = true;
+                            Connected = true;
                             RaiseStateEvent();
 
                             if (packet.data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
                             {
-                                camParam.Parse(packet.data, 1);
+                                DeviceParameter.Parse(packet.data, 1);
                             }
                         }
                     }
@@ -84,7 +89,7 @@ namespace RTGraphProtocol
                         if (result)
                         {
                             type = 2;
-                            connected = false;
+                            Connected = false;
                         }
                     }
                 }
@@ -96,19 +101,19 @@ namespace RTGraphProtocol
                     if (packet.Option == 0x00)
                     {
                         // default
-                        camParam.Parse(packet.data);
+                        DeviceParameter.Parse(packet.data);
                     }
                     else if (packet.Option == 0x01)
                     {
                         // Load
-                        camParam.Parse(packet.data);
+                        DeviceParameter.Parse(packet.data);
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
                         // apply, save success
                         if (packet.data?[0] == 0)
                         {
-                            camParam.Assign(tempCamParam);
+                            DeviceParameter.Assign(pendingParam);
                         }
                     }
                 }
@@ -119,12 +124,12 @@ namespace RTGraphProtocol
                 {
                     if (packet.Option == 0x00)
                     {
-                        Array.Copy(packet.data, calData, 1024);
+                        Array.Copy(packet.data, CalibrationData, 1024);
                         RaiseCalEvent();
                     }
                     else if (packet.Option == 0x01)
                     {
-                        Array.Copy(packet.data, calData, 1024);
+                        Array.Copy(packet.data, CalibrationData, 1024);
                         RaiseCalEvent();
                     }
                 }
@@ -228,8 +233,8 @@ namespace RTGraphProtocol
 
         public void ApplyParam(RTGraphParameter camParam, bool isSave = false)
         {
-            tempCamParam = camParam.Clone() as RTGraphParameter;
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, tempCamParam.serialize());
+            pendingParam = camParam.Clone() as RTGraphParameter;
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, pendingParam.serialize());
         }
 
         public void ApplyCalibration(bool isSave, bool calEnable)

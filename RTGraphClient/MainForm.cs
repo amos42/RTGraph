@@ -26,7 +26,7 @@ namespace RTGraph
         {
             comm.ErrorEvent += new ErrorEventHandler(CommError);
             comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
-            comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
+            comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
 
             var cfg = new ConfigUtil("network");
             var hostIP = cfg.GetValue("HostIP");
@@ -37,15 +37,13 @@ namespace RTGraph
             if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
             if (!String.IsNullOrEmpty(recvPort)) comm.RecvPort = Int32.Parse(recvPort);
 
-            //SocketOpenBtn_Click(this, new EventArgs());
-            openToolStripMenuItem_Click(this, new EventArgs());
-            //comm.OpenComm();
+            DeviceCommOpen(true);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             comm.ErrorEvent -= new ErrorEventHandler(CommError);
-            comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
+            comm.DeviceParameter.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
             comm.CloseComm();
         }
 
@@ -60,13 +58,13 @@ namespace RTGraph
         {
             if (e.PropertyName == nameof(RTGraphParameter.Level)) {
                 this.Invoke(new Action(() => {
-                    chart1.TriggerValue = comm.camParam.Level;
+                    chart1.TriggerValue = comm.DeviceParameter.Level;
                 }));
             } 
             else if (e.PropertyName == nameof(RTGraphParameter.TriggerSource))
             {
                 this.Invoke(new Action(() => {
-                    setGraphDrawMode(comm.camParam.TriggerSource);
+                    setGraphDrawMode(comm.DeviceParameter.TriggerSource);
                 }));
             }
         }
@@ -90,12 +88,62 @@ namespace RTGraph
             }
         }
 
-        private void ConnectProcess(bool connected)
+        private void DeviceCommOpen(bool isOpen)
+        {
+            if (isOpen)
+            {
+                comm.OpenComm();
+
+                toolStripButton3.Enabled = true;
+
+                toolStripDropDownButton1.Image = Properties.Resources.on;
+                openToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                comm.CloseComm();
+
+                toolStripButton3.Enabled = false;
+                SetConnectState(false);
+
+                toolStripDropDownButton1.Image = Properties.Resources.off;
+                openToolStripMenuItem.Checked = false;
+            }
+        }
+
+        private void DeviceConnect(int connectState)
+        {
+            if (connectState == 1)
+            {
+                comm.Connect();
+
+                toolStripButton3.Text = "Cconnecting...";
+                toolStripButton3.CheckState = CheckState.Indeterminate;
+
+                timer1.Start();
+            }
+            else if (connectState == 2)
+            {
+                SetConnectState(true);
+
+                timer1.Stop();
+            }
+            else
+            {
+                comm.Disconnect();
+
+                SetConnectState(false);
+
+                timer1.Stop();
+            }
+        }
+
+        private void SetConnectState(bool connected)
         {
             if (connected)
             {
                 toolStripButton3.Text = "Disconnect";
-                toolStripButton3.Checked = true;
+                toolStripButton3.CheckState = CheckState.Checked;
                 toolStripDropDownButton2.Enabled = true;
                 toolStripDropDownButton3.Enabled = true;
                 toolStripDropDownButton4.Enabled = true;
@@ -103,7 +151,7 @@ namespace RTGraph
             else
             {
                 toolStripButton3.Text = "Cconnect";
-                toolStripButton3.Checked = false;
+                toolStripButton3.CheckState = CheckState.Unchecked;
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton3.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
@@ -117,11 +165,11 @@ namespace RTGraph
                 if (e.Type == 1)
                 {
                     timer1.Stop();
-                    ConnectProcess(true);
+                    SetConnectState(true);
                 }
                 else if (e.Type == 2)
                 {
-                    ConnectProcess(false);
+                    SetConnectState(false);
                 }
                 else if (e.Type == 10)
                 {
@@ -146,34 +194,16 @@ namespace RTGraph
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Stop();
-            if (!comm.connected)
+            if (!comm.Connected)
             {
                 MessageBox.Show("장치로부터 응답이 없습니다.");
-                toolStripButton3_Click(this, new EventArgs());
+                DeviceConnect(0);
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!openToolStripMenuItem.Checked)
-            {
-                comm.OpenComm();
-
-                toolStripButton3.Enabled = true;
-
-                toolStripDropDownButton1.Image = Properties.Resources.on;
-                openToolStripMenuItem.Checked = true;
-            }
-            else
-            {
-                comm.CloseComm();
-
-                toolStripButton3.Enabled = false;
-                ConnectProcess(false);
-
-                toolStripDropDownButton1.Image = Properties.Resources.off;
-                openToolStripMenuItem.Checked = false;
-            }
+            DeviceCommOpen(!openToolStripMenuItem.Checked);
         }
 
         private void settingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -189,19 +219,11 @@ namespace RTGraph
         {
             if (toolStripButton3.CheckState == CheckState.Unchecked)
             {
-                comm.Connect();
-
-                toolStripButton3.Text = "Cconnecting...";
-                toolStripButton3.CheckState = CheckState.Indeterminate;
-
-                timer1.Start();
+                DeviceConnect(1);
             }
-            else
+            else if (toolStripButton3.CheckState == CheckState.Checked)
             {
-                comm.Disconnect();
-
-                toolStripButton3.Text = "Connect";
-                toolStripButton3.Checked = false;
+                DeviceConnect(0);
             }
         }
 
@@ -227,9 +249,9 @@ namespace RTGraph
 
         private void continuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger)
+            if (comm.DeviceParameter.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger)
             {
-                var param = comm.camParam.Clone() as RTGraphParameter;
+                var param = comm.DeviceParameter.Clone() as RTGraphParameter;
                 param.TriggerSource = RTGraphParameterTriggerSource.ImageTrigger;
                 comm.ApplyParam(param);
             }
@@ -237,9 +259,9 @@ namespace RTGraph
 
         private void triggerModeToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (comm.camParam.TriggerSource != RTGraphParameterTriggerSource.ExternalTrigger)
+            if (comm.DeviceParameter.TriggerSource != RTGraphParameterTriggerSource.ExternalTrigger)
             {
-                var param = comm.camParam.Clone() as RTGraphParameter;
+                var param = comm.DeviceParameter.Clone() as RTGraphParameter;
                 param.TriggerSource = RTGraphParameterTriggerSource.ExternalTrigger;
                 comm.ApplyParam(param);
             }

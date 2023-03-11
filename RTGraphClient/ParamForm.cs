@@ -30,13 +30,13 @@ namespace RTGraph
 
         private void ParamForm_Load(object sender, EventArgs e)
         {
-            this.comm.camParam.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
-            ParamToUI(this.comm.camParam);
+            this.comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
+            ParamToUI(this.comm.DeviceParameter);
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.comm.camParam.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
+            this.comm.DeviceParameter.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
         }
 
         private void ParamToUI(RTGraphParameter camParam)
@@ -87,7 +87,7 @@ namespace RTGraph
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Invoke(new Action(() => {
-                ParamToUI(comm.camParam);
+                ParamToUI(comm.DeviceParameter);
             }));
         }
 

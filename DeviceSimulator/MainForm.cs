@@ -44,7 +44,7 @@ namespace DeviceSimulator
                         applyTimer();
 
                         var data = new byte[27 + 1];
-                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(data, 1));
+                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.serialize(data, 1));
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
@@ -69,7 +69,7 @@ namespace DeviceSimulator
                 {
                     if (packet.Option == 0x01 || packet.Option == 0x00)
                     {
-                        packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize());
+                        packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.serialize());
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
@@ -77,11 +77,11 @@ namespace DeviceSimulator
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
-                        comm.camParam.Parse(packet.data);
+                        comm.DeviceParameter.Parse(packet.data);
                         if (packet.Option == 0x02)
                         {
                             var cfg = new ConfigUtil("camParam");
-                            cfg.SetAllValues(comm.camParam);
+                            cfg.SetAllValues(comm.DeviceParameter);
                             cfg.Save();
                         }
                     }
@@ -177,15 +177,15 @@ namespace DeviceSimulator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            propertyGrid1.SelectedObject = comm.camParam;
-            comm.camParam.PropertyChanged += new PropertyChangedEventHandler(propertyGrid1_SelectedGridPropertyChanged);
+            propertyGrid1.SelectedObject = comm.DeviceParameter;
+            comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(propertyGrid1_SelectedGridPropertyChanged);
 
             endPtrDic = new Dictionary<IPEndPoint, bool>();
 
             socketOpen(true);
 
             var cfg = new ConfigUtil("camParam");
-            cfg.GetAllValues(comm.camParam);
+            cfg.GetAllValues(comm.DeviceParameter);
         }
 
         private void addLogItem(int direction, string message, byte[] byteData = null)
