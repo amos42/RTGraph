@@ -200,7 +200,7 @@ namespace RTGraph
             get { return start; }
             set
             {
-                if (start != value)
+                if (start != value && start >= 0 && start < 1024)
                 {
                     start = value;
                     OnPropertyChanged();
@@ -214,7 +214,7 @@ namespace RTGraph
             get { return size; }
             set
             {
-                if (size != value)
+                if (size != value && size >= 0 && size < 1024)
                 {
                     size = value;
                     OnPropertyChanged();

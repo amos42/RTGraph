@@ -127,11 +127,21 @@ namespace RTGraph
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
+            if (trackBar1.Value > trackBar2.Value)
+            {
+                trackBar1.Value = trackBar2.Value;
+            }
+
             numStart.Value = trackBar1.Value;
         }
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
+            if (trackBar1.Value > trackBar2.Value)
+            {
+                trackBar2.Value = trackBar1.Value;
+            }
+
             numSize.Value = trackBar2.Value;
         }
     }

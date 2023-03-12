@@ -103,7 +103,7 @@ namespace RTGraph
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripButton3
             // 
@@ -112,14 +112,14 @@ namespace RTGraph
             this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(70, 24);
+            this.toolStripButton3.Size = new System.Drawing.Size(70, 28);
             this.toolStripButton3.Text = "Connect";
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripDropDownButton3
             // 
@@ -131,20 +131,20 @@ namespace RTGraph
             this.toolStripDropDownButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton3.Image")));
             this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            this.toolStripDropDownButton3.Size = new System.Drawing.Size(65, 24);
+            this.toolStripDropDownButton3.Size = new System.Drawing.Size(65, 28);
             this.toolStripDropDownButton3.Text = "Grab...";
             // 
             // startGrabToolStripMenuItem
             // 
             this.startGrabToolStripMenuItem.Name = "startGrabToolStripMenuItem";
-            this.startGrabToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.startGrabToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
             this.startGrabToolStripMenuItem.Text = "Start Grab";
             this.startGrabToolStripMenuItem.Click += new System.EventHandler(this.startGrabToolStripMenuItem_Click);
             // 
             // stopGrabToolStripMenuItem
             // 
             this.stopGrabToolStripMenuItem.Name = "stopGrabToolStripMenuItem";
-            this.stopGrabToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.stopGrabToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
             this.stopGrabToolStripMenuItem.Text = "Stop Grab";
             this.stopGrabToolStripMenuItem.Click += new System.EventHandler(this.stopGrabToolStripMenuItem_Click);
             // 
@@ -166,14 +166,14 @@ namespace RTGraph
             this.continuesToolStripMenuItem.Checked = true;
             this.continuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continuesToolStripMenuItem.Name = "continuesToolStripMenuItem";
-            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
             this.continuesToolStripMenuItem.Text = "Continueous mode";
             this.continuesToolStripMenuItem.Click += new System.EventHandler(this.continuesToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem1
             // 
             this.triggerModeToolStripMenuItem1.Name = "triggerModeToolStripMenuItem1";
-            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(223, 26);
             this.triggerModeToolStripMenuItem1.Text = "Trigger mode";
             this.triggerModeToolStripMenuItem1.Click += new System.EventHandler(this.triggerModeToolStripMenuItem1_Click);
             // 
@@ -187,7 +187,7 @@ namespace RTGraph
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 24);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 28);
             this.toolStripDropDownButton2.Text = "More Actions...";
             // 
             // parametersToolStripMenuItem
@@ -214,6 +214,7 @@ namespace RTGraph
             this.chart1.BufferCount = 80;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
+            this.chart1.ValuesCount = 1;
             this.chart1.Location = new System.Drawing.Point(6, 32);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chart1.Name = "chart1";
@@ -221,6 +222,7 @@ namespace RTGraph
             this.chart1.StartPos = 0;
             this.chart1.TabIndex = 5;
             this.chart1.TriggerValue = 0;
+            this.chart1.ValueCount = 1024;
             // 
             // MainForm
             // 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,11 +15,16 @@ namespace RTGraph
     public partial class CalibForm : Form
     {
         private RTGraphComm comm;
+        private Queue<byte[]> queue = new Queue<byte[]>(5);
+        private int[] sums = new int[1024];
 
         public CalibForm(RTGraphComm comm)
         {
             this.comm = comm;
             InitializeComponent();
+
+            chart1.ValuesCount = 2;
+            //chart1.Values[1].GraphColor = Color.
         }
 
         private void CalibForm_Load(object sender, EventArgs e)
@@ -34,7 +40,33 @@ namespace RTGraph
         private void CalChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(() => {
-                rtGraphChartControl1.AddValueLine(-1, comm.CalibrationData, 0, 1024);
+                chart1.AddValueLine(-1, comm.CalibrationData, 0, 1024);
+
+                var curr = comm.CalibrationData.Clone() as byte[];
+                for (int i = 0; i < 1024; i++)
+                {
+                    sums[i] += curr[i];
+                }
+
+                queue.Enqueue(curr);
+                int cnt = queue.Count;
+
+                if (cnt > 5)
+                {
+                    var last = queue.Dequeue();
+                    for (int i = 0; i < 1024; i++)
+                    {
+                        sums[i] -= last[i];
+                    }
+                    cnt--;
+                }
+
+                for (int i = 0; i < 1024; i++)
+                {
+                    chart1.Values[1].Items[i] = (byte)(sums[i] / cnt);
+                }
+
+                chart1.Refresh();
             }));
         }
 

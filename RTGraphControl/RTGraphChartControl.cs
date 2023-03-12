@@ -74,8 +74,58 @@ namespace RTGraph
             }
         }
 
+        private int valueCount = 1024;
+        public int ValueCount
+        {
+            get { return valueCount; }
+            set
+            {
+                if (value != valueCount && value > 0)
+                {
+                    valueCount = value;
+                    Values.ForEach(items => {
+                        items.SetSize(value);
+                    });
+                    enqPos = 0;
+                    startPos = 0;
+                    genImage();
+                    this.Refresh();
+                }
+            }
+        }
+
         private int valueCnt = 0;
-        private byte[] values = null;
+        //private byte[] values = null;
+
+        public List<GraphItem> Values { get; } = new List<GraphItem>();
+
+        public int ValuesCount {
+            get { return Values.Count; }
+            set
+            {
+                if (value != Values.Count && value > 1)
+                {
+                    if (value > Values.Count)
+                    {
+                        int cnt = value - Values.Count;
+                        for (int i = 0; i < cnt; i++)
+                        {
+                            Values.Add(new GraphItem(valueCount));
+                        }
+                    } 
+                    else
+                    {
+                        int cnt = Values.Count - value;
+                        for (int i = 0; i < cnt; i++)
+                        {
+                            Values.RemoveAt(value);
+                        }
+                    }
+                    this.Refresh();
+                }
+            }
+        }
+
         //public byte[] Values {
         //    get { return values; }
         //    set {
@@ -115,7 +165,7 @@ namespace RTGraph
         {
             if (bufferCount > 0)
             {
-                outBm = new Bitmap(1024, bufferCount, PixelFormat.Format8bppIndexed);
+                outBm = new Bitmap(valueCount, bufferCount, PixelFormat.Format8bppIndexed);
                 var pal = outBm.Palette;
                 for (int i = 0; i < pal.Entries.Length; i++)
                 {
@@ -133,41 +183,25 @@ namespace RTGraph
         {
             InitializeComponent();
 
-            //byte[] xx = new byte[1024 * 256 * 3];
-            //for (int i = 0; i < xx.Length; i++)
-            //{
-            //    xx[i] = (byte)(i & 0xff);
-            //}
-
             genImage();
 
-            //Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-            //BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-            //Marshal.Copy(xx, 0, bmpData.Scan0, 1024*250);
-
-            //outBm.UnlockBits(bmpData);
-
-            this.values = new byte[1024];
+            this.Values.Add(new GraphItem(valueCount, Color.Blue, Color.Lime));
 
             BackColor = Color.Black;
         }
 
-        public void SetValuesCap(int size)
+        public void SetValuesCapacity(int size)
         {
-            if (values?.Length != size)
+            int cnt = 0;
+            this.Values.ForEach(items =>
             {
-                values = new byte[size];
-                Array.Clear(values, 0, size);
-                this.Refresh();
-            }
-        }
-
-        public void SetValuesLines(int size)
-        {
-            if (values?.Length != size)
+                if (items.SetSize(size) == true)
+                {
+                    cnt++;
+                }
+            });
+            if(cnt > 0)
             {
-                values = new byte[size];
-                Array.Clear(values, 0, size);
                 this.Refresh();
             }
         }
@@ -199,10 +233,12 @@ namespace RTGraph
 
         public void AddValueLine(int idx, byte[] values, int startIdx, int length)
         {
-            if (this.values != null)
+            int curIndex = 0;
+
+            if (this.Values[curIndex]?.Items != null)
             {
-                length = Math.Min(this.values.Length, Math.Min(length, values.Length - startIdx));
-                Array.Copy(values, startIdx, this.values, 0, length);
+                length = Math.Min(this.Values[curIndex].Items.Length, Math.Min(length, values.Length - startIdx));
+                Array.Copy(values, startIdx, this.Values[curIndex].Items, 0, length);
             }
 
             if (outBm != null)
@@ -229,6 +265,19 @@ namespace RTGraph
 
                 this.Refresh();
             }
+        }
+
+        public void SetValueLine(int idx, byte[] values, int startIdx, int length)
+        {
+            if (idx >= this.Values.Count) return;
+
+            if (this.Values[idx]?.Items != null)
+            {
+                length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
+                Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+            }
+
+            this.Refresh();
         }
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
@@ -279,26 +328,26 @@ namespace RTGraph
             width--; height--;
             float graphBaseY = startY + height;
 
-            if (this.values != null)
+            this.Values.ForEach(items =>
             {
-                float oldV = graphBaseY - this.values[0] * height / 255;
-                int cnt = this.values.Length;
-                for (int i = 1; i < cnt; i++)
+                if (items.Items != null)
                 {
-                    float v = graphBaseY - this.values[i] * height / 255;
-                    Pen pen;
-                    if (triggerValue > 0 && values[i] > triggerValue)
+                    var gpen = new Pen(items.GraphColor, items.LineWidth);
+                    var tpen = new Pen(items.TriggerColor, items.LineWidth);
+
+                    float oldV = graphBaseY - items.Items[0] * height / 255;
+                    int cnt = items.Items.Length;
+                    for (int i = 1; i < cnt; i++)
                     {
-                        pen = Pens.Lime;
-                    } 
-                    else
-                    {
-                        pen = Pens.Blue;
+                        float v = graphBaseY - items.Items[i] * height / 255;
+                        Pen pen;
+                        pen = (triggerValue > 0 && items.Items[i] > triggerValue) ? tpen : gpen;
+                        e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
+                        oldV = v;
                     }
-                    e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
-                    oldV = v;
                 }
-            }
+            });
+
             if (TriggerValue > 0) {
                 float v2 = graphBaseY - TriggerValue * height / 255;
                 var trigPen = new Pen(Color.Red, 1);
@@ -314,6 +363,80 @@ namespace RTGraph
         }
     }
 
+    public class GraphItem
+    {
+        private byte[] items = null;
+        public byte[] Items
+        {
+            get { return items; }
+        }
+
+        public int Size
+        {
+            get { return items != null ? items.Length : 0; }
+            set
+            {
+                if (value > 0 && (items == null || value != items.Length))
+                {
+                    items = new byte[value];
+                } 
+                else
+                {
+                    items = null;
+                }
+            }
+        }
+
+        public Color GraphColor { get; set; } = Color.White;
+        public Color TriggerColor { get; set; } = Color.Red;
+        public int LineWidth { get; set; } = 1;
+
+        public bool SetSize(int size, bool isClear = true)
+        {
+            bool result = false;
+            if (size > 0)
+            {
+                if (Items == null || size != Items.Length)
+                {
+                    items = new byte[size];
+                    if (isClear)
+                    {
+                        Array.Clear(Items, 0, size);
+                    }
+                    result = true;
+                }
+            }
+            else
+            {
+                if (size != Items?.Length)
+                {
+                    result = true;
+                }
+                items = null;
+            }
+            return result;
+        }
+
+        public GraphItem(int size, Color graphColor, Color triggerColor, int lineWidth = 1)
+        {
+            SetSize(size);
+            GraphColor = graphColor;
+            TriggerColor = triggerColor;
+            LineWidth = lineWidth;
+        }
+
+        public GraphItem(Color graphColor, Color triggerColor, int lineWidth = 1) : this(0, graphColor, triggerColor, lineWidth)
+        {            
+        }
+
+        public GraphItem(int size) : this(size, Color.White, Color.Red)
+        {
+        }
+
+        public GraphItem() : this(0, Color.White, Color.Red)
+        {
+        }
+    };
 
 }
 
