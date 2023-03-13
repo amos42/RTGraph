@@ -77,10 +77,10 @@ namespace DeviceSimulator
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
-                        comm.DeviceParameter.Parse(packet.data);
+                        comm.DeviceParameter.Parse(packet.Data);
                         if (packet.Option == 0x02)
                         {
-                            var cfg = new ConfigUtil("camParam");
+                            var cfg = new AppConfig("camParam");
                             cfg.SetAllValues(comm.DeviceParameter);
                             cfg.Save();
                         }
@@ -107,7 +107,7 @@ namespace DeviceSimulator
                     else if (packet.Option == 0x01)
                     {
                         var data = new byte[1024];
-                        var cfg = new ConfigUtil("calibration");
+                        var cfg = new AppConfig("calibration");
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
@@ -149,7 +149,7 @@ namespace DeviceSimulator
             if (foward)
             {
                 packet.SubClass = PacketSubClass.RES;
-                packet.data = new byte[1] { 0x00 }; // of 0xFF
+                packet.Data = new byte[1] { 0x00 }; // of 0xFF
                 comm.SendPacket(packet, e.TargetIPEndPoint);
             }
         }
@@ -169,7 +169,7 @@ namespace DeviceSimulator
             else
             {
                 comm.CloseComm();
-                comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
+                comm.PacketReceived -= ReceivePacket;
                 SocketOpenBtn.Text = "Socket Open";
                 SocketOpenBtn.Tag = null;
             }
@@ -184,7 +184,7 @@ namespace DeviceSimulator
 
             socketOpen(true);
 
-            var cfg = new ConfigUtil("camParam");
+            var cfg = new AppConfig("camParam");
             cfg.GetAllValues(comm.DeviceParameter);
         }
 

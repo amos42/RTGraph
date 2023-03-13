@@ -62,10 +62,11 @@ namespace RTGraphProtocol
                     {
                         // 연결
                         bool result;
-                        if (packet.data?.Length > 0)
+                        if (packet.Data?.Length > 0)
                         {
-                            result = packet.data[0] == 0;
-                        } else
+                            result = packet.Data[0] == 0;
+                        } 
+                        else
                         {
                             result = true;
                         }
@@ -76,16 +77,16 @@ namespace RTGraphProtocol
                             Connected = true;
                             RaiseStateEvent();
 
-                            if (packet.data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
+                            if (packet.Data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
                             {
-                                DeviceParameter.Parse(packet.data, 1);
+                                DeviceParameter.Parse(packet.Data, 1);
                             }
                         }
                     }
                     else if (packet.Option == 0x00)
                     {
                         // 연결 종료
-                        bool result = packet.data[0] == 0;
+                        bool result = packet.Data[0] == 0;
                         if (result)
                         {
                             type = 2;
@@ -101,17 +102,17 @@ namespace RTGraphProtocol
                     if (packet.Option == 0x00)
                     {
                         // default
-                        DeviceParameter.Parse(packet.data);
+                        DeviceParameter.Parse(packet.Data);
                     }
                     else if (packet.Option == 0x01)
                     {
                         // Load
-                        DeviceParameter.Parse(packet.data);
+                        DeviceParameter.Parse(packet.Data);
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
                         // apply, save success
-                        if (packet.data?[0] == 0)
+                        if (packet.Data?[0] == 0)
                         {
                             DeviceParameter.Assign(pendingParam);
                         }
@@ -124,12 +125,12 @@ namespace RTGraphProtocol
                 {
                     if (packet.Option == 0x00)
                     {
-                        Array.Copy(packet.data, CalibrationData, 1024);
+                        Array.Copy(packet.Data, CalibrationData, 1024);
                         RaiseCalEvent();
                     }
                     else if (packet.Option == 0x01)
                     {
-                        Array.Copy(packet.data, CalibrationData, 1024);
+                        Array.Copy(packet.Data, CalibrationData, 1024);
                         RaiseCalEvent();
                     }
                 }

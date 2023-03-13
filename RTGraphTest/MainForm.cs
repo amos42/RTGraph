@@ -32,10 +32,10 @@ namespace RTGraph
             this.Invoke(new Action(() => {
                 if (e.Type == 10)
                 {
-                    chart1.AddValueLine(-1, e.Packet.data, 2, e.Packet.data.Length - 2);
+                    chart1.AddValueLine(-1, e.Packet.Data, 2, e.Packet.Data.Length - 2);
                 }
 
-                if (logForm != null) logForm.AddItem(1, null, e.Packet.data);
+                if (logForm != null) logForm.AddItem(1, null, e.Packet.Data);
             }));
 
         }
@@ -62,7 +62,7 @@ namespace RTGraph
             else
             {
                 comm.CloseComm();
-                comm.PacketReceived -= new PacketReceivedEventHandler(ReceivePacket);
+                comm.PacketReceived -= ReceivePacket;
                 SocketOpenBtn.Text = "Socket Open";
                 SocketOpenBtn.Tag = null;
                 panel1.Enabled = false;

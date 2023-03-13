@@ -35,7 +35,7 @@ namespace RTGraph
             comm.SendPort = Int32.Parse(textBox2.Text);
             comm.RecvPort = Int32.Parse(textBox3.Text);
 
-            var cfg = new ConfigUtil("network");
+            var cfg = new AppConfig("network");
             cfg.SetValue("HostIP", comm.HostIP);
             cfg.SetValue("SendPort", comm.SendPort.ToString());
             cfg.SetValue("RecvPort", comm.RecvPort.ToString());

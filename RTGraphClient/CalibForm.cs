@@ -34,7 +34,7 @@ namespace RTGraph
 
         private void CalibForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            comm.CalibrationChanged -= new EventHandler(CalChanged);
+            comm.CalibrationChanged -= CalChanged;
         }
 
         private void CalChanged(object sender, EventArgs e)

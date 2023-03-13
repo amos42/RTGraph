@@ -36,7 +36,7 @@ namespace RTGraph
         public PacketSubClass SubClass;
         public PacketClassBit Control;
         public int Option;
-        public byte[] data = null;
+        public byte[] Data = null;
         //public CamParam camParam = null;
 
         public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option, byte[] data = null)
@@ -45,7 +45,7 @@ namespace RTGraph
             this.SubClass = SubClass;
             this.Control = Control;
             this.Option = Option;
-            this.data = data;
+            this.Data = data;
         }
 
         public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option/*, CamParam camParam*/)
@@ -73,10 +73,10 @@ namespace RTGraph
                 //}
                 //else
                 //{
-                    data = new byte[len];
+                    Data = new byte[len];
                     for (int i = 0; i < len; i++)
                     {
-                        data[i] = packet[6 + i];
+                        Data[i] = packet[6 + i];
                     }
                 //}
             } 
@@ -85,9 +85,9 @@ namespace RTGraph
         public byte[] serialize(byte[] packet = null)
         {
             int len = 0;
-            if(data != null)
+            if(Data != null)
             {
-                len += data.Length;
+                len += Data.Length;
             }
             //if(camParam != null)
             //{
@@ -106,11 +106,11 @@ namespace RTGraph
             packet[4] = (byte)(len & 0xff);
             packet[5] = (byte)(len >> 8);
 
-            if (data != null)
+            if (Data != null)
             {
                 for (int i = 0; i < len; i++)
                 {
-                    packet[6 + i] = data[i];
+                    packet[6 + i] = Data[i];
                 }
             }
             //if (camParam != null)

@@ -8,19 +8,19 @@ using System.IO;
 
 namespace RTGraphProtocol
 {
-    public class UDPCommventArgs : EventArgs
+    public class StreamReceivedEventArgs : EventArgs
     {
-        public byte[] stream { get; set; }
+        public byte[] Stream { get; set; }
         public IPEndPoint TargetIPEndPoint {get; set;} = null;
 
-        public UDPCommventArgs(byte[] stream, IPEndPoint targetEP = null) 
+        public StreamReceivedEventArgs(byte[] stream, IPEndPoint targetEP = null) 
         {
-            this.stream = stream;
+            this.Stream = stream;
             this.TargetIPEndPoint = targetEP;
         }
     }
 
-    public delegate void UDPCommEventHandler(object sender, UDPCommventArgs e);
+    public delegate void StreamReceivedEventHandler(object sender, StreamReceivedEventArgs e);
 
     public class UDPComm
     {
@@ -31,7 +31,7 @@ namespace RTGraphProtocol
         public int RecvPort { get; set; } = 0;
 
         public event ErrorEventHandler ErrorEvent;
-        public event UDPCommEventHandler StreamReceivedEvent;
+        public event StreamReceivedEventHandler StreamReceivedEvent;
 
         protected UdpClient udpClient;
         protected UdpClient udpSender = null;
@@ -52,7 +52,7 @@ namespace RTGraphProtocol
         {
             if (StreamReceivedEvent != null)
             {
-                StreamReceivedEvent(this, new UDPCommventArgs(stream, targetIPEndPoint));
+                StreamReceivedEvent(this, new StreamReceivedEventArgs(stream, targetIPEndPoint));
             }
         }
 

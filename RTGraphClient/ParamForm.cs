@@ -36,7 +36,7 @@ namespace RTGraph
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.comm.DeviceParameter.PropertyChanged -= new PropertyChangedEventHandler(ParameterChanged);
+            this.comm.DeviceParameter.PropertyChanged -= ParameterChanged;
         }
 
         private void ParamToUI(RTGraphParameter camParam)

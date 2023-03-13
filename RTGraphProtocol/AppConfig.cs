@@ -5,13 +5,13 @@ using System.Text;
 
 namespace RTGraphProtocol
 {
-    public class ConfigUtil
+    public class AppConfig
     {
         private string prefix = null;
         private Configuration config;
         private KeyValueConfigurationCollection cfgCollection;
 
-        public ConfigUtil(string prefix = null)
+        public AppConfig(string prefix = null)
         {
             this.config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             this.cfgCollection = config.AppSettings.Settings;
