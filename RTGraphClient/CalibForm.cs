@@ -40,7 +40,7 @@ namespace RTGraph
         private void CalChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(() => {
-                chart1.AddValueLine(-1, comm.CalibrationData, 0, 1024);
+                chart1.SetValueLine(0, comm.CalibrationData, 0, 1024);
 
                 var curr = comm.CalibrationData.Clone() as byte[];
                 for (int i = 0; i < 1024; i++)

@@ -176,15 +176,15 @@ namespace RTGraph
                     if (continusMode == 0)
                     {
                         if (e.Packet.Option == 0x2) { 
-                            chart1.AddValueLine(-1, e.Packet.Data, 2, e.Packet.Data.Length - 2);
+                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2);
                         }
                     } 
                     else if (continusMode == 1)
                     {
                         if (e.Packet.Option == 0x3)
                         {
-                            int idx = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                            chart1.AddValueLine(idx, e.Packet.Data, 2, e.Packet.Data.Length - 2);
+                            int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos);
                         }
                     }
                 }

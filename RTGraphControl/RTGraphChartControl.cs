@@ -95,7 +95,6 @@ namespace RTGraph
         }
 
         private int valueCnt = 0;
-        //private byte[] values = null;
 
         public List<GraphItem> Values { get; } = new List<GraphItem>();
 
@@ -125,14 +124,6 @@ namespace RTGraph
                 }
             }
         }
-
-        //public byte[] Values {
-        //    get { return values; }
-        //    set {
-        //        values = value;
-        //        this.Refresh();
-        //    }
-        //}
 
         Padding graphMargin = new Padding(10, 100, 10, 100);
         public Padding GraphMargin {
@@ -231,23 +222,23 @@ namespace RTGraph
             }
         }
 
-        public void AddValueLine(int idx, byte[] values, int startIdx, int length)
+        public void SetValueLine(int idx, byte[] values, int startIdx, int length, int pos = -1)
         {
-            int curIndex = 0;
+            if (idx >= this.Values.Count) return;
 
-            if (this.Values[curIndex]?.Items != null)
+            if (this.Values[idx]?.Items != null)
             {
-                length = Math.Min(this.Values[curIndex].Items.Length, Math.Min(length, values.Length - startIdx));
-                Array.Copy(values, startIdx, this.Values[curIndex].Items, 0, length);
+                length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
+                Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
             }
 
-            if (outBm != null)
+            if (idx == 0 && outBm != null)
             {
                 Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
                 BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                if (idx >= 0)
+                if (pos >= 0)
                 {
-                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * idx), length);
+                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
                 } 
                 else
                 {
@@ -265,19 +256,6 @@ namespace RTGraph
 
                 this.Refresh();
             }
-        }
-
-        public void SetValueLine(int idx, byte[] values, int startIdx, int length)
-        {
-            if (idx >= this.Values.Count) return;
-
-            if (this.Values[idx]?.Items != null)
-            {
-                length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
-                Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
-            }
-
-            this.Refresh();
         }
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
