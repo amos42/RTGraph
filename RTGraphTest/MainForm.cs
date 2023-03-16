@@ -30,7 +30,7 @@ namespace RTGraph
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
             this.Invoke(new Action(() => {
-                if (e.Type == 10)
+                if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
                 {
                     chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2);
                 }
