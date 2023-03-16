@@ -43,10 +43,10 @@ namespace RTGraph
         {
             try
             {
-                comboBox1.SelectedIndex = (int)camParam.ImageSelector;
-                comboBox2.SelectedIndex = (int)camParam.TriggerSource;
+                cboImageSelect.SelectedIndex = (int)camParam.ImageSelector;
+                cboTriggerSource.SelectedIndex = (int)camParam.TriggerSource;
                 // numExposureTime.Value = (int)camParam.ExposureLevel; // 현재 사용 안 함
-                comboBox3.SelectedIndex = (int)camParam.LineScanRate;
+                cboLineScanRate.SelectedIndex = (int)camParam.LineScanRate;
                 comboBox4.SelectedIndex = (int)camParam.GainLevel;
                 numTde.Value = camParam.TDE;
                 numTch.Value = camParam.TCH;
@@ -54,10 +54,10 @@ namespace RTGraph
                 numTre2.Value = camParam.TRE2;
                 numTsl.Value = camParam.TSL;
                 numTpw.Value = camParam.TPW;
-                numStart.Value = camParam.ROIStart;
-                numSize.Value = camParam.ROIEnd;
-                numLevel.Value = camParam.ThresholdLevel;
-                numMinSize.Value = camParam.ThresholdWidth;
+                numRoiStart.Value = camParam.ROIStart;
+                numRoiEnd.Value = camParam.ROIEnd;
+                numThresholdLevel.Value = camParam.ThresholdLevel;
+                numThresholdWidth.Value = camParam.ThresholdWidth;
             } 
             catch(Exception ex)
             {
@@ -67,10 +67,10 @@ namespace RTGraph
 
         private void UIToParam(RTGraphParameter camParam)
         {
-            camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)comboBox1.SelectedIndex;
+            camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)cboImageSelect.SelectedIndex;
             // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)comboBox2.SelectedIndex; // 현재 세팅 불가
             // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)numExposureTime.Value; // 현재 사용 안 함
-            camParam.LineScanRate = (RTGraphParameter.LineScanRateEnum)comboBox3.SelectedIndex;
+            camParam.LineScanRate = (RTGraphParameter.LineScanRateEnum)cboLineScanRate.SelectedIndex;
             camParam.GainLevel = (RTGraphParameter.GainLevelEnum)comboBox4.SelectedIndex;
             camParam.TDE = (UInt16)numTde.Value;
             camParam.TCH = (UInt16)numTch.Value;
@@ -78,10 +78,10 @@ namespace RTGraph
             camParam.TRE2 = (UInt16)numTre2.Value;
             camParam.TSL = (UInt16)numTsl.Value;
             camParam.TPW = (UInt16)numTpw.Value;
-            camParam.ROIStart = (UInt16)numStart.Value;
-            camParam.ROIEnd = (UInt16)numSize.Value;
-            camParam.ThresholdLevel = (byte)numLevel.Value;
-            camParam.ThresholdWidth = (UInt16)numMinSize.Value;
+            camParam.ROIStart = (UInt16)numRoiStart.Value;
+            camParam.ROIEnd = (UInt16)numRoiEnd.Value;
+            camParam.ThresholdLevel = (byte)numThresholdLevel.Value;
+            camParam.ThresholdWidth = (UInt16)numThresholdWidth.Value;
         }
 
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
@@ -110,36 +110,36 @@ namespace RTGraph
 
         private void numStart_ValueChanged(object sender, EventArgs e)
         {
-            trackBar1.Value = (int)numStart.Value;
+            trkRoiStart.Value = (int)numRoiStart.Value;
             timer1.Stop();
             timer1.Start();
         }
 
         private void numSize_ValueChanged(object sender, EventArgs e)
         {
-            trackBar2.Value = (int)numSize.Value;
+            trkRoiEnd.Value = (int)numRoiEnd.Value;
             timer1.Stop();
             timer1.Start();
         }
 
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        private void trkRoiStart_ValueChanged(object sender, EventArgs e)
         {
-            if (trackBar1.Value > trackBar2.Value)
+            if (trkRoiStart.Value > trkRoiEnd.Value)
             {
-                trackBar1.Value = trackBar2.Value;
+                trkRoiStart.Value = trkRoiEnd.Value;
             }
 
-            numStart.Value = trackBar1.Value;
+            numRoiStart.Value = trkRoiStart.Value;
         }
 
-        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        private void trkRoiEnd_ValueChanged(object sender, EventArgs e)
         {
-            if (trackBar1.Value > trackBar2.Value)
+            if (trkRoiStart.Value > trkRoiEnd.Value)
             {
-                trackBar2.Value = trackBar1.Value;
+                trkRoiEnd.Value = trkRoiStart.Value;
             }
 
-            numSize.Value = trackBar2.Value;
+            numRoiEnd.Value = trkRoiEnd.Value;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
