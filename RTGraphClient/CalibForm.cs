@@ -40,6 +40,7 @@ namespace RTGraph
             chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
 
             comm.RequesCalibration(); // load
+            checkBox1.Checked = comm.DeviceParameter.CalibrationEnable; 
         }
 
         private void CalibForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -130,5 +131,14 @@ namespace RTGraph
             comm.ApplyCalibration(chart1.Values[2].Items, false, checkBox1.Checked);
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked != comm.DeviceParameter.CalibrationEnable)
+            {
+                var param = new RTGraphParameter();
+                param.CalibrationEnable = checkBox1.Checked;
+                comm.ApplyParam(param, false, RTGraphParameter.MASK_GROUP_4);
+            }
+        }
     }
 }

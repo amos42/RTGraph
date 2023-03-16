@@ -96,6 +96,7 @@ namespace RTGraph
             // 
             // checkBox1
             // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(15, 291);
             this.checkBox1.Name = "checkBox1";
@@ -103,6 +104,7 @@ namespace RTGraph
             this.checkBox1.TabIndex = 17;
             this.checkBox1.Text = "Calibration Enable";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // chart1
             // 
