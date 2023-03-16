@@ -8,7 +8,7 @@ namespace RTGraph
         CONN = 0x11,
         PARAM = 0x20,
         CAL = 0x30,
-        CAPTURE = 0x40
+        GRAB = 0x40
     }
 
     public enum PacketSubClass

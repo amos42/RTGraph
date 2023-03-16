@@ -138,7 +138,6 @@ namespace RTGraph
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(1013, 487);
-            this.chart1.StartPos = 0;
             this.chart1.TabIndex = 5;
             this.chart1.TriggerValue = -1;
             // 

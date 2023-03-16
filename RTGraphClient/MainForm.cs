@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RTGraphProtocol;
+using static RTGraphProtocol.PacketReceivedEventArgs;
 
 namespace RTGraph
 {
@@ -56,9 +57,9 @@ namespace RTGraph
 
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(RTGraphParameter.Level)) {
+            if (e.PropertyName == nameof(RTGraphParameter.ThresholdLevel)) {
                 this.Invoke(new Action(() => {
-                    chart1.TriggerValue = comm.DeviceParameter.Level;
+                    chart1.TriggerValue = comm.DeviceParameter.ThresholdLevel;
                 }));
             } 
             else if (e.PropertyName == nameof(RTGraphParameter.TriggerSource))
@@ -69,16 +70,16 @@ namespace RTGraph
             }
         }
 
-        private void setGraphDrawMode(RTGraphParameterTriggerSource triggerSource)
+        private void setGraphDrawMode(RTGraphParameter.TriggerSourceEnum triggerSource)
         {
-            if (continusMode != 0 && triggerSource == RTGraphParameterTriggerSource.ImageTrigger)
+            if (continusMode != 0 && triggerSource == RTGraphParameter.TriggerSourceEnum.ImageTrigger)
             {
                 continusMode = 0;
                 continuesToolStripMenuItem.Checked = true;
                 triggerModeToolStripMenuItem1.Checked = false;
                 toolStripDropDownButton4.Text = "Continues Mode";
             }
-            else if (continusMode != 1 && triggerSource == RTGraphParameterTriggerSource.ExternalTrigger)
+            else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
                 continusMode = 1;
                 continuesToolStripMenuItem.Checked = false;
@@ -162,16 +163,16 @@ namespace RTGraph
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
             this.Invoke(new Action(() => {
-                if (e.Type == 1)
+                if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
                 {
                     timer1.Stop();
                     SetConnectState(true);
                 }
-                else if (e.Type == 2)
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
                 {
                     SetConnectState(false);
                 }
-                else if (e.Type == 10)
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
                 {
                     if (continusMode == 0)
                     {
@@ -249,21 +250,17 @@ namespace RTGraph
 
         private void continuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comm.DeviceParameter.TriggerSource != RTGraphParameterTriggerSource.ImageTrigger)
+            if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ImageTrigger)
             {
-                var param = comm.DeviceParameter.Clone() as RTGraphParameter;
-                param.TriggerSource = RTGraphParameterTriggerSource.ImageTrigger;
-                comm.ApplyParam(param);
+                comm.ChangeGrapMode(0);
             }
         }
 
         private void triggerModeToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (comm.DeviceParameter.TriggerSource != RTGraphParameterTriggerSource.ExternalTrigger)
+            if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
-                var param = comm.DeviceParameter.Clone() as RTGraphParameter;
-                param.TriggerSource = RTGraphParameterTriggerSource.ExternalTrigger;
-                comm.ApplyParam(param);
+                comm.ChangeGrapMode(1);
             }
         }
     }

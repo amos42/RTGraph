@@ -67,7 +67,7 @@ namespace RTGraph
                 {
                     bufferCount = value;
                     enqPos = 0;
-                    startPos = 0;
+                    //startPos = 0;
                     genImage();
                     this.Refresh();
                 }
@@ -87,7 +87,7 @@ namespace RTGraph
                         items.SetSize(value);
                     });
                     enqPos = 0;
-                    startPos = 0;
+                    //startPos = 0;
                     genImage();
                     this.Refresh();
                 }
@@ -135,18 +135,18 @@ namespace RTGraph
             } 
         }
 
-        private int startPos = 0;
-        public int StartPos
-        {
-            get { return startPos; }
-            set {
-                if (startPos != value)
-                {
-                    startPos = value;
-                    this.Refresh();
-                }
-            }
-        }
+        //private int startPos = 0;
+        //public int StartPos
+        //{
+        //    get { return startPos; }
+        //    set {
+        //        if (startPos != value)
+        //        {
+        //            startPos = value;
+        //            this.Refresh();
+        //        }
+        //    }
+        //}
 
         private Bitmap outBm = null;
         private int enqPos = 0;
@@ -216,7 +216,7 @@ namespace RTGraph
                 validPos = enqPos;
                 enqPos = 0;
                 valueCnt = 0;
-                this.startPos = 0;
+                //this.startPos = 0;
 
                 this.Refresh();
             }
@@ -249,7 +249,7 @@ namespace RTGraph
                     if (enqPos >= bufferCount)
                     {
                         enqPos = 0;
-                        this.startPos++;
+                        //this.startPos++;
                     }
                 }
                 outBm.UnlockBits(bmpData);

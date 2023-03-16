@@ -130,7 +130,6 @@ namespace RTGraph
             this.chart1.Location = new System.Drawing.Point(1, 2);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(866, 271);
-            this.chart1.StartPos = 0;
             this.chart1.TabIndex = 0;
             this.chart1.TriggerValue = 0;
             this.chart1.ValueCount = 1024;

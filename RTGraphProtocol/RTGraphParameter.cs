@@ -2,59 +2,113 @@
 using System.ComponentModel;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace RTGraph
 {
-    public enum RTGraphParameterImageSelector
-    {
-        RealImage,
-        VerticalTestImage,
-        HorizontalTestImage
-    }
-
-    public enum RTGraphParameterTriggerSource
-    {
-        ImageTrigger,
-        ExternalTrigger
-    }
-
     public class RTGraphParameter : INotifyPropertyChanged, ICloneable
     {
-        public const int PARAMETERS_PACKET_SIZE = 27;
+        public enum ImageSelectorEnum
+        {
+            RealImage,
+            HorizontalPattern,
+            VerticalPattern,
+            ImageStop
+        }
+
+        public enum TriggerSourceEnum
+        {
+            ImageTrigger,
+            ExternalTrigger
+        }
+
+        public enum ExposureLevelEnum
+        {
+            Level1_10,
+            Level1_20,
+            Level1_30,
+            Level1_40,
+            Level1_50,
+            Level1_60,
+            Level1_70,
+            Level1_80,
+            Level1_90,
+            Level1_100
+        }
+
+        public enum LineScanRateEnum
+        {
+            ScanRate_30000_LPS,
+            ScanRate_25000_LPS,
+            ScanRate_20000_LPS,
+            ScanRate_15000_LPS,
+            ScanRate_10000_LPS,
+            ScanRate_5000_LPS,
+            ScanRate_2500_LPS
+        }
+
+        public enum GainLevelEnum
+        {
+            GainLevel_0,
+            GainLevel_1,
+            GainLevel_2,
+            GainLevel_3,
+            GainLevel_4,
+            GainLevel_5,
+            GainLevel_6,
+            GainLevel_7
+        }
+
+        public const int MASK_GROUP_1 = 0x01;
+        public const int MASK_GROUP_2 = 0x02;
+        public const int MASK_GROUP_3 = 0x04;
+        public const int MASK_GROUP_4 = 0x08;
+        public const int MASK_GROUP_ALL = MASK_GROUP_1 | MASK_GROUP_2 | MASK_GROUP_3 | MASK_GROUP_4;
+
+        private int group_1_refCnt = 0;
+        private int group_2_refCnt = 0;
+        private int group_3_refCnt = 0;
+        private int group_4_refCnt = 0;
+
+        public const int PARAMETERS_PACKET_SIZE = 25;
 
         // camera setting			
-        private RTGraphParameterImageSelector image_selector = RTGraphParameterImageSelector.RealImage;
-        private RTGraphParameterTriggerSource trigger_source = RTGraphParameterTriggerSource.ImageTrigger;
-        private byte exposure_time = 100;
-        private short line_rate = 0;
-        private short gain = 0;  // 감도			
+        private ImageSelectorEnum image_selector = ImageSelectorEnum.RealImage;
+        private TriggerSourceEnum trigger_source = TriggerSourceEnum.ImageTrigger;
+        private ExposureLevelEnum exposure_level = 0;
+        private LineScanRateEnum line_scan_rate = 0;
+        private GainLevelEnum gain_level = 0;  // 감도			
 
         // trigger timing
-        private short rch = 0;
-        private short tre1 = 0;
-        private short tre2 = 0;
-        private short tsl = 0;
-        private short tde = 0;
-        private short twd = 0;
+        private UInt16 tde = 0;
+        private UInt16 tch = 0;
+        private UInt16 tre1 = 0;
+        private UInt16 tre2 = 0;
+        private UInt16 tsl = 0;
+        private UInt16 tpw = 0;
 
         // detect condition			
-        private short start = 0;
-        private short size = 0;
-        private short level = 0;
-        private short min_size = 0;
+        private UInt16 roi_start = 0; // 0 ~ 1023
+        private UInt16 roi_end = 0; // 0 ~ 1023
+        private byte threshold_level = 0; // 0 ~ 255
+        private UInt16 threshold_width = 0; // 1 ~ 1024
+
+        // calibration
+        private bool calibration_enable;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         // camera setting			
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("real image, vertical test image, horizontal test image")]
         [RefreshProperties(RefreshProperties.All)]
-        public RTGraphParameterImageSelector ImageSelector { 
+        public ImageSelectorEnum ImageSelector { 
             get { return image_selector; }
             set {
                 if (image_selector != value)
                 {
                     image_selector = value;
+                    group_1_refCnt++;
                     OnPropertyChanged();
                 }
             } 
@@ -62,112 +116,63 @@ namespace RTGraph
 
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("image tirgger or external trigger")]
         [RefreshProperties(RefreshProperties.All)]
-        public RTGraphParameterTriggerSource TriggerSource
+        public TriggerSourceEnum TriggerSource
         {
             get { return trigger_source; }
             set {
                 if (trigger_source != value) {
                     trigger_source = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Camera Setting"), DescriptionAttribute("100 <= time <= 255")]
-        public byte ExposureTime
-        {
-            get { return exposure_time; }
-            set
-            {
-                if (exposure_time != value && value >= 100 && value <= 255)
-                {
-                    exposure_time = value;
+                    group_1_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Camera Setting")]
-        public short LineRate
+        public ExposureLevelEnum ExposureLevel
         {
-            get { return line_rate; }
+            get { return exposure_level; }
             set
             {
-                if (line_rate != value) {
-                    line_rate = value;
+                if (exposure_level != value)
+                {
+                    exposure_level = value;
+                    group_1_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Camera Setting")]
+        public LineScanRateEnum LineScanRate
+        {
+            get { return line_scan_rate; }
+            set
+            {
+                if (line_scan_rate != value) {
+                    line_scan_rate = value;
+                    group_1_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Camera Setting"), DescriptionAttribute("감도")]
-        public short Gain
+        public GainLevelEnum GainLevel
         {
-            get { return gain; }
+            get { return gain_level; }
             set
             {
-                if (gain != value) {
-                    gain = value;
+                if (gain_level != value) {
+                    gain_level = value;
+                    group_1_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Trigger Timing")]
-        public short RCH
-        {
-            get { return rch; }
-            set
-            {
-                if (rch != value) {
-                    rch = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Trigger Timing")]
-        public short TRE1
-        {
-            get { return tre1; }
-            set
-            {
-                if (tre1 != value) {
-                    tre1 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Trigger Timing")]
-        public short TRE2
-        {
-            get { return tre2; }
-            set
-            {
-                if (tre2 != value) {
-                    tre2 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Trigger Timing")]
-        public short TSL
-        {
-            get { return tsl; }
-            set
-            {
-                if (tsl != value)
-                {
-                    tsl = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Trigger Timing")]
-        public short TDE
+        public UInt16 TDE
         {
             get { return tde; }
             set
@@ -175,87 +180,165 @@ namespace RTGraph
                 if (tde != value)
                 {
                     tde = value;
+                    group_2_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Trigger Timing")]
-        public short TWD
+        public UInt16 TCH
         {
-            get { return twd; }
+            get { return tch; }
             set
             {
-                if (twd != value)
+                if (tch != value) {
+                    tch = value;
+                    group_2_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public UInt16 TRE1
+        {
+            get { return tre1; }
+            set
+            {
+                if (tre1 != value) {
+                    tre1 = value;
+                    group_2_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public UInt16 TRE2
+        {
+            get { return tre2; }
+            set
+            {
+                if (tre2 != value) {
+                    tre2 = value;
+                    group_2_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public UInt16 TSL
+        {
+            get { return tsl; }
+            set
+            {
+                if (tsl != value)
                 {
-                    twd = value;
+                    tsl = value;
+                    group_2_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Trigger Timing")]
+        public UInt16 TPW
+        {
+            get { return tpw; }
+            set
+            {
+                if (tpw != value)
+                {
+                    tpw = value;
+                    group_2_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Detect Condition")]
-        public short Start
+        public UInt16 ROIStart
         {
-            get { return start; }
+            get { return roi_start; }
             set
             {
-                if (start != value && start >= 0 && start < 1024)
+                if (roi_start != value && roi_start >= 0 && roi_start < 1024)
                 {
-                    start = value;
+                    roi_start = value;
+                    group_3_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Detect Condition")]
-        public short Size
+        public UInt16 ROIEnd
         {
-            get { return size; }
+            get { return roi_end; }
             set
             {
-                if (size != value && size >= 0 && size < 1024)
+                if (roi_end != value && roi_end >= 0 && roi_end < 1024)
                 {
-                    size = value;
+                    roi_end = value;
+                    group_3_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Detect Condition")]
-        public short Level
+        public byte ThresholdLevel
         {
-            get { return level; }
+            get { return threshold_level; }
             set
             {
-                if (level != value)
+                if (threshold_level != value)
                 {
-                    level = value;
+                    threshold_level = value;
+                    group_3_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
         [CategoryAttribute("Detect Condition")]
-        public short MinSize
+        public UInt16 ThresholdWidth
         {
-            get { return min_size; }
+            get { return threshold_width; }
             set
             {
-                if (min_size != value)
+                if (threshold_width != value)
                 {
-                    min_size = value;
+                    threshold_width = value;
+                    group_3_refCnt++;
                     OnPropertyChanged();
                 }
             }
         }
 
-        private static short getShortValu(byte[] packet, int startIdx)
+        [CategoryAttribute("Calibration")]
+        public bool CalibrationEnable
         {
-            return (short)(packet[startIdx] | ((int)packet[startIdx + 1] << 8));
+            get { return calibration_enable; }
+            set
+            {
+                if (calibration_enable != value)
+                {
+                    calibration_enable = value;
+                    group_4_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        private static void setShortValue(byte[] packet, int startIdx, short value)
+        private static UInt16 getUInt16Value(byte[] packet, int startIdx)
+        {
+            return (UInt16)(packet[startIdx] | ((UInt16)packet[startIdx + 1] << 8));
+        }
+
+        private static void setUInt16Value(byte[] packet, int startIdx, UInt16 value)
         {
             packet[startIdx] = (byte)(value & 0xff);
             packet[startIdx + 1] = (byte)(value >> 8);
@@ -278,67 +361,95 @@ namespace RTGraph
         {
             ImageSelector = src.image_selector;
             TriggerSource = src.trigger_source;
-            ExposureTime = src.exposure_time;
-            LineRate = src.line_rate;
-            Gain = src.gain;
-            RCH = src.rch;
+            ExposureLevel = src.exposure_level;
+            LineScanRate = src.line_scan_rate;
+            GainLevel = src.gain_level;
+            TDE = src.tde;
+            TCH = src.tch;
             TRE1 = src.tre1;
             TRE2 = src.tre2;
             TSL = src.tsl;
-            TDE = src.tde;
-            TWD = src.twd;
-            Start = src.start;
-            Size = src.size;
-            Level = src.level;
-            MinSize = src.min_size;
+            TPW = src.tpw;
+            ROIStart = src.roi_start;
+            ROIEnd = src.roi_end;
+            ThresholdLevel = src.threshold_level;
+            ThresholdWidth = src.threshold_width;
+            CalibrationEnable = src.calibration_enable;
         }
 
-        public void Parse(byte[] packet, int startIdx = 0)
+        public void Parse(byte[] packet, int startIdx = 0, int groupMask = MASK_GROUP_ALL)
         {
             if (packet.Length - startIdx >= PARAMETERS_PACKET_SIZE)
             {
-                ImageSelector = (RTGraphParameterImageSelector)packet[startIdx + 0];
-                TriggerSource = (RTGraphParameterTriggerSource)packet[startIdx + 1];
-                ExposureTime = packet[startIdx + 2];
-                LineRate = getShortValu(packet, startIdx + 3);
-                Gain = getShortValu(packet, startIdx + 5);
-                RCH = getShortValu(packet, startIdx + 7);
-                TRE1 = getShortValu(packet, startIdx + 9);
-                TRE2 = getShortValu(packet, startIdx + 11);
-                TSL = getShortValu(packet, startIdx + 13);
-                TDE = getShortValu(packet, startIdx + 15);
-                TWD = getShortValu(packet, startIdx + 17);
-                Start = getShortValu(packet, startIdx + 19);
-                Size = getShortValu(packet, startIdx + 21);
-                Level = getShortValu(packet, startIdx + 23);
-                MinSize = getShortValu(packet, startIdx + 25);
+                if ((groupMask & MASK_GROUP_1) != 0)
+                {
+                    ImageSelector = (ImageSelectorEnum)packet[startIdx + 0];
+                    TriggerSource = (TriggerSourceEnum)packet[startIdx + 1];
+                    ExposureLevel = (ExposureLevelEnum)packet[startIdx + 2];
+                    LineScanRate = (LineScanRateEnum)packet[startIdx + 3];
+                    GainLevel = (GainLevelEnum)packet[startIdx + 4];
+                }
+                if ((groupMask & MASK_GROUP_2) != 0)
+                {
+                    TDE = getUInt16Value(packet, startIdx + 5);
+                    TCH = getUInt16Value(packet, startIdx + 7);
+                    TRE1 = getUInt16Value(packet, startIdx + 9);
+                    TRE2 = getUInt16Value(packet, startIdx + 11);
+                    TSL = getUInt16Value(packet, startIdx + 13);
+                    TPW = getUInt16Value(packet, startIdx + 15);
+                }
+                if ((groupMask & MASK_GROUP_3) != 0)
+                {
+                    ROIStart = getUInt16Value(packet, startIdx + 17);
+                    ROIEnd = getUInt16Value(packet, startIdx + 19);
+                    ThresholdLevel = packet[startIdx + 21];
+                    ThresholdWidth = getUInt16Value(packet, startIdx + 22);
+                }
+                if ((groupMask & MASK_GROUP_4) != 0)
+                {
+                    CalibrationEnable = packet[startIdx + 24] != 0;
+                }
             }
         }
 
-        public byte[] serialize(byte[] packet = null, int startIdx = 0)
+        public byte[] serialize(byte[] packet = null, int startIdx = 0, int groupMask = MASK_GROUP_ALL)
         {
             if (packet == null)
             {
-                packet = new byte[PARAMETERS_PACKET_SIZE];
+                packet = new byte[startIdx + PARAMETERS_PACKET_SIZE];
             }
 
             if (packet.Length - startIdx >= PARAMETERS_PACKET_SIZE)
             {
-                packet[startIdx + 0] = (byte)image_selector;
-                packet[startIdx + 1] = (byte)trigger_source;
-                packet[startIdx + 2] = exposure_time;
-                setShortValue(packet, startIdx + 3, line_rate);
-                setShortValue(packet, startIdx + 5, gain);
-                setShortValue(packet, startIdx + 7, rch);
-                setShortValue(packet, startIdx + 9, tre1);
-                setShortValue(packet, startIdx + 11, tre2);
-                setShortValue(packet, startIdx + 13, tsl);
-                setShortValue(packet, startIdx + 15, tde);
-                setShortValue(packet, startIdx + 17, twd);
-                setShortValue(packet, startIdx + 19, start);
-                setShortValue(packet, startIdx + 21, size);
-                setShortValue(packet, startIdx + 23, level);
-                setShortValue(packet, startIdx + 25, min_size);
+                if ((groupMask & MASK_GROUP_1) != 0)
+                {
+                    packet[startIdx + 0] = (byte)image_selector;
+                    packet[startIdx + 1] = (byte)trigger_source;
+                    packet[startIdx + 2] = (byte)exposure_level;
+                    packet[startIdx + 3] = (byte)line_scan_rate;
+                    packet[startIdx + 4] = (byte)gain_level;
+                }
+                if ((groupMask & MASK_GROUP_2) != 0)
+                {
+                    setUInt16Value(packet, startIdx + 5, tde);
+                    setUInt16Value(packet, startIdx + 7, tch);
+                    setUInt16Value(packet, startIdx + 9, tre1);
+                    setUInt16Value(packet, startIdx + 11, tre2);
+                    setUInt16Value(packet, startIdx + 13, tsl);
+                    setUInt16Value(packet, startIdx + 15, tpw);
+                }
+                if ((groupMask & MASK_GROUP_3) != 0)
+                {
+
+                    setUInt16Value(packet, startIdx + 17, roi_start);
+                    setUInt16Value(packet, startIdx + 19, roi_end);
+                    packet[startIdx + 21] = threshold_level;
+                    setUInt16Value(packet, startIdx + 22, threshold_width);
+                }
+                if ((groupMask & MASK_GROUP_4) != 0)
+                {
+                    packet[startIdx + 24] = (byte)(calibration_enable ? 1 : 0);
+                }
             }
 
             return packet;

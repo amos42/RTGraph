@@ -4,17 +4,29 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using RTGraph;
+using static RTGraphProtocol.PacketReceivedEventArgs;
+using static RTGraph.RTGraphParameter;
 
 namespace RTGraphProtocol
 {
     public class PacketReceivedEventArgs : EventArgs
     {
+        public enum ReceiveTypeEnum
+        {
+            Dummy,
+            Connected,
+            Disconnected,
+            GrabDataReceivced,
+            ParameterReceived
+        }
+
+
         public RTGraphPacket Packet { get; set; }
-        public int Type { get; set; } = 0;
+        public ReceiveTypeEnum Type { get; set; } = 0;
         public int Result { get; set; } = 0;
         public IPEndPoint TargetIPEndPoint {get; set;} = null;
 
-        public PacketReceivedEventArgs(RTGraphPacket packet, int type, int result = 0, IPEndPoint targetEP = null) 
+        public PacketReceivedEventArgs(RTGraphPacket packet, ReceiveTypeEnum type, int result = 0, IPEndPoint targetEP = null) 
         {
             this.Packet = packet;
             this.Type = type;
@@ -32,6 +44,7 @@ namespace RTGraphProtocol
         public byte[] CalibrationData { get; set; } = new byte[1024];
 
         // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
+        private TriggerSourceEnum pendingParamTriggerSource;
         private RTGraphParameter pendingParam = null;
 
         // 패킷을 받았을 때 발생
@@ -51,7 +64,7 @@ namespace RTGraphProtocol
 
         protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
-            int type = 0;
+            ReceiveTypeEnum type = 0;
 
             var packet = new RTGraphPacket(byteData);
             if (packet.Class == PacketClass.CONN)
@@ -73,7 +86,7 @@ namespace RTGraphProtocol
 
                         if (result)
                         {
-                            type = 1;
+                            type = ReceiveTypeEnum.Connected;
                             Connected = true;
                             RaiseStateEvent();
 
@@ -89,7 +102,7 @@ namespace RTGraphProtocol
                         bool result = packet.Data[0] == 0;
                         if (result)
                         {
-                            type = 2;
+                            type = ReceiveTypeEnum.Disconnected;
                             Connected = false;
                         }
                     }
@@ -102,12 +115,12 @@ namespace RTGraphProtocol
                     if (packet.Option == 0x00)
                     {
                         // default
-                        DeviceParameter.Parse(packet.Data);
+                        DeviceParameter.Parse(packet.Data, 1);
                     }
                     else if (packet.Option == 0x01)
                     {
                         // Load
-                        DeviceParameter.Parse(packet.Data);
+                        DeviceParameter.Parse(packet.Data, 1);
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
@@ -117,6 +130,8 @@ namespace RTGraphProtocol
                             DeviceParameter.Assign(pendingParam);
                         }
                     }
+
+                    type = ReceiveTypeEnum.ParameterReceived;
                 }
             }
             else if (packet.Class == PacketClass.CAL)
@@ -135,7 +150,7 @@ namespace RTGraphProtocol
                     }
                 }
             }
-            else if (packet.Class == PacketClass.CAPTURE)
+            else if (packet.Class == PacketClass.GRAB)
             {
                 if (packet.SubClass == PacketSubClass.RES)
                 {
@@ -148,10 +163,19 @@ namespace RTGraphProtocol
                         // 캡춰 끝
 
                     }
+                    else if (packet.Option == 0x03)
+                    {
+                        // 모드 변경
+                        if (packet.Data?[0] == 0)
+                        {
+                            DeviceParameter.TriggerSource = pendingParamTriggerSource;
+                        }
+
+                    }
                 }
                 else if (packet.SubClass == PacketSubClass.NTY)
                 {
-                    type = 10;
+                    type = ReceiveTypeEnum.GrabDataReceivced;
                 }
             }
 
@@ -174,7 +198,7 @@ namespace RTGraphProtocol
             }
         }
 
-        public void RaisePacketReceivedEvent(RTGraphPacket packet, int type, int result, IPEndPoint targetIPEndPoint = null)
+        public void RaisePacketReceivedEvent(RTGraphPacket packet, ReceiveTypeEnum type, int result, IPEndPoint targetIPEndPoint = null)
         {
             if (PacketReceived != null)
             {
@@ -198,14 +222,14 @@ namespace RTGraphProtocol
 
         public void StartCapture()
         {
-            var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
             var data = packet.serialize();
             udpSender.Send(data, data.Length);
         }
 
         public void StopCapture()
         {
-            var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
             var data = packet.serialize();
             udpSender.Send(data, data.Length);
         }
@@ -232,10 +256,24 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, opts);
         }
 
-        public void ApplyParam(RTGraphParameter camParam, bool isSave = false)
+        public void ApplyParam(RTGraphParameter camParam, bool isSave = false, byte groupMask = RTGraphParameter.MASK_GROUP_ALL)
         {
             pendingParam = camParam.Clone() as RTGraphParameter;
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, pendingParam.serialize());
+            var data = pendingParam.serialize(null, 1);
+            data[0] = groupMask;
+            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
+        }
+
+        public void RequestGrapInfo()
+        {
+            SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x2);
+        }
+
+        public void ChangeGrapMode(byte mode)
+        {
+            pendingParamTriggerSource = (RTGraphParameter.TriggerSourceEnum)mode;
+            var data = new byte[1] { mode };
+            SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x3, data);
         }
 
         public void ApplyCalibration(bool isSave, bool calEnable)

@@ -43,7 +43,7 @@ namespace DeviceSimulator
                         endPtrDic.Add(ep, false);  // 접속하자마자 바로 캡춰 패킷 전송하려면 true로
                         applyTimer();
 
-                        var data = new byte[27 + 1];
+                        var data = new byte[RTGraphParameter.PARAMETERS_PACKET_SIZE + 1];
                         packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.serialize(data, 1));
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
@@ -69,15 +69,17 @@ namespace DeviceSimulator
                 {
                     if (packet.Option == 0x01 || packet.Option == 0x00)
                     {
-                        packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.serialize());
+                        var data = comm.DeviceParameter.serialize(null, 1);
+                        data[0] = RTGraphParameter.MASK_GROUP_ALL;
+                        packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
+                        // comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data, e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
-                        comm.DeviceParameter.Parse(packet.Data);
+                        comm.DeviceParameter.Parse(packet.Data, 1);
                         if (packet.Option == 0x02)
                         {
                             var cfg = new AppConfig("camParam");
@@ -123,7 +125,7 @@ namespace DeviceSimulator
                     }
                 }
             }
-            else if (packet.Class == PacketClass.CAPTURE)
+            else if (packet.Class == PacketClass.GRAB)
             {
                 if (packet.SubClass == PacketSubClass.REQ)
                 {
@@ -142,6 +144,11 @@ namespace DeviceSimulator
                             endPtrDic[ep] = false;
                             applyTimer();
                         }
+                    }
+                    else if (packet.Option == 0x03)
+                    {
+                        comm.DeviceParameter.TriggerSource = (RTGraphParameter.TriggerSourceEnum)packet.Data?[0];
+                        comm.DeviceParameter.TriggerSource = (RTGraphParameter.TriggerSourceEnum)packet.Data?[0];
                     }
                 }
             }
@@ -253,7 +260,7 @@ namespace DeviceSimulator
                     }
                 }
 
-                var packet = new RTGraphPacket(PacketClass.CAPTURE, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
+                var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
                 comm.SendPacket(packet, xx.Key);
                 addLogItem(0, "", packet.serialize());
             }

@@ -45,43 +45,43 @@ namespace RTGraph
             {
                 comboBox1.SelectedIndex = (int)camParam.ImageSelector;
                 comboBox2.SelectedIndex = (int)camParam.TriggerSource;
-                numExposureTime.Value = camParam.ExposureTime;
-                numLineRate.Value = camParam.LineRate;
-                numGain.Value = camParam.Gain;
-                numRch.Value = camParam.RCH;
-                numTre1.Value = camParam.TRE1;
-                numTre2.Value = camParam.TRE2;
-                numTsl.Value = camParam.TSL;
-                numTde.Value = camParam.TDE;
-                numTwd.Value = camParam.TWD;
-                numStart.Value = camParam.Start;
-                numSize.Value = camParam.Size;
-                numLevel.Value = camParam.Level;
-                numMinSize.Value = camParam.MinSize;
+                // numExposureTime.Value = (int)camParam.ExposureLevel; // 현재 사용 안 함
+                comboBox3.SelectedIndex = (int)camParam.LineScanRate;
+                comboBox4.SelectedIndex = (int)camParam.GainLevel;
+                numTde.Value = camParam.TCH;
+                numTch.Value = camParam.TRE1;
+                numTre1.Value = camParam.TRE2;
+                numTre2.Value = camParam.TSL;
+                numTsl.Value = camParam.TDE;
+                numTpw.Value = camParam.TPW;
+                numStart.Value = camParam.ROIStart;
+                numSize.Value = camParam.ROIEnd;
+                numLevel.Value = camParam.ThresholdLevel;
+                numMinSize.Value = camParam.ThresholdWidth;
             } 
             catch(Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void UIToParam(RTGraphParameter camParam)
         {
-            camParam.ImageSelector = (RTGraphParameterImageSelector)comboBox1.SelectedIndex;
-            camParam.TriggerSource = (RTGraphParameterTriggerSource)comboBox2.SelectedIndex;
-            camParam.ExposureTime = (byte)numExposureTime.Value;
-            camParam.LineRate = (short)numLineRate.Value;
-            camParam.Gain = (short)numGain.Value;
-            camParam.RCH = (short)numRch.Value;
-            camParam.TRE1 = (short)numTre1.Value;
-            camParam.TRE2 = (short)numTre2.Value;
-            camParam.TSL = (short)numTsl.Value;
-            camParam.TDE = (short)numTde.Value;
-            camParam.TWD = (short)numTwd.Value;
-            camParam.Start = (short)numStart.Value;
-            camParam.Size = (short)numSize.Value;
-            camParam.Level = (short)numLevel.Value;
-            camParam.MinSize = (short)numMinSize.Value;
+            camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)comboBox1.SelectedIndex;
+            // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)comboBox2.SelectedIndex; // 현재 세팅 불가
+            // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)numExposureTime.Value; // 현재 사용 안 함
+            camParam.LineScanRate = (RTGraphParameter.LineScanRateEnum)comboBox3.SelectedIndex;
+            camParam.GainLevel = (RTGraphParameter.GainLevelEnum)comboBox4.SelectedIndex;
+            camParam.TDE = (UInt16)numTsl.Value;
+            camParam.TCH = (UInt16)numTde.Value;
+            camParam.TRE1 = (UInt16)numTch.Value;
+            camParam.TRE2 = (UInt16)numTre1.Value;
+            camParam.TSL = (UInt16)numTre2.Value;
+            camParam.TPW = (UInt16)numTpw.Value;
+            camParam.ROIStart = (UInt16)numStart.Value;
+            camParam.ROIEnd = (UInt16)numSize.Value;
+            camParam.ThresholdLevel = (byte)numLevel.Value;
+            camParam.ThresholdWidth = (UInt16)numMinSize.Value;
         }
 
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
