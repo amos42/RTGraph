@@ -175,6 +175,7 @@ namespace RTGraph
                 btnConnect.Text = "Connect";
                 btnConnect.CheckState = CheckState.Unchecked;
                 btnGrab.Enabled = false;
+                SetGrabState(false);
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
             }
