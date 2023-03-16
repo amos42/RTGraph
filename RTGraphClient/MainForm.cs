@@ -146,7 +146,7 @@ namespace RTGraph
             if (connectState == 1)
             {
                 comm.StartCapture();
-                btnGrab.Text = "Grap Starting...";
+                btnGrab.Text = "Grab Starting...";
                 btnGrab.CheckState = CheckState.Indeterminate;
             }
             else if (connectState == 2)
@@ -209,11 +209,11 @@ namespace RTGraph
                 {
                     SetConnectState(false);
                 }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrapStarted)
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
                 {
                     SetGrabState(true);
                 }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrapStopped)
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
                 {
                     SetGrabState(false);
                 }

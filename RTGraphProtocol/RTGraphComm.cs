@@ -16,8 +16,8 @@ namespace RTGraphProtocol
             Dummy,
             Connected,
             Disconnected,
-            GrapStarted,
-            GrapStopped,
+            GrabStarted,
+            GrabStopped,
             GrabDataReceivced,
             ParameterReceived
         }
@@ -171,7 +171,7 @@ namespace RTGraphProtocol
                         // 캡춰 시작
                         if (packet.Data?[0] == 0)
                         {
-                            type = ReceiveTypeEnum.GrapStarted;
+                            type = ReceiveTypeEnum.GrabStarted;
                         }
                     }
                     else if (packet.Option == 0x01)
@@ -179,7 +179,7 @@ namespace RTGraphProtocol
                         // 캡춰 끝
                         if (packet.Data?[0] == 0)
                         {
-                            type = ReceiveTypeEnum.GrapStopped;
+                            type = ReceiveTypeEnum.GrabStopped;
                         }
                     }
                     else if (packet.Option == 0x03)
