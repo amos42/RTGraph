@@ -46,6 +46,7 @@ namespace RTGraphProtocol
         // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
         private TriggerSourceEnum pendingParamTriggerSource;
         private RTGraphParameter pendingParam = null;
+        private byte[] pendingCalibrationData = null;
 
         // 패킷을 받았을 때 발생
         public event PacketReceivedEventHandler PacketReceived;
@@ -138,15 +139,24 @@ namespace RTGraphProtocol
             {
                 if (packet.SubClass == PacketSubClass.RES)
                 {
-                    if (packet.Option == 0x00)
+                    if (packet.Option == 0x01)
                     {
-                        Array.Copy(packet.Data, CalibrationData, 1024);
-                        RaiseCalEvent();
+                        if (packet.Data?[0] == 0) 
+                        {
+                            Array.Copy(packet.Data, 1, CalibrationData, 0, 1024);
+                            RaiseCalEvent();
+                        }
                     }
-                    else if (packet.Option == 0x01)
+                    else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
-                        Array.Copy(packet.Data, CalibrationData, 1024);
-                        RaiseCalEvent();
+                        if (packet.Data?[0] == 0)
+                        {
+                            if (pendingCalibrationData != null) 
+                            {
+                                Array.Copy(pendingCalibrationData, CalibrationData, 1024);
+                                RaiseCalEvent();
+                            }
+                        }
                     }
                 }
             }
@@ -198,7 +208,7 @@ namespace RTGraphProtocol
             }
         }
 
-        public void RaisePacketReceivedEvent(RTGraphPacket packet, ReceiveTypeEnum type, int result, IPEndPoint targetIPEndPoint = null)
+        private void RaisePacketReceivedEvent(RTGraphPacket packet, ReceiveTypeEnum type, int result, IPEndPoint targetIPEndPoint = null)
         {
             if (PacketReceived != null)
             {
@@ -251,9 +261,9 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isDefault? 0x0 : 0x1);
         }
 
-        public void RequesCalibration(int opts = 0)
+        public void RequesCalibration()
         {
-            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, opts);
+            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 1);
         }
 
         public void ApplyParam(RTGraphParameter camParam, bool isSave = false, byte groupMask = RTGraphParameter.MASK_GROUP_ALL)
@@ -276,11 +286,12 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x3, data);
         }
 
-        public void ApplyCalibration(bool isSave, bool calEnable)
+        public void ApplyCalibration(byte[] calData, bool isSave, bool calEnable)
         {
-            var data = new byte[1];
-            data[0] = (byte)(calEnable ? 0x1 : 0x0);
-            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
+            //var data = new byte[1];
+            //data[0] = (byte)(calEnable ? 0x1 : 0x0);
+            pendingCalibrationData = calData.Clone() as byte[];
+            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, calData);
         }
     }
 }

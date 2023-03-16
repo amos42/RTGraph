@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Text;
 
@@ -35,6 +36,31 @@ namespace RTGraphProtocol
         {
             if (prefix != null) key = prefix + "." + key;
             return cfgCollection[key]?.Value;
+        }
+
+        public void SetArrayValue(string key, byte[] data)
+        {
+            var value = BitConverter.ToString(data).Replace("-", " ");
+            SetValue(key, value);
+        }
+
+        public byte[] GetArrayValue(string key, byte[] data = null)
+        {
+            var arrStr = GetValue(key);
+            if (arrStr != null) 
+            {
+                var data2 = Array.ConvertAll<string, byte>(arrStr.Split(' '), s => Convert.ToByte(s, 16));
+                if (data == null)
+                {
+                    data = data2;
+                } 
+                else
+                {
+                    Array.Copy(data2, data, Math.Min(data2.Length, data.Length));
+                }
+                return data;
+            } 
+            return null;
         }
 
         public bool TryGetValue(string key, out string value)

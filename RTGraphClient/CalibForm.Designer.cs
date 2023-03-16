@@ -33,7 +33,6 @@ namespace RTGraph
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chart1 = new RTGraph.RTGraphChartControl();
@@ -84,25 +83,14 @@ namespace RTGraph
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(229, 279);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 34);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Default";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // button6
             // 
             this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Location = new System.Drawing.Point(333, 279);
+            this.button6.Location = new System.Drawing.Point(307, 279);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(103, 34);
+            this.button6.Size = new System.Drawing.Size(129, 34);
             this.button6.TabIndex = 16;
-            this.button6.Text = "Calibration";
+            this.button6.Text = "Calibration Start";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -126,13 +114,13 @@ namespace RTGraph
             this.chart1.BufferCount = 0;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10);
-            this.chart1.ValuesCount = 1;
             this.chart1.Location = new System.Drawing.Point(1, 2);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(866, 271);
             this.chart1.TabIndex = 0;
             this.chart1.TriggerValue = 0;
             this.chart1.ValueCount = 1024;
+            this.chart1.ValuesCount = 1;
             // 
             // CalibForm
             // 
@@ -145,7 +133,6 @@ namespace RTGraph
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.chart1);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "CalibForm";
@@ -165,7 +152,6 @@ namespace RTGraph
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.CheckBox checkBox1;
     }

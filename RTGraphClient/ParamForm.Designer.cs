@@ -29,7 +29,10 @@ namespace RTGraph
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.Gain = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -58,6 +61,7 @@ namespace RTGraph
             this.numTch = new System.Windows.Forms.NumericUpDown();
             this.numTde = new System.Windows.Forms.NumericUpDown();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -71,10 +75,8 @@ namespace RTGraph
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numExposureTime)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -112,13 +114,48 @@ namespace RTGraph
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Camera Setting";
             // 
+            // comboBox3
+            // 
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "30000 lines/sec",
+            "25000 lines/sec",
+            "20000 lines/sec",
+            "15000 lines/sec",
+            "10000 lines/sec",
+            "5000 lines/sec",
+            "2500 lines/sec"});
+            this.comboBox3.Location = new System.Drawing.Point(149, 134);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(159, 23);
+            this.comboBox3.TabIndex = 14;
+            // 
+            // comboBox4
+            // 
+            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox4.FormattingEnabled = true;
+            this.comboBox4.Items.AddRange(new object[] {
+            "Gain Level 0",
+            "Gain Level 1",
+            "Gain Level 2",
+            "Gain Level 3",
+            "Gain Level 4",
+            "Gain Level 5",
+            "Gain Level 6",
+            "Gain Level 7"});
+            this.comboBox4.Location = new System.Drawing.Point(149, 165);
+            this.comboBox4.Name = "comboBox4";
+            this.comboBox4.Size = new System.Drawing.Size(159, 23);
+            this.comboBox4.TabIndex = 13;
+            // 
             // Gain
             // 
             this.Gain.Location = new System.Drawing.Point(6, 168);
             this.Gain.Name = "Gain";
             this.Gain.Size = new System.Drawing.Size(137, 15);
             this.Gain.TabIndex = 11;
-            this.Gain.Text = "Gane Level";
+            this.Gain.Text = "Gain(Gamma) Level";
             this.Gain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label8
@@ -152,11 +189,11 @@ namespace RTGraph
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 47);
+            this.label5.Location = new System.Drawing.Point(39, 47);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(137, 15);
+            this.label5.Size = new System.Drawing.Size(104, 15);
             this.label5.TabIndex = 7;
-            this.label5.Text = "Test Image Selector";
+            this.label5.Text = "Image Selector";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // numExposureTime
@@ -235,7 +272,7 @@ namespace RTGraph
             this.groupBox2.Size = new System.Drawing.Size(186, 218);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Trigger Timing";
+            this.groupBox2.Text = "Trigger Pulse Timing";
             // 
             // label16
             // 
@@ -425,6 +462,7 @@ namespace RTGraph
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.label2);
@@ -442,19 +480,28 @@ namespace RTGraph
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Detect Condition";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(9, 140);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(71, 15);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Threshold";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(188, 144);
+            this.label4.Location = new System.Drawing.Point(310, 140);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(64, 15);
+            this.label4.Size = new System.Drawing.Size(44, 15);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Min Size";
+            this.label4.Text = "Width";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 144);
+            this.label3.Location = new System.Drawing.Point(119, 140);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(42, 15);
             this.label3.TabIndex = 8;
@@ -465,24 +512,24 @@ namespace RTGraph
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(18, 91);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 15);
+            this.label2.Size = new System.Drawing.Size(62, 15);
             this.label2.TabIndex = 7;
-            this.label2.Text = "End";
+            this.label2.Text = "ROI End";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(18, 43);
+            this.label1.Location = new System.Drawing.Point(13, 43);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(37, 15);
+            this.label1.Size = new System.Drawing.Size(67, 15);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Start";
+            this.label1.Text = "ROI Start";
             // 
             // numMinSize
             // 
-            this.numMinSize.Location = new System.Drawing.Point(258, 142);
+            this.numMinSize.Location = new System.Drawing.Point(359, 134);
             this.numMinSize.Maximum = new decimal(new int[] {
-            32767,
+            1023,
             0,
             0,
             0});
@@ -493,9 +540,9 @@ namespace RTGraph
             // 
             // numLevel
             // 
-            this.numLevel.Location = new System.Drawing.Point(66, 142);
+            this.numLevel.Location = new System.Drawing.Point(167, 134);
             this.numLevel.Maximum = new decimal(new int[] {
-            32767,
+            255,
             0,
             0,
             0});
@@ -535,26 +582,26 @@ namespace RTGraph
             // trackBar2
             // 
             this.trackBar2.AutoSize = false;
-            this.trackBar2.Location = new System.Drawing.Point(61, 80);
+            this.trackBar2.Location = new System.Drawing.Point(91, 80);
             this.trackBar2.Maximum = 1023;
             this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(368, 26);
+            this.trackBar2.Size = new System.Drawing.Size(338, 26);
             this.trackBar2.TabIndex = 1;
             this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
             // trackBar1
             // 
             this.trackBar1.AutoSize = false;
-            this.trackBar1.Location = new System.Drawing.Point(61, 33);
+            this.trackBar1.Location = new System.Drawing.Point(91, 33);
             this.trackBar1.Maximum = 1023;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(368, 25);
+            this.trackBar1.Size = new System.Drawing.Size(338, 25);
             this.trackBar1.TabIndex = 0;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(98, 431);
+            this.button1.Location = new System.Drawing.Point(199, 431);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 30);
             this.button1.TabIndex = 5;
@@ -564,7 +611,7 @@ namespace RTGraph
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(189, 431);
+            this.button2.Location = new System.Drawing.Point(286, 431);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 30);
             this.button2.TabIndex = 6;
@@ -575,7 +622,7 @@ namespace RTGraph
             // button3
             // 
             this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button3.Location = new System.Drawing.Point(280, 431);
+            this.button3.Location = new System.Drawing.Point(373, 431);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 30);
             this.button3.TabIndex = 7;
@@ -583,60 +630,20 @@ namespace RTGraph
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(371, 431);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 30);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Apply";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
             // button5
             // 
             this.button5.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button5.Location = new System.Drawing.Point(462, 431);
+            this.button5.Location = new System.Drawing.Point(460, 431);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 30);
             this.button5.TabIndex = 10;
             this.button5.Text = "Close";
             this.button5.UseVisualStyleBackColor = true;
             // 
-            // comboBox4
+            // timer1
             // 
-            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "Gain Level 0",
-            "Gain Level 1",
-            "Gain Level 2",
-            "Gain Level 3",
-            "Gain Level 4",
-            "Gain Level 5",
-            "Gain Level 6",
-            "Gain Level 7"});
-            this.comboBox4.Location = new System.Drawing.Point(149, 165);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(159, 23);
-            this.comboBox4.TabIndex = 13;
-            // 
-            // comboBox3
-            // 
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "30000 lines/sec",
-            "25000 lines/sec",
-            "20000 lines/sec",
-            "15000 lines/sec",
-            "10000 lines/sec",
-            "5000 lines/sec",
-            "2500 lines/sec"});
-            this.comboBox3.Location = new System.Drawing.Point(149, 134);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(159, 23);
-            this.comboBox3.TabIndex = 14;
+            this.timer1.Interval = 500;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // ParamForm
             // 
@@ -644,7 +651,6 @@ namespace RTGraph
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(552, 468);
             this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -702,7 +708,6 @@ namespace RTGraph
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -728,5 +733,7 @@ namespace RTGraph
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Timer timer1;
     }
 }

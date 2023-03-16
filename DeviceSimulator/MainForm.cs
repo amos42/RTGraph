@@ -95,12 +95,13 @@ namespace DeviceSimulator
                 {
                     if (packet.Option == 0x00)
                     {
-                        var data = new byte[1024];
+                        var data = new byte[1024 + 1];
                         var rnd = new Random();
-                        for (int i = 0; i < 1024;i++)
+                        for (int i = 1; i < 1024+1;i++)
                         {
                             data[i] = (byte)rnd.Next(10, 50);
                         }
+                        data[0] = 0;
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
@@ -108,20 +109,23 @@ namespace DeviceSimulator
                     }
                     else if (packet.Option == 0x01)
                     {
-                        var data = new byte[1024];
-                        var cfg = new AppConfig("calibration");
-                        packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
+                        var data = new byte[1024 + 1];
+                        Array.Copy(comm.CalibrationData, 0, data, 1, 1024);
+                        data[0] = 0;
+                        packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         addLogItem(0, null, packet.serialize());
                         foward = false;
                     }
-                    else if (packet.Option == 0x02)
+                    else if (packet.Option == 0x02 || packet.Option == 0x03)
                     {
-
-                    }
-                    else if (packet.Option == 0x03)
-                    {
-
+                        Array.Copy(packet.Data, comm.CalibrationData, 1024);
+                        if (packet.Option == 0x02)
+                        {
+                            var cfg = new AppConfig("calibration");
+                            cfg.SetArrayValue("Data", comm.CalibrationData);
+                            cfg.Save();
+                        }
                     }
                 }
             }
@@ -193,6 +197,9 @@ namespace DeviceSimulator
 
             var cfg = new AppConfig("camParam");
             cfg.GetAllValues(comm.DeviceParameter);
+
+            var cfg2 = new AppConfig("calibration");
+            cfg2.GetArrayValue("Data", comm.CalibrationData);
         }
 
         private void addLogItem(int direction, string message, byte[] byteData = null)

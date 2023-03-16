@@ -48,11 +48,11 @@ namespace RTGraph
                 // numExposureTime.Value = (int)camParam.ExposureLevel; // 현재 사용 안 함
                 comboBox3.SelectedIndex = (int)camParam.LineScanRate;
                 comboBox4.SelectedIndex = (int)camParam.GainLevel;
-                numTde.Value = camParam.TCH;
-                numTch.Value = camParam.TRE1;
-                numTre1.Value = camParam.TRE2;
-                numTre2.Value = camParam.TSL;
-                numTsl.Value = camParam.TDE;
+                numTde.Value = camParam.TDE;
+                numTch.Value = camParam.TCH;
+                numTre1.Value = camParam.TRE1;
+                numTre2.Value = camParam.TRE2;
+                numTsl.Value = camParam.TSL;
                 numTpw.Value = camParam.TPW;
                 numStart.Value = camParam.ROIStart;
                 numSize.Value = camParam.ROIEnd;
@@ -72,11 +72,11 @@ namespace RTGraph
             // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)numExposureTime.Value; // 현재 사용 안 함
             camParam.LineScanRate = (RTGraphParameter.LineScanRateEnum)comboBox3.SelectedIndex;
             camParam.GainLevel = (RTGraphParameter.GainLevelEnum)comboBox4.SelectedIndex;
-            camParam.TDE = (UInt16)numTsl.Value;
-            camParam.TCH = (UInt16)numTde.Value;
-            camParam.TRE1 = (UInt16)numTch.Value;
-            camParam.TRE2 = (UInt16)numTre1.Value;
-            camParam.TSL = (UInt16)numTre2.Value;
+            camParam.TDE = (UInt16)numTde.Value;
+            camParam.TCH = (UInt16)numTch.Value;
+            camParam.TRE1 = (UInt16)numTre1.Value;
+            camParam.TRE2 = (UInt16)numTre2.Value;
+            camParam.TSL = (UInt16)numTsl.Value;
             camParam.TPW = (UInt16)numTpw.Value;
             camParam.ROIStart = (UInt16)numStart.Value;
             camParam.ROIEnd = (UInt16)numSize.Value;
@@ -108,21 +108,18 @@ namespace RTGraph
             comm.ApplyParam(camParam, true);
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            var camParam = new RTGraphParameter();
-            UIToParam(camParam);
-            comm.ApplyParam(camParam, false);
-        }
-
         private void numStart_ValueChanged(object sender, EventArgs e)
         {
             trackBar1.Value = (int)numStart.Value;
+            timer1.Stop();
+            timer1.Start();
         }
 
         private void numSize_ValueChanged(object sender, EventArgs e)
         {
             trackBar2.Value = (int)numSize.Value;
+            timer1.Stop();
+            timer1.Start();
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -143,6 +140,15 @@ namespace RTGraph
             }
 
             numSize.Value = trackBar2.Value;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop();
+
+            var camParam = new RTGraphParameter();
+            UIToParam(camParam);
+            comm.ApplyParam(camParam);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,82 +18,116 @@ namespace RTGraph
         private RTGraphComm comm;
         private Queue<byte[]> queue = new Queue<byte[]>(5);
         private int[] sums = new int[1024];
+        private bool calMode = false;
 
         public CalibForm(RTGraphComm comm)
         {
             this.comm = comm;
             InitializeComponent();
 
-            chart1.ValuesCount = 2;
-            //chart1.Values[1].GraphColor = Color.
+            //chart1.ValuesCount = 3;
+            //chart1.Values[2].GraphColor = Color.AliceBlue;
+
+            chart1.Values.Add(new GraphItem(chart1.ValueCount, Color.Cyan, Color.Lime));
+            chart1.Values.Add(new GraphItem(chart1.ValueCount, Color.White, Color.Lime));
         }
 
         private void CalibForm_Load(object sender, EventArgs e)
         {
             comm.CalibrationChanged += new EventHandler(CalChanged);
+            comm.PacketReceived += new PacketReceivedEventHandler(RecvChanged);
+
+            chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
+
+            comm.RequesCalibration(); // load
         }
 
         private void CalibForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            comm.PacketReceived -= RecvChanged;
             comm.CalibrationChanged -= CalChanged;
+        }
+
+        private void RecvChanged(object sender, PacketReceivedEventArgs e)
+        {
+            if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
+            {
+                var data = new byte[1024];
+                chart1.SetValueLine(0, e.Packet.Data, 2, 1024);
+
+                if (calMode)
+                {
+                    Array.Copy(e.Packet.Data, 2, data, 0, 1024);
+
+                    for (int i = 0; i < 1024; i++)
+                    {
+                        sums[i] += data[i];
+                    }
+
+                    queue.Enqueue(data);
+                    int cnt = queue.Count;
+
+                    if (cnt > 5)
+                    {
+                        var last = queue.Dequeue();
+                        for (int i = 0; i < 1024; i++)
+                        {
+                            sums[i] -= last[i];
+                        }
+                        cnt--;
+                    }
+
+                    var itms = chart1.Values[2].Items;
+
+                    for (int i = 0; i < 1024; i++)
+                    {
+                        itms[i] = (byte)(sums[i] / cnt);
+                    }
+                }
+
+                this.Invoke(new Action(() => {
+                    chart1.Refresh();
+                }));
+            }
         }
 
         private void CalChanged(object sender, EventArgs e)
         {
             this.Invoke(new Action(() => {
-                chart1.SetValueLine(0, comm.CalibrationData, 0, 1024);
-
-                var curr = comm.CalibrationData.Clone() as byte[];
-                for (int i = 0; i < 1024; i++)
-                {
-                    sums[i] += curr[i];
-                }
-
-                queue.Enqueue(curr);
-                int cnt = queue.Count;
-
-                if (cnt > 5)
-                {
-                    var last = queue.Dequeue();
-                    for (int i = 0; i < 1024; i++)
-                    {
-                        sums[i] -= last[i];
-                    }
-                    cnt--;
-                }
-
-                for (int i = 0; i < 1024; i++)
-                {
-                    chart1.Values[1].Items[i] = (byte)(sums[i] / cnt);
-                }
-
+                chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
                 chart1.Refresh();
             }));
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // comm.RequesCalibration(-1); // default
-        }
-
         private void button6_Click(object sender, EventArgs e)
         {
-            comm.RequesCalibration();
+            if (!calMode) 
+            {
+                queue.Clear(); ;
+                Array.Clear(sums, 0, 1024);
+                calMode = true;
+                button6.Text = "Calibration Stop";
+            } 
+            else
+            {
+                calMode = false;
+                button6.Text = "Calibration Start";
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            comm.RequesCalibration(1); // load
+            comm.RequesCalibration(); // load
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            comm.ApplyCalibration(true, checkBox1.Checked);
+            comm.ApplyCalibration(chart1.Values[2].Items, true, checkBox1.Checked);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            comm.ApplyCalibration(false, checkBox1.Checked);
+            comm.ApplyCalibration(chart1.Values[2].Items, false, checkBox1.Checked);
         }
 
     }
