@@ -108,37 +108,47 @@ namespace RTGraph
             comm.ApplyParam(camParam, true);
         }
 
-        private void numStart_ValueChanged(object sender, EventArgs e)
+        private void numRoiStart_ValueChanged(object sender, EventArgs e)
         {
-            trkRoiStart.Value = (int)numRoiStart.Value;
+            var maxValue = Math.Max(numRoiEnd.Value - numThresholdWidth.Value, 0);
+            if (numRoiStart.Value > maxValue)
+            {
+                numRoiStart.Value = maxValue;
+            }
+
+            if (trkRoiStart.Value != (int)numRoiStart.Value)
+            {
+                trkRoiStart.Value = (int)numRoiStart.Value;
+            }
+
             timer1.Stop();
             timer1.Start();
         }
 
-        private void numSize_ValueChanged(object sender, EventArgs e)
+        private void numRoiEnd_ValueChanged(object sender, EventArgs e)
         {
-            trkRoiEnd.Value = (int)numRoiEnd.Value;
+            var minValue = Math.Min(numRoiStart.Value + numThresholdWidth.Value, 1023);
+            if (numRoiEnd.Value < minValue)
+            {
+                numRoiEnd.Value = minValue;
+            }
+
+            if(trkRoiEnd.Value != (int)numRoiEnd.Value)
+            {
+                trkRoiEnd.Value = (int)numRoiEnd.Value;
+            }
+
             timer1.Stop();
             timer1.Start();
         }
 
         private void trkRoiStart_ValueChanged(object sender, EventArgs e)
         {
-            if (trkRoiStart.Value > trkRoiEnd.Value)
-            {
-                trkRoiStart.Value = trkRoiEnd.Value;
-            }
-
             numRoiStart.Value = trkRoiStart.Value;
         }
 
         private void trkRoiEnd_ValueChanged(object sender, EventArgs e)
         {
-            if (trkRoiStart.Value > trkRoiEnd.Value)
-            {
-                trkRoiEnd.Value = trkRoiStart.Value;
-            }
-
             numRoiEnd.Value = trkRoiEnd.Value;
         }
 

@@ -92,7 +92,7 @@ namespace RTGraph
         private UInt16 roi_start = 0; // 0 ~ 1023
         private UInt16 roi_end = 0; // 0 ~ 1023
         private byte threshold_level = 0; // 0 ~ 255
-        private UInt16 threshold_width = 0; // 1 ~ 1024
+        private UInt16 threshold_width = 1; // 1 ~ 1024
 
         // calibration
         private bool calibration_enable;
@@ -309,7 +309,7 @@ namespace RTGraph
             get { return threshold_width; }
             set
             {
-                if (threshold_width != value)
+                if (threshold_width != value && value >= 1 && value <= 1024)
                 {
                     threshold_width = value;
                     group_3_refCnt++;

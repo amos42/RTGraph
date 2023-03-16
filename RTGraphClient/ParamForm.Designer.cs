@@ -528,7 +528,12 @@ namespace RTGraph
             // 
             this.numThresholdWidth.Location = new System.Drawing.Point(359, 103);
             this.numThresholdWidth.Maximum = new decimal(new int[] {
-            1023,
+            1024,
+            0,
+            0,
+            0});
+            this.numThresholdWidth.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -536,6 +541,11 @@ namespace RTGraph
             this.numThresholdWidth.Size = new System.Drawing.Size(74, 25);
             this.numThresholdWidth.TabIndex = 5;
             this.numThresholdWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numThresholdWidth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // numThresholdLevel
             // 
@@ -562,7 +572,7 @@ namespace RTGraph
             this.numRoiEnd.Size = new System.Drawing.Size(70, 25);
             this.numRoiEnd.TabIndex = 3;
             this.numRoiEnd.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numRoiEnd.ValueChanged += new System.EventHandler(this.numSize_ValueChanged);
+            this.numRoiEnd.ValueChanged += new System.EventHandler(this.numRoiEnd_ValueChanged);
             // 
             // numRoiStart
             // 
@@ -576,7 +586,7 @@ namespace RTGraph
             this.numRoiStart.Size = new System.Drawing.Size(72, 25);
             this.numRoiStart.TabIndex = 2;
             this.numRoiStart.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numRoiStart.ValueChanged += new System.EventHandler(this.numStart_ValueChanged);
+            this.numRoiStart.ValueChanged += new System.EventHandler(this.numRoiStart_ValueChanged);
             // 
             // trkRoiEnd
             // 
