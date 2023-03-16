@@ -118,7 +118,7 @@ namespace RTGraph
             {
                 comm.Connect();
 
-                toolStripButton3.Text = "Cconnecting...";
+                toolStripButton3.Text = "Connecting...";
                 toolStripButton3.CheckState = CheckState.Indeterminate;
 
                 timer1.Start();
@@ -151,7 +151,7 @@ namespace RTGraph
             }
             else
             {
-                toolStripButton3.Text = "Cconnect";
+                toolStripButton3.Text = "Connect";
                 toolStripButton3.CheckState = CheckState.Unchecked;
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton3.Enabled = false;

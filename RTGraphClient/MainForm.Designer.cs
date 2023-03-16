@@ -159,7 +159,7 @@ namespace RTGraph
             this.toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton4.Name = "toolStripDropDownButton4";
             this.toolStripDropDownButton4.Size = new System.Drawing.Size(154, 28);
-            this.toolStripDropDownButton4.Text = "Continueous mode";
+            this.toolStripDropDownButton4.Text = "Continuous mode";
             // 
             // continuesToolStripMenuItem
             // 
@@ -167,7 +167,7 @@ namespace RTGraph
             this.continuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continuesToolStripMenuItem.Name = "continuesToolStripMenuItem";
             this.continuesToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
-            this.continuesToolStripMenuItem.Text = "Continueous mode";
+            this.continuesToolStripMenuItem.Text = "Continuous mode";
             this.continuesToolStripMenuItem.Click += new System.EventHandler(this.continuesToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem1
