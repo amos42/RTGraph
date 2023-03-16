@@ -130,6 +130,7 @@ namespace RTGraph
             this.cboLineScanRate.Name = "cboLineScanRate";
             this.cboLineScanRate.Size = new System.Drawing.Size(164, 23);
             this.cboLineScanRate.TabIndex = 14;
+            this.cboLineScanRate.SelectedIndexChanged += new System.EventHandler(this.cboLineScanRate_SelectedIndexChanged);
             // 
             // comboBox4
             // 
@@ -148,6 +149,7 @@ namespace RTGraph
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(164, 23);
             this.comboBox4.TabIndex = 13;
+            this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.comboBox4_SelectedIndexChanged);
             // 
             // Gain
             // 
@@ -218,6 +220,7 @@ namespace RTGraph
             0,
             0});
             this.numExposureLevel.Visible = false;
+            this.numExposureLevel.ValueChanged += new System.EventHandler(this.numExposureLevel_ValueChanged);
             // 
             // cboTriggerSource
             // 
@@ -231,6 +234,7 @@ namespace RTGraph
             this.cboTriggerSource.Name = "cboTriggerSource";
             this.cboTriggerSource.Size = new System.Drawing.Size(164, 23);
             this.cboTriggerSource.TabIndex = 3;
+            this.cboTriggerSource.SelectedIndexChanged += new System.EventHandler(this.cboTriggerSource_SelectedIndexChanged);
             // 
             // cboImageSelect
             // 
@@ -245,6 +249,7 @@ namespace RTGraph
             this.cboImageSelect.Name = "cboImageSelect";
             this.cboImageSelect.Size = new System.Drawing.Size(164, 23);
             this.cboImageSelect.TabIndex = 2;
+            this.cboImageSelect.SelectedIndexChanged += new System.EventHandler(this.cboImageSelect_SelectedIndexChanged);
             // 
             // groupBox2
             // 
@@ -393,6 +398,7 @@ namespace RTGraph
             this.numTpw.Size = new System.Drawing.Size(86, 25);
             this.numTpw.TabIndex = 10;
             this.numTpw.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTpw.ValueChanged += new System.EventHandler(this.numTpw_ValueChanged);
             // 
             // numTsl
             // 
@@ -406,6 +412,7 @@ namespace RTGraph
             this.numTsl.Size = new System.Drawing.Size(86, 25);
             this.numTsl.TabIndex = 9;
             this.numTsl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTsl.ValueChanged += new System.EventHandler(this.numTsl_ValueChanged);
             // 
             // numTre2
             // 
@@ -419,6 +426,7 @@ namespace RTGraph
             this.numTre2.Size = new System.Drawing.Size(86, 25);
             this.numTre2.TabIndex = 8;
             this.numTre2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTre2.ValueChanged += new System.EventHandler(this.numTre2_ValueChanged);
             // 
             // numTre1
             // 
@@ -432,6 +440,7 @@ namespace RTGraph
             this.numTre1.Size = new System.Drawing.Size(86, 25);
             this.numTre1.TabIndex = 7;
             this.numTre1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTre1.ValueChanged += new System.EventHandler(this.numTre1_ValueChanged);
             // 
             // numTch
             // 
@@ -445,6 +454,7 @@ namespace RTGraph
             this.numTch.Size = new System.Drawing.Size(86, 25);
             this.numTch.TabIndex = 6;
             this.numTch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTch.ValueChanged += new System.EventHandler(this.numTch_ValueChanged);
             // 
             // numTde
             // 
@@ -458,6 +468,7 @@ namespace RTGraph
             this.numTde.Size = new System.Drawing.Size(86, 25);
             this.numTde.TabIndex = 5;
             this.numTde.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTde.ValueChanged += new System.EventHandler(this.numTde_ValueChanged);
             // 
             // groupBox3
             // 
@@ -546,6 +557,7 @@ namespace RTGraph
             0,
             0,
             0});
+            this.numThresholdWidth.ValueChanged += new System.EventHandler(this.numThresholdWidth_ValueChanged);
             // 
             // numThresholdLevel
             // 
@@ -559,6 +571,7 @@ namespace RTGraph
             this.numThresholdLevel.Size = new System.Drawing.Size(79, 25);
             this.numThresholdLevel.TabIndex = 4;
             this.numThresholdLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numThresholdLevel.ValueChanged += new System.EventHandler(this.numThresholdLevel_ValueChanged);
             // 
             // numRoiEnd
             // 

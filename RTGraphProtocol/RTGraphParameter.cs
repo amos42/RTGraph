@@ -66,10 +66,10 @@ namespace RTGraph
         public const int MASK_GROUP_4 = 0x08;
         public const int MASK_GROUP_ALL = MASK_GROUP_1 | MASK_GROUP_2 | MASK_GROUP_3 | MASK_GROUP_4;
 
-        private int group_1_refCnt = 0;
-        private int group_2_refCnt = 0;
-        private int group_3_refCnt = 0;
-        private int group_4_refCnt = 0;
+        public int group_1_refCnt = 0;
+        public int group_2_refCnt = 0;
+        public int group_3_refCnt = 0;
+        public int group_4_refCnt = 0;
 
         public const int PARAMETERS_PACKET_SIZE = 25;
 
@@ -347,6 +347,10 @@ namespace RTGraph
         public RTGraphParameter(RTGraphParameter src)
         {
             Assign(src);
+            group_1_refCnt = 0;
+            group_2_refCnt = 0;
+            group_3_refCnt = 0;
+            group_4_refCnt = 0;
         }
 
         public RTGraphParameter(byte[] packet = null, int startIdx = 0)
@@ -354,6 +358,10 @@ namespace RTGraph
             if (packet != null)
             {
                 Parse(packet, startIdx);
+                group_1_refCnt = 0;
+                group_2_refCnt = 0;
+                group_3_refCnt = 0;
+                group_4_refCnt = 0;
             }
         }
 

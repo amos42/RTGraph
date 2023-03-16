@@ -16,6 +16,7 @@ namespace RTGraph
     public partial class ParamForm : Form
     {
         private RTGraphComm comm;
+        private bool userHandle = true;
 
         public ParamForm(RTGraphComm comm)
         {
@@ -39,10 +40,20 @@ namespace RTGraph
             this.comm.DeviceParameter.PropertyChanged -= ParameterChanged;
         }
 
+        private void kickTimer()
+        {
+            timer1.Stop();
+            if (userHandle)
+            {
+                timer1.Start();
+            }
+        }
+
         private void ParamToUI(RTGraphParameter camParam)
         {
             try
             {
+                userHandle = false;
                 cboImageSelect.SelectedIndex = (int)camParam.ImageSelector;
                 cboTriggerSource.SelectedIndex = (int)camParam.TriggerSource;
                 // numExposureTime.Value = (int)camParam.ExposureLevel; // 현재 사용 안 함
@@ -58,8 +69,9 @@ namespace RTGraph
                 numRoiEnd.Value = camParam.ROIEnd;
                 numThresholdLevel.Value = camParam.ThresholdLevel;
                 numThresholdWidth.Value = camParam.ThresholdWidth;
-            } 
-            catch(Exception ex)
+                userHandle = true;
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -108,6 +120,71 @@ namespace RTGraph
             comm.ApplyParam(camParam, true);
         }
 
+        private void cboImageSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void cboTriggerSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numExposureLevel_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void cboLineScanRate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numThresholdLevel_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numThresholdWidth_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTde_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTch_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTre1_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTre2_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTsl_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
+        private void numTpw_ValueChanged(object sender, EventArgs e)
+        {
+            kickTimer();
+        }
+
         private void numRoiStart_ValueChanged(object sender, EventArgs e)
         {
             var maxValue = Math.Max(numRoiEnd.Value - numThresholdWidth.Value, 0);
@@ -121,8 +198,7 @@ namespace RTGraph
                 trkRoiStart.Value = (int)numRoiStart.Value;
             }
 
-            timer1.Stop();
-            timer1.Start();
+            kickTimer();
         }
 
         private void numRoiEnd_ValueChanged(object sender, EventArgs e)
@@ -133,13 +209,12 @@ namespace RTGraph
                 numRoiEnd.Value = minValue;
             }
 
-            if(trkRoiEnd.Value != (int)numRoiEnd.Value)
+            if (trkRoiEnd.Value != (int)numRoiEnd.Value)
             {
                 trkRoiEnd.Value = (int)numRoiEnd.Value;
             }
 
-            timer1.Stop();
-            timer1.Start();
+            kickTimer();
         }
 
         private void trkRoiStart_ValueChanged(object sender, EventArgs e)
@@ -156,9 +231,19 @@ namespace RTGraph
         {
             timer1.Stop();
 
-            var camParam = new RTGraphParameter();
+            var camParam = new RTGraphParameter(comm.DeviceParameter);
             UIToParam(camParam);
-            comm.ApplyParam(camParam);
+            byte msk = 0;
+            if (camParam.group_1_refCnt > 0)
+                msk |= RTGraphParameter.MASK_GROUP_1;
+            if (camParam.group_2_refCnt > 0)
+                msk |= RTGraphParameter.MASK_GROUP_2;
+            if (camParam.group_3_refCnt > 0)
+                msk |= RTGraphParameter.MASK_GROUP_3;
+            if (camParam.group_4_refCnt > 0)
+                msk |= RTGraphParameter.MASK_GROUP_4;
+            comm.ApplyParam(camParam, false, msk);
         }
+
     }
 }
