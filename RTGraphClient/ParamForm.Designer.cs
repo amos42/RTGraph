@@ -585,6 +585,11 @@ namespace RTGraph
             this.numRoiEnd.Size = new System.Drawing.Size(70, 25);
             this.numRoiEnd.TabIndex = 3;
             this.numRoiEnd.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numRoiEnd.Value = new decimal(new int[] {
+            1023,
+            0,
+            0,
+            0});
             this.numRoiEnd.ValueChanged += new System.EventHandler(this.numRoiEnd_ValueChanged);
             // 
             // numRoiStart
@@ -610,6 +615,7 @@ namespace RTGraph
             this.trkRoiEnd.Size = new System.Drawing.Size(338, 26);
             this.trkRoiEnd.TabIndex = 1;
             this.trkRoiEnd.TickFrequency = 10;
+            this.trkRoiEnd.Value = 1023;
             this.trkRoiEnd.ValueChanged += new System.EventHandler(this.trkRoiEnd_ValueChanged);
             // 
             // trkRoiStart

@@ -25,39 +25,39 @@ namespace RTGraph
 
         public enum ExposureLevelEnum
         {
-            Level1_10,
-            Level1_20,
-            Level1_30,
-            Level1_40,
-            Level1_50,
-            Level1_60,
-            Level1_70,
-            Level1_80,
-            Level1_90,
-            Level1_100
+            Level_10,
+            Level_20,
+            Level_30,
+            Level_40,
+            Level_50,
+            Level_60,
+            Level_70,
+            Level_80,
+            Level_90,
+            Level_100
         }
 
         public enum LineScanRateEnum
         {
-            ScanRate_30000_LPS,
-            ScanRate_25000_LPS,
-            ScanRate_20000_LPS,
-            ScanRate_15000_LPS,
-            ScanRate_10000_LPS,
-            ScanRate_5000_LPS,
-            ScanRate_2500_LPS
+            Rate_30000_LPS,
+            Rate_25000_LPS,
+            Rate_20000_LPS,
+            Rate_15000_LPS,
+            Rate_10000_LPS,
+            Rate_5000_LPS,
+            Rate_2500_LPS
         }
 
         public enum GainLevelEnum
         {
-            GainLevel_0,
-            GainLevel_1,
-            GainLevel_2,
-            GainLevel_3,
-            GainLevel_4,
-            GainLevel_5,
-            GainLevel_6,
-            GainLevel_7
+            Level_0,
+            Level_1,
+            Level_2,
+            Level_3,
+            Level_4,
+            Level_5,
+            Level_6,
+            Level_7
         }
 
         public const int MASK_GROUP_1 = 0x01;
@@ -90,7 +90,7 @@ namespace RTGraph
 
         // detect condition			
         private UInt16 roi_start = 0; // 0 ~ 1023
-        private UInt16 roi_end = 0; // 0 ~ 1023
+        private UInt16 roi_end = 1023; // 0 ~ 1023
         private byte threshold_level = 0; // 0 ~ 255
         private UInt16 threshold_width = 1; // 1 ~ 1024
 
