@@ -78,6 +78,7 @@ namespace RTGraph
                 continuesToolStripMenuItem.Checked = true;
                 triggerModeToolStripMenuItem1.Checked = false;
                 toolStripDropDownButton4.Text = "Continues Mode";
+                calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked);
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
@@ -86,6 +87,7 @@ namespace RTGraph
                 triggerModeToolStripMenuItem1.Checked = true;
                 toolStripDropDownButton4.Text = "Trigger Mode";
                 chart1.Clear();
+                calibrationToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -95,7 +97,7 @@ namespace RTGraph
             {
                 comm.OpenComm();
 
-                toolStripButton3.Enabled = true;
+                btnConnect.Enabled = true;
 
                 toolStripDropDownButton1.Image = Properties.Resources.on;
                 openToolStripMenuItem.Checked = true;
@@ -104,7 +106,7 @@ namespace RTGraph
             {
                 comm.CloseComm();
 
-                toolStripButton3.Enabled = false;
+                btnConnect.Enabled = false;
                 SetConnectState(false);
 
                 toolStripDropDownButton1.Image = Properties.Resources.off;
@@ -118,8 +120,8 @@ namespace RTGraph
             {
                 comm.Connect();
 
-                toolStripButton3.Text = "Connecting...";
-                toolStripButton3.CheckState = CheckState.Indeterminate;
+                btnConnect.Text = "Connecting...";
+                btnConnect.CheckState = CheckState.Indeterminate;
 
                 timer1.Start();
             }
@@ -139,25 +141,59 @@ namespace RTGraph
             }
         }
 
+        private void DoGrab(int connectState)
+        {
+            if (connectState == 1)
+            {
+                comm.StartCapture();
+                btnGrab.Text = "Grap Starting...";
+                btnGrab.CheckState = CheckState.Indeterminate;
+            }
+            else if (connectState == 2)
+            {
+                SetGrabState(true);
+            }
+            else
+            {
+                comm.StopCapture();
+                SetGrabState(false);
+            }
+        }
+
         private void SetConnectState(bool connected)
         {
             if (connected)
             {
-                toolStripButton3.Text = "Disconnect";
-                toolStripButton3.CheckState = CheckState.Checked;
+                btnConnect.Text = "Disconnect";
+                btnConnect.CheckState = CheckState.Checked;
+                btnGrab.Enabled = true;
                 toolStripDropDownButton2.Enabled = true;
-                toolStripDropDownButton3.Enabled = true;
                 toolStripDropDownButton4.Enabled = true;
             }
             else
             {
-                toolStripButton3.Text = "Connect";
-                toolStripButton3.CheckState = CheckState.Unchecked;
+                btnConnect.Text = "Connect";
+                btnConnect.CheckState = CheckState.Unchecked;
+                btnGrab.Enabled = false;
                 toolStripDropDownButton2.Enabled = false;
-                toolStripDropDownButton3.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
             }
+        }
 
+        private void SetGrabState(bool grab)
+        {
+            if (grab)
+            {
+                btnGrab.Text = "Stop Grab";
+                btnGrab.CheckState = CheckState.Checked;
+                calibrationToolStripMenuItem.Enabled = (continusMode == 0);
+            }
+            else
+            {
+                btnGrab.Text = "Start Grab";
+                btnGrab.CheckState = CheckState.Unchecked;
+                calibrationToolStripMenuItem.Enabled = false;
+            }
         }
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
@@ -171,6 +207,14 @@ namespace RTGraph
                 else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
                 {
                     SetConnectState(false);
+                }
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrapStarted)
+                {
+                    SetGrabState(true);
+                }
+                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrapStopped)
+                {
+                    SetGrabState(false);
                 }
                 else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
                 {
@@ -202,6 +246,18 @@ namespace RTGraph
             }
         }
 
+        private void btnGrab_Click(object sender, EventArgs e)
+        {
+            if (btnGrab.CheckState == CheckState.Unchecked)
+            {
+                DoGrab(1);
+            }
+            else if (btnGrab.CheckState == CheckState.Checked)
+            {
+                DoGrab(0);
+            }
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DeviceCommOpen(!openToolStripMenuItem.Checked);
@@ -216,13 +272,13 @@ namespace RTGraph
             }
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
+        private void btnConnec_Click(object sender, EventArgs e)
         {
-            if (toolStripButton3.CheckState == CheckState.Unchecked)
+            if (btnConnect.CheckState == CheckState.Unchecked)
             {
                 DeviceConnect(1);
             }
-            else if (toolStripButton3.CheckState == CheckState.Checked)
+            else if (btnConnect.CheckState == CheckState.Checked)
             {
                 DeviceConnect(0);
             }

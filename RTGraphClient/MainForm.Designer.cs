@@ -37,11 +37,9 @@ namespace RTGraph
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.btnConnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.startGrabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopGrabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnGrab = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton4 = new System.Windows.Forms.ToolStripDropDownButton();
             this.continuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.triggerModeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,9 +61,9 @@ namespace RTGraph
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripDropDownButton1,
             this.toolStripSeparator1,
-            this.toolStripButton3,
+            this.btnConnect,
             this.toolStripSeparator2,
-            this.toolStripDropDownButton3,
+            this.btnGrab,
             this.toolStripDropDownButton4,
             this.toolStripDropDownButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -105,48 +103,33 @@ namespace RTGraph
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
-            // toolStripButton3
+            // btnConnect
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton3.Enabled = false;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(70, 28);
-            this.toolStripButton3.Text = "Connect";
-            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+            this.btnConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnConnect.Enabled = false;
+            this.btnConnect.Image = ((System.Drawing.Image)(resources.GetObject("btnConnect.Image")));
+            this.btnConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(70, 28);
+            this.btnConnect.Text = "Connect";
+            this.btnConnect.Click += new System.EventHandler(this.btnConnec_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
-            // toolStripDropDownButton3
+            // btnGrab
             // 
-            this.toolStripDropDownButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startGrabToolStripMenuItem,
-            this.stopGrabToolStripMenuItem});
-            this.toolStripDropDownButton3.Enabled = false;
-            this.toolStripDropDownButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton3.Image")));
-            this.toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            this.toolStripDropDownButton3.Size = new System.Drawing.Size(65, 28);
-            this.toolStripDropDownButton3.Text = "Grab...";
-            // 
-            // startGrabToolStripMenuItem
-            // 
-            this.startGrabToolStripMenuItem.Name = "startGrabToolStripMenuItem";
-            this.startGrabToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
-            this.startGrabToolStripMenuItem.Text = "Start Grab";
-            this.startGrabToolStripMenuItem.Click += new System.EventHandler(this.startGrabToolStripMenuItem_Click);
-            // 
-            // stopGrabToolStripMenuItem
-            // 
-            this.stopGrabToolStripMenuItem.Name = "stopGrabToolStripMenuItem";
-            this.stopGrabToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
-            this.stopGrabToolStripMenuItem.Text = "Stop Grab";
-            this.stopGrabToolStripMenuItem.Click += new System.EventHandler(this.stopGrabToolStripMenuItem_Click);
+            this.btnGrab.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnGrab.Enabled = false;
+            this.btnGrab.Image = ((System.Drawing.Image)(resources.GetObject("btnGrab.Image")));
+            this.btnGrab.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGrab.Name = "btnGrab";
+            this.btnGrab.Size = new System.Drawing.Size(82, 28);
+            this.btnGrab.Text = "Start Grab";
+            this.btnGrab.ToolTipText = "Grap";
+            this.btnGrab.Click += new System.EventHandler(this.btnGrab_Click);
             // 
             // toolStripDropDownButton4
             // 
@@ -158,7 +141,7 @@ namespace RTGraph
             this.toolStripDropDownButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton4.Image")));
             this.toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton4.Name = "toolStripDropDownButton4";
-            this.toolStripDropDownButton4.Size = new System.Drawing.Size(154, 28);
+            this.toolStripDropDownButton4.Size = new System.Drawing.Size(146, 28);
             this.toolStripDropDownButton4.Text = "Continuous mode";
             // 
             // continuesToolStripMenuItem
@@ -166,14 +149,14 @@ namespace RTGraph
             this.continuesToolStripMenuItem.Checked = true;
             this.continuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continuesToolStripMenuItem.Name = "continuesToolStripMenuItem";
-            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(223, 26);
+            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.continuesToolStripMenuItem.Text = "Continuous mode";
             this.continuesToolStripMenuItem.Click += new System.EventHandler(this.continuesToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem1
             // 
             this.triggerModeToolStripMenuItem1.Name = "triggerModeToolStripMenuItem1";
-            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(223, 26);
+            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
             this.triggerModeToolStripMenuItem1.Text = "Trigger mode";
             this.triggerModeToolStripMenuItem1.Click += new System.EventHandler(this.triggerModeToolStripMenuItem1_Click);
             // 
@@ -199,8 +182,9 @@ namespace RTGraph
             // 
             // calibrationToolStripMenuItem
             // 
+            this.calibrationToolStripMenuItem.Enabled = false;
             this.calibrationToolStripMenuItem.Name = "calibrationToolStripMenuItem";
-            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(167, 26);
+            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.calibrationToolStripMenuItem.Text = "Calibration";
             this.calibrationToolStripMenuItem.Click += new System.EventHandler(this.calibrationToolStripMenuItem_Click);
             // 
@@ -214,7 +198,6 @@ namespace RTGraph
             this.chart1.BufferCount = 80;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
-            this.chart1.ValuesCount = 1;
             this.chart1.Location = new System.Drawing.Point(6, 32);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chart1.Name = "chart1";
@@ -222,6 +205,7 @@ namespace RTGraph
             this.chart1.TabIndex = 5;
             this.chart1.TriggerValue = 0;
             this.chart1.ValueCount = 1024;
+            this.chart1.ValuesCount = 1;
             // 
             // MainForm
             // 
@@ -250,18 +234,16 @@ namespace RTGraph
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton btnConnect;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem parametersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
-        private System.Windows.Forms.ToolStripMenuItem startGrabToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stopGrabToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton4;
         private System.Windows.Forms.ToolStripMenuItem continuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem triggerModeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripButton btnGrab;
     }
 }
 
