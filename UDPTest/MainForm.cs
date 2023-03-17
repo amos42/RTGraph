@@ -33,14 +33,12 @@ namespace RTGraph
 
         private void addItem(int direction, byte[] byteData)
         {
-            this.Invoke(new Action(() =>
-            {
+            this.Invoke(new MethodInvoker(() => {
                 var item = new ListViewItem(
-                    new string[]
-                    {
-                            DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                            dirStr[direction],
-                            BitConverter.ToString(byteData).Replace("-", " ")
+                    new string[] {
+                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                        dirStr[direction],
+                        BitConverter.ToString(byteData).Replace("-", " ")
                     }
                 );
 
@@ -53,11 +51,9 @@ namespace RTGraph
                 {
                     listView1.EndUpdate();
                 }
-
                 
                 item.EnsureVisible();
             }));
-
         }
 
         private void receiveText(IAsyncResult result)

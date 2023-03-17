@@ -204,7 +204,7 @@ namespace DeviceSimulator
 
         private void addLogItem(int direction, string message, byte[] byteData = null)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 logControl1.AddItem(direction, message, byteData);
             }));
         }
@@ -222,22 +222,14 @@ namespace DeviceSimulator
 
             if (cnt > 0)
             {
-                this.Invoke(new Action(() =>
-                {
-                    if (!timer1.Enabled)
-                    {
-                        timer1.Start();
-                    }
+                this.Invoke(new MethodInvoker(() => {
+                    if (!timer1.Enabled) timer1.Start();
                 }));
             }
             else
             {
-                this.Invoke(new Action(() =>
-                {
-                    if (timer1.Enabled)
-                    {
-                        timer1.Stop();
-                    }
+                this.Invoke(new MethodInvoker(() => {
+                    if (timer1.Enabled) timer1.Stop();
                 }));
             }
         }
@@ -289,12 +281,11 @@ namespace DeviceSimulator
                 SocketOpenBtn.Text = "Socket Open";
                 SocketOpenBtn.Tag = null;
             }
-
         }
 
         private void propertyGrid1_SelectedGridPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 propertyGrid1.Refresh();
             }));
         }

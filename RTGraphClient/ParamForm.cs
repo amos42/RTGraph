@@ -98,7 +98,7 @@ namespace RTGraph
 
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 ParamToUI(comm.DeviceParameter);
             }));
         }

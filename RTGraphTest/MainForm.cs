@@ -29,7 +29,7 @@ namespace RTGraph
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
                 {
                     chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2);
@@ -71,7 +71,7 @@ namespace RTGraph
 
         private void CommError(object sender, ErrorEventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 MessageBox.Show(e.GetException().Message);
             }));
         }

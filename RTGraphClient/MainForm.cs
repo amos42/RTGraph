@@ -17,6 +17,7 @@ namespace RTGraph
     {
         private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
         private int continusMode = 0;
+        private bool isActive = false;
 
         public MainForm()
         {
@@ -38,11 +39,15 @@ namespace RTGraph
             if (!String.IsNullOrEmpty(sendPort)) comm.SendPort = Int32.Parse(sendPort);
             if (!String.IsNullOrEmpty(recvPort)) comm.RecvPort = Int32.Parse(recvPort);
 
+            isActive = true;
+
             DeviceCommOpen(true);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            isActive = false;
+
             comm.ErrorEvent -= CommError;
             comm.DeviceParameter.PropertyChanged -= ParameterChanged;
             comm.CloseComm();
@@ -50,7 +55,7 @@ namespace RTGraph
 
         private void CommError(object sender, ErrorEventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 MessageBox.Show(e.GetException().Message);
             }));
         }
@@ -58,13 +63,13 @@ namespace RTGraph
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(RTGraphParameter.ThresholdLevel)) {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     chart1.TriggerValue = comm.DeviceParameter.ThresholdLevel;
                 }));
             } 
             else if (e.PropertyName == nameof(RTGraphParameter.TriggerSource))
             {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     setGraphDrawMode(comm.DeviceParameter.TriggerSource);
                 }));
             }
@@ -199,28 +204,30 @@ namespace RTGraph
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
+            if (!isActive) return;
+
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
             {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     timer1.Stop();
                     SetConnectState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
             {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     SetConnectState(false);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
             {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     SetGrabState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
             {
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     SetGrabState(false);
                 }));
             }
@@ -230,11 +237,8 @@ namespace RTGraph
                 {
                     if (e.Packet.Option == 0x2) { 
                         chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
-                        this.Invoke(new Action(() => {
-                            if (!timer2.Enabled)
-                            {
-                                timer2.Start();
-                            }
+                        this.Invoke(new MethodInvoker(() => {
+                            if (!timer2.Enabled) timer2.Start();
                         }));
                     }
                 } 
@@ -244,11 +248,8 @@ namespace RTGraph
                     {
                         int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
                         chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                        this.Invoke(new Action(() => {
-                            if (!timer2.Enabled)
-                            {
-                                timer2.Start();
-                            }
+                        this.Invoke(new MethodInvoker(() => {
+                            if (!timer2.Enabled) timer2.Start();
                         }));
                     }
                 }

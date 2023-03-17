@@ -19,6 +19,7 @@ namespace RTGraph
         private Queue<byte[]> queue = new Queue<byte[]>(5);
         private int[] sums = new int[1024];
         private bool calMode = false;
+        private bool isActive = false;
 
         public CalibForm(RTGraphComm comm)
         {
@@ -40,21 +41,27 @@ namespace RTGraph
             chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
 
             comm.RequesCalibration(); // load
-            checkBox1.Checked = comm.DeviceParameter.CalibrationEnable; 
+            checkBox1.Checked = comm.DeviceParameter.CalibrationEnable;
+
+            isActive = true;
         }
 
         private void CalibForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            isActive = false;
+
             comm.PacketReceived -= RecvChanged;
             comm.CalibrationChanged -= CalChanged;
         }
 
         private void RecvChanged(object sender, PacketReceivedEventArgs e)
         {
+            if (!isActive) return;
+
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
             {
                 var data = new byte[1024];
-                chart1.SetValueLine(0, e.Packet.Data, 2, 1024);
+                chart1.SetValueLine(0, e.Packet.Data, 2, 1024, -1, false);
 
                 if (calMode)
                 {
@@ -86,7 +93,7 @@ namespace RTGraph
                     }
                 }
 
-                this.Invoke(new Action(() => {
+                this.Invoke(new MethodInvoker(() => {
                     chart1.Refresh();
                 }));
             }
@@ -94,7 +101,7 @@ namespace RTGraph
 
         private void CalChanged(object sender, EventArgs e)
         {
-            this.Invoke(new Action(() => {
+            this.Invoke(new MethodInvoker(() => {
                 chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
                 chart1.Refresh();
             }));
