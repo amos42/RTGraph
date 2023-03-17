@@ -199,42 +199,56 @@ namespace RTGraph
 
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
-            this.Invoke(new Action(() => {
-                if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
-                {
+            if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
+            {
+                this.Invoke(new Action(() => {
                     timer1.Stop();
                     SetConnectState(true);
-                }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
-                {
+                }));
+            }
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
+            {
+                this.Invoke(new Action(() => {
                     SetConnectState(false);
-                }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
-                {
+                }));
+            }
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
+            {
+                this.Invoke(new Action(() => {
                     SetGrabState(true);
-                }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
-                {
+                }));
+            }
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
+            {
+                this.Invoke(new Action(() => {
                     SetGrabState(false);
-                }
-                else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
+                }));
+            }
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
+            {
+                if (continusMode == 0)
                 {
-                    if (continusMode == 0)
+                    if (e.Packet.Option == 0x2) { 
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
+                        this.Invoke(new Action(() => {
+                            timer2.Stop();
+                            timer2.Start();
+                        }));
+                    }
+                } 
+                else if (continusMode == 1)
+                {
+                    if (e.Packet.Option == 0x3)
                     {
-                        if (e.Packet.Option == 0x2) { 
-                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2);
-                        }
-                    } 
-                    else if (continusMode == 1)
-                    {
-                        if (e.Packet.Option == 0x3)
-                        {
-                            int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos);
-                        }
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new Action(() => {
+                            timer2.Stop();
+                            timer2.Start();
+                        }));
                     }
                 }
-            }));
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -309,7 +323,14 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ImageTrigger)
             {
-                comm.ChangeGrapMode(0);
+                if(btnGrab.CheckState != CheckState.Checked)
+                {
+                    comm.ChangeGrapMode(0);
+                }
+                else
+                {
+                    MessageBox.Show("Grab이 진행 중일 땐 모드를 변경할 수 없습니다.");
+                }
             }
         }
 
@@ -317,8 +338,21 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
-                comm.ChangeGrapMode(1);
+                if (btnGrab.CheckState != CheckState.Checked)
+                {
+                    comm.ChangeGrapMode(1);
+                }
+                else
+                {
+                    MessageBox.Show("Grab이 진행 중일 땐 모드를 변경할 수 없습니다.");
+                }
             }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            timer2.Stop();
+            chart1.Refresh();
         }
     }
 }

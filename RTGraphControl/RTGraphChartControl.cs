@@ -222,7 +222,7 @@ namespace RTGraph
             }
         }
 
-        public void SetValueLine(int idx, byte[] values, int startIdx, int length, int pos = -1)
+        public void SetValueLine(int idx, byte[] values, int startIdx, int length, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
 
@@ -254,7 +254,10 @@ namespace RTGraph
                 }
                 outBm.UnlockBits(bmpData);
 
-                this.Refresh();
+                if (isRefresh)
+                {
+                    this.Refresh();
+                }
             }
         }
 

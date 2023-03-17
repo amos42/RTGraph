@@ -46,6 +46,7 @@ namespace RTGraph
             this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             this.parametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.chart1 = new RTGraph.RTGraphChartControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -149,14 +150,14 @@ namespace RTGraph
             this.continuesToolStripMenuItem.Checked = true;
             this.continuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continuesToolStripMenuItem.Name = "continuesToolStripMenuItem";
-            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
             this.continuesToolStripMenuItem.Text = "Continuous mode";
             this.continuesToolStripMenuItem.Click += new System.EventHandler(this.continuesToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem1
             // 
             this.triggerModeToolStripMenuItem1.Name = "triggerModeToolStripMenuItem1";
-            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(215, 26);
             this.triggerModeToolStripMenuItem1.Text = "Trigger mode";
             this.triggerModeToolStripMenuItem1.Click += new System.EventHandler(this.triggerModeToolStripMenuItem1_Click);
             // 
@@ -184,9 +185,14 @@ namespace RTGraph
             // 
             this.calibrationToolStripMenuItem.Enabled = false;
             this.calibrationToolStripMenuItem.Name = "calibrationToolStripMenuItem";
-            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(167, 26);
             this.calibrationToolStripMenuItem.Text = "Calibration";
             this.calibrationToolStripMenuItem.Click += new System.EventHandler(this.calibrationToolStripMenuItem_Click);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 50;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // chart1
             // 
@@ -195,7 +201,7 @@ namespace RTGraph
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.Color.Black;
             this.chart1.BorderLineWidth = 2;
-            this.chart1.BufferCount = 80;
+            this.chart1.BufferCount = 300;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
             this.chart1.Location = new System.Drawing.Point(6, 32);
@@ -244,6 +250,7 @@ namespace RTGraph
         private System.Windows.Forms.ToolStripMenuItem continuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem triggerModeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripButton btnGrab;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 
