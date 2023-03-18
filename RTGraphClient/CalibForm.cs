@@ -38,7 +38,7 @@ namespace RTGraph
             comm.CalibrationChanged += new EventHandler(CalChanged);
             comm.PacketReceived += new PacketReceivedEventHandler(RecvChanged);
 
-            chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
+            chart1.SetValueLine(1, comm.CalibrationData);
 
             comm.RequesCalibration(); // load
             checkBox1.Checked = comm.DeviceParameter.CalibrationEnable;
@@ -60,11 +60,11 @@ namespace RTGraph
 
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
             {
-                var data = new byte[1024];
-                chart1.SetValueLine(0, e.Packet.Data, 2, 1024, -1, false);
+                chart1.SetValueLine(0, e.Packet.Data, 2, 1024, isRefresh: false);
 
                 if (calMode)
                 {
+                    var data = new byte[1024];
                     Array.Copy(e.Packet.Data, 2, data, 0, 1024);
 
                     for (int i = 0; i < 1024; i++)
@@ -85,12 +85,12 @@ namespace RTGraph
                         cnt--;
                     }
 
-                    var itms = chart1.Values[2].Items;
-
+                    var avgs = new byte[1924];
                     for (int i = 0; i < 1024; i++)
                     {
-                        itms[i] = (byte)(sums[i] / cnt);
+                        avgs[i] = (byte)(sums[i] / cnt);
                     }
+                    chart1.SetValueLine(2, avgs, isRefresh: false);
                 }
 
                 this.Invoke(new MethodInvoker(() => {
@@ -102,8 +102,7 @@ namespace RTGraph
         private void CalChanged(object sender, EventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
-                chart1.SetValueLine(1, comm.CalibrationData, 0, 1024);
-                chart1.Refresh();
+                chart1.SetValueLine(1, comm.CalibrationData);
             }));
         }
 

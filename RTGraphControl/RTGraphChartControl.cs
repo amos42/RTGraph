@@ -273,7 +273,7 @@ namespace RTGraph
             outBm.UnlockBits(bmpData);
         }
 
-        public void SetValueLine(int idx, byte[] values, int startIdx, int length, int pos = -1, bool isRefresh = true)
+        public void SetValueLine(int idx, byte[] values, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
 
@@ -281,6 +281,7 @@ namespace RTGraph
             {
                 lock (thisBlock)
                 {
+                    if (length <= 0) length = values.Length;
                     length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
                     Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
                     this.Values[idx].Index = pos;
