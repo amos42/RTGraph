@@ -120,67 +120,7 @@ namespace RTGraph
             comm.ApplyParam(camParam, true);
         }
 
-        private void cboImageSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void cboTriggerSource_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numExposureLevel_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void cboLineScanRate_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numThresholdLevel_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numThresholdWidth_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTde_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTch_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTre1_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTre2_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTsl_ValueChanged(object sender, EventArgs e)
-        {
-            kickTimer();
-        }
-
-        private void numTpw_ValueChanged(object sender, EventArgs e)
+        private void Item_ValueChanged(object sender, EventArgs e)
         {
             kickTimer();
         }
@@ -244,6 +184,5 @@ namespace RTGraph
                 msk |= RTGraphParameter.MASK_GROUP_4;
             comm.ApplyParam(camParam, false, msk);
         }
-
     }
 }
