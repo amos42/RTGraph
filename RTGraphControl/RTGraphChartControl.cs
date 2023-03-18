@@ -230,10 +230,13 @@ namespace RTGraph
         {
             if (idx >= this.Values.Count) return;
 
-            if (this.Values[idx]?.Items != null)
+            lock (thisBlock)
             {
-                length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
-                Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                if (this.Values[idx]?.Items != null)
+                {
+                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
+                    Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                }
             }
 
             if (idx == 0 && outBm != null)
@@ -316,25 +319,27 @@ namespace RTGraph
             width--; height--;
             float graphBaseY = startY + height;
 
-            this.Values.ForEach(items =>
+            lock (thisBlock)
             {
-                if (items.Items != null)
-                {
-                    var gpen = new Pen(items.GraphColor, items.LineWidth);
-                    var tpen = new Pen(items.TriggerColor, items.LineWidth);
-
-                    float oldV = graphBaseY - items.Items[0] * height / 255;
-                    int cnt = items.Items.Length;
-                    for (int i = 1; i < cnt; i++)
+                this.Values.ForEach(items => {
+                    if (items.Items != null)
                     {
-                        float v = graphBaseY - items.Items[i] * height / 255;
-                        Pen pen;
-                        pen = (triggerValue > 0 && items.Items[i] > triggerValue) ? tpen : gpen;
-                        e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
-                        oldV = v;
+                        var gpen = new Pen(items.GraphColor, items.LineWidth);
+                        var tpen = new Pen(items.TriggerColor, items.LineWidth);
+
+                        float oldV = graphBaseY - items.Items[0] * height / 255;
+                        int cnt = items.Items.Length;
+                        for (int i = 1; i < cnt; i++)
+                        {
+                            float v = graphBaseY - items.Items[i] * height / 255;
+                            Pen pen;
+                            pen = (triggerValue > 0 && items.Items[i] > triggerValue) ? tpen : gpen;
+                            e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
+                            oldV = v;
+                        }
                     }
-                }
-            });
+                });
+            }
 
             if (TriggerValue > 0) {
                 float v2 = graphBaseY - TriggerValue * height / 255;
@@ -342,7 +347,6 @@ namespace RTGraph
                 trigPen.DashStyle = DashStyle.Dash;
                 e.Graphics.DrawLine(trigPen, startX, v2, startX + width - 1, v2);
             }
-
         }
 
         private void RTGraphChartControl_Resize(object sender, EventArgs e)
