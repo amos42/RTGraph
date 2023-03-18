@@ -69,7 +69,7 @@ namespace RTGraph
             this.toolStripDropDownButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1040, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1040, 31);
             this.toolStrip1.TabIndex = 12;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -82,7 +82,7 @@ namespace RTGraph
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 24);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 28);
             this.toolStripDropDownButton1.Text = "Open";
             // 
             // openToolStripMenuItem
@@ -102,7 +102,7 @@ namespace RTGraph
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // btnConnect
             // 
@@ -111,14 +111,14 @@ namespace RTGraph
             this.btnConnect.Image = ((System.Drawing.Image)(resources.GetObject("btnConnect.Image")));
             this.btnConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(70, 24);
+            this.btnConnect.Size = new System.Drawing.Size(70, 28);
             this.btnConnect.Text = "Connect";
             this.btnConnect.Click += new System.EventHandler(this.btnConnec_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
             // btnGrab
             // 
@@ -127,7 +127,7 @@ namespace RTGraph
             this.btnGrab.Image = ((System.Drawing.Image)(resources.GetObject("btnGrab.Image")));
             this.btnGrab.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnGrab.Name = "btnGrab";
-            this.btnGrab.Size = new System.Drawing.Size(82, 24);
+            this.btnGrab.Size = new System.Drawing.Size(82, 28);
             this.btnGrab.Text = "Start Grab";
             this.btnGrab.ToolTipText = "Grap";
             this.btnGrab.Click += new System.EventHandler(this.btnGrab_Click);
@@ -142,7 +142,7 @@ namespace RTGraph
             this.toolStripDropDownButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton4.Image")));
             this.toolStripDropDownButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton4.Name = "toolStripDropDownButton4";
-            this.toolStripDropDownButton4.Size = new System.Drawing.Size(146, 24);
+            this.toolStripDropDownButton4.Size = new System.Drawing.Size(146, 28);
             this.toolStripDropDownButton4.Text = "Continuous mode";
             // 
             // continuesToolStripMenuItem
@@ -171,7 +171,7 @@ namespace RTGraph
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 24);
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(123, 28);
             this.toolStripDropDownButton2.Text = "More Actions...";
             // 
             // parametersToolStripMenuItem
@@ -201,7 +201,7 @@ namespace RTGraph
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.Color.Black;
             this.chart1.BorderLineWidth = 2;
-            this.chart1.BufferCount = 80;
+            this.chart1.BufferCount = 300;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
             this.chart1.Location = new System.Drawing.Point(6, 32);
