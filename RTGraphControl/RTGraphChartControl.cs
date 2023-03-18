@@ -148,6 +148,7 @@ namespace RTGraph
         //    }
         //}
 
+        private Queue<byte[]> pendingGraphQueue = new Queue<byte[]>();
         private Bitmap outBm = null;
         private int enqPos = 0;
         private int validPos = 0;
@@ -236,33 +237,34 @@ namespace RTGraph
                 {
                     length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
                     Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                    pendingGraphQueue.Enqueue(this.Values[idx].Items.Clone() as byte[]);
                 }
             }
 
             if (idx == 0 && outBm != null)
             {
-                Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-                lock (thisBlock)
-                {
-                    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                    if (pos >= 0)
-                    {
-                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
-                    }
-                    else
-                    {
-                        valueCnt++;
-                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
-                        validPos = enqPos;
-                        enqPos++;
-                        if (enqPos >= bufferCount)
-                        {
-                            enqPos = 0;
-                            //this.startPos++;
-                        }
-                    }
-                    outBm.UnlockBits(bmpData);
-                }
+                //Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+                //lock (thisBlock)
+                //{
+                //    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                //    if (pos >= 0)
+                //    {
+                //        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
+                //    }
+                //    else
+                //    {
+                //        valueCnt++;
+                //        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
+                //        validPos = enqPos;
+                //        enqPos++;
+                //        if (enqPos >= bufferCount)
+                //        {
+                //            enqPos = 0;
+                //            //this.startPos++;
+                //        }
+                //    }
+                //    outBm.UnlockBits(bmpData);
+                //}
 
                 if (isRefresh) this.Refresh();
             }
@@ -292,19 +294,46 @@ namespace RTGraph
             {
                 lock (thisBlock)
                 {
-                    const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
-                    if (valueCnt > bufferCount)
+                    Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+
+                    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                    while (pendingGraphQueue.Count > 0)
                     {
-                        int drawPos = this.ClientSize.Height * validPos / outBm.Height;
-                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height - drawPos),
-                                                    new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
-                                                    new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+                        var values = pendingGraphQueue.Dequeue();
+
+                        int pos = -1;
+                        if (pos >= 0)
+                        {
+                            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), values.Length);
+                        }
+                        else
+                        {
+                            valueCnt++;
+                            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Length);
+                            validPos = enqPos;
+                            enqPos++;
+                            if (enqPos >= bufferCount)
+                            {
+                                enqPos = 0;
+                                //this.startPos++;
+                            }
+                        }
                     }
-                    else
-                    {
-                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
-                    }
+                    outBm.UnlockBits(bmpData);
+                }
+
+                const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
+                if (valueCnt > bufferCount)
+                {
+                    int drawPos = this.ClientSize.Height * validPos / outBm.Height;
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height - drawPos),
+                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
+                                                new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+                }
+                else
+                {
+                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
                 }
             }
 
@@ -319,27 +348,32 @@ namespace RTGraph
             width--; height--;
             float graphBaseY = startY + height;
 
+            var lines = new List<GraphItem>();
             lock (thisBlock)
             {
                 this.Values.ForEach(items => {
                     if (items.Items != null)
                     {
-                        var gpen = new Pen(items.GraphColor, items.LineWidth);
-                        var tpen = new Pen(items.TriggerColor, items.LineWidth);
-
-                        float oldV = graphBaseY - items.Items[0] * height / 255;
-                        int cnt = items.Items.Length;
-                        for (int i = 1; i < cnt; i++)
-                        {
-                            float v = graphBaseY - items.Items[i] * height / 255;
-                            Pen pen;
-                            pen = (triggerValue > 0 && items.Items[i] > triggerValue) ? tpen : gpen;
-                            e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
-                            oldV = v;
-                        }
+                        lines.Add(items.Clone() as GraphItem);
                     }
                 });
-            }
+             }
+
+            lines.ForEach(items => {
+                var gpen = new Pen(items.GraphColor, items.LineWidth);
+                var tpen = new Pen(items.TriggerColor, items.LineWidth);
+
+                float oldV = graphBaseY - items.Items[0] * height / 255;
+                int cnt = items.Items.Length;
+                for (int i = 1; i < cnt; i++)
+                {
+                    float v = graphBaseY - items.Items[i] * height / 255;
+                    Pen pen;
+                    pen = (triggerValue > 0 && items.Items[i] > triggerValue) ? tpen : gpen;
+                    e.Graphics.DrawLine(pen, startX + (i - 1) * width / (cnt - 1), oldV, startX + i * width / (cnt - 1), v);
+                    oldV = v;
+                }
+            });
 
             if (TriggerValue > 0) {
                 float v2 = graphBaseY - TriggerValue * height / 255;
@@ -355,7 +389,7 @@ namespace RTGraph
         }
     }
 
-    public class GraphItem
+    public class GraphItem : ICloneable
     {
         private byte[] items = null;
         public byte[] Items
@@ -428,7 +462,13 @@ namespace RTGraph
         public GraphItem() : this(0, Color.White, Color.Red)
         {
         }
-    };
 
+        public object Clone()
+        {
+            var item =  new GraphItem(this.GraphColor, this.TriggerColor, this.LineWidth);
+            item.items = this.items.Clone() as byte[];
+            return item;
+        }
+    }
 }
 

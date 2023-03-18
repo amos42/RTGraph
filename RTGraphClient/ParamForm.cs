@@ -103,17 +103,17 @@ namespace RTGraph
             }));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void defaultButton_Click(object sender, EventArgs e)
         {
             comm.RequestParam(true);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void loadButton_Click(object sender, EventArgs e)
         {
             comm.RequestParam(false);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
             var camParam = new RTGraphParameter();
             UIToParam(camParam);

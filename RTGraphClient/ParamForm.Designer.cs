@@ -72,10 +72,10 @@ namespace RTGraph
             this.numRoiStart = new System.Windows.Forms.NumericUpDown();
             this.trkRoiEnd = new System.Windows.Forms.TrackBar();
             this.trkRoiStart = new System.Windows.Forms.TrackBar();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.defaultButton = new System.Windows.Forms.Button();
+            this.loadButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numExposureLevel)).BeginInit();
@@ -629,46 +629,46 @@ namespace RTGraph
             this.trkRoiStart.TickFrequency = 10;
             this.trkRoiStart.ValueChanged += new System.EventHandler(this.trkRoiStart_ValueChanged);
             // 
-            // button1
+            // defaultButton
             // 
-            this.button1.Location = new System.Drawing.Point(204, 372);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Default";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.defaultButton.Location = new System.Drawing.Point(204, 372);
+            this.defaultButton.Name = "defaultButton";
+            this.defaultButton.Size = new System.Drawing.Size(75, 30);
+            this.defaultButton.TabIndex = 5;
+            this.defaultButton.Text = "Default";
+            this.defaultButton.UseVisualStyleBackColor = true;
+            this.defaultButton.Click += new System.EventHandler(this.defaultButton_Click);
             // 
-            // button2
+            // loadButton
             // 
-            this.button2.Location = new System.Drawing.Point(291, 372);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 30);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Load";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.loadButton.Location = new System.Drawing.Point(291, 372);
+            this.loadButton.Name = "loadButton";
+            this.loadButton.Size = new System.Drawing.Size(75, 30);
+            this.loadButton.TabIndex = 6;
+            this.loadButton.Text = "Load";
+            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.loadButton_Click);
             // 
-            // button3
+            // saveButton
             // 
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button3.Location = new System.Drawing.Point(378, 372);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 30);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "Save";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.saveButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.saveButton.Location = new System.Drawing.Point(378, 372);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 30);
+            this.saveButton.TabIndex = 7;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
-            // button5
+            // closeButton
             // 
-            this.button5.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button5.Location = new System.Drawing.Point(465, 372);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 30);
-            this.button5.TabIndex = 10;
-            this.button5.Text = "Close";
-            this.button5.UseVisualStyleBackColor = true;
+            this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.closeButton.Location = new System.Drawing.Point(465, 372);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(75, 30);
+            this.closeButton.TabIndex = 10;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
             // 
             // timer1
             // 
@@ -680,10 +680,10 @@ namespace RTGraph
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(552, 412);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.closeButton);
+            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.loadButton);
+            this.Controls.Add(this.defaultButton);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -732,10 +732,10 @@ namespace RTGraph
         private System.Windows.Forms.NumericUpDown numRoiStart;
         private System.Windows.Forms.TrackBar trkRoiEnd;
         private System.Windows.Forms.TrackBar trkRoiStart;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button defaultButton;
+        private System.Windows.Forms.Button loadButton;
+        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
