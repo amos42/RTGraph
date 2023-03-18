@@ -268,9 +268,9 @@ namespace RTGraph
                 //    }
                 //    outBm.UnlockBits(bmpData);
                 //}
-
-                if (isRefresh) this.Refresh();
             }
+
+            if (isRefresh) this.Refresh();
         }
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
@@ -303,6 +303,7 @@ namespace RTGraph
                 {
                     cnt = pendingGraphQueue.Count;
                 }
+                Console.WriteLine(cnt);
 
                 while (cnt > 0)
                 {
