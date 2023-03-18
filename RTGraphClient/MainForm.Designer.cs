@@ -201,9 +201,10 @@ namespace RTGraph
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.Color.Black;
             this.chart1.BorderLineWidth = 2;
-            this.chart1.BufferCount = 300;
+            this.chart1.BufferCount = 100;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
+            this.chart1.IndexedMode = false;
             this.chart1.Location = new System.Drawing.Point(6, 32);
             this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chart1.Name = "chart1";

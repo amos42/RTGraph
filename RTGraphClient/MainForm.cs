@@ -83,6 +83,8 @@ namespace RTGraph
                 continuesToolStripMenuItem.Checked = true;
                 triggerModeToolStripMenuItem1.Checked = false;
                 toolStripDropDownButton4.Text = "Continues Mode";
+                chart1.IndexedMode = false;
+                chart1.BufferCount = 100;
                 calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked);
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
@@ -91,6 +93,8 @@ namespace RTGraph
                 continuesToolStripMenuItem.Checked = false;
                 triggerModeToolStripMenuItem1.Checked = true;
                 toolStripDropDownButton4.Text = "Trigger Mode";
+                chart1.IndexedMode = true;
+                chart1.BufferCount = 300;
                 chart1.Clear();
                 calibrationToolStripMenuItem.Enabled = false;
             }

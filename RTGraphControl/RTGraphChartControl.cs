@@ -111,7 +111,7 @@ namespace RTGraph
                         {
                             Values.Add(new GraphItem(valueCount));
                         }
-                    } 
+                    }
                     else
                     {
                         int cnt = Values.Count - value;
@@ -125,6 +125,8 @@ namespace RTGraph
             }
         }
 
+        public bool IndexedMode {get; set;} = false;
+
         Padding graphMargin = new Padding(10, 100, 10, 100);
         public Padding GraphMargin {
             get { return graphMargin; }
@@ -135,20 +137,7 @@ namespace RTGraph
             } 
         }
 
-        //private int startPos = 0;
-        //public int StartPos
-        //{
-        //    get { return startPos; }
-        //    set {
-        //        if (startPos != value)
-        //        {
-        //            startPos = value;
-        //            this.Refresh();
-        //        }
-        //    }
-        //}
-
-        private Queue<byte[]> pendingGraphQueue = new Queue<byte[]>();
+        private Queue<KeyValuePair<int, byte[]>> pendingGraphQueue = new Queue<KeyValuePair<int, byte[]>>();
         private Bitmap outBm = null;
         private int enqPos = 0;
         private int validPos = 0;
@@ -227,48 +216,77 @@ namespace RTGraph
             }
         }
 
+        private void applyBitmap(int index, byte[] line)
+        {
+            if (outBm == null) return;
+
+            Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+
+            BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+            if (IndexedMode)
+            {
+                Marshal.Copy(line, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * index), line.Length);
+            }
+            else
+            {
+                valueCnt++;
+                Marshal.Copy(line, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), line.Length);
+                validPos = enqPos;
+                enqPos++;
+                if (enqPos >= bufferCount)
+                {
+                    enqPos = 0;
+                    //this.startPos++;
+                }
+            }
+            outBm.UnlockBits(bmpData);
+        }
+
+        private void applyBitmap(Queue<KeyValuePair<int, byte[]>> graphQueue)
+        {
+            if (outBm == null) return;
+
+            Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+
+            BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+            while (graphQueue.Count > 0)
+            {
+                var values = graphQueue.Dequeue();
+
+                if (IndexedMode)
+                {
+                    Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
+                }
+                else
+                {
+                    valueCnt++;
+                    Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Value.Length);
+                    validPos = enqPos;
+                    enqPos++;
+                    if (enqPos >= bufferCount)
+                    {
+                        enqPos = 0;
+                        //this.startPos++;
+                    }
+                }
+            }
+            outBm.UnlockBits(bmpData);
+        }
+
         public void SetValueLine(int idx, byte[] values, int startIdx, int length, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
 
-            //lock (thisBlock)
+            if (this.Values[idx]?.Items != null)
             {
-                if (this.Values[idx]?.Items != null)
+                lock (thisBlock)
                 {
-                    lock (thisBlock)
-                    {
-                        length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
-                        Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
-                        this.Values[idx].Index = pos;
-                    }
-                    pendingGraphQueue.Enqueue(this.Values[idx].Items.Clone() as byte[]);
+                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
+                    Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                    this.Values[idx].Index = pos;
                 }
-            }
 
-            if (idx == 0 && outBm != null)
-            {
-                //Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-                //lock (thisBlock)
-                //{
-                //    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                //    if (pos >= 0)
-                //    {
-                //        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
-                //    }
-                //    else
-                //    {
-                //        valueCnt++;
-                //        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
-                //        validPos = enqPos;
-                //        enqPos++;
-                //        if (enqPos >= bufferCount)
-                //        {
-                //            enqPos = 0;
-                //            //this.startPos++;
-                //        }
-                //    }
-                //    outBm.UnlockBits(bmpData);
-                //}
+                pendingGraphQueue.Enqueue(new KeyValuePair<int, byte[]>(pos, this.Values[idx].Items.Clone() as byte[]));
             }
 
             if (isRefresh) this.Refresh();
@@ -300,48 +318,7 @@ namespace RTGraph
 
             if (outBm != null)
             {
-                Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-
-                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                int cnt;
-                //lock (thisBlock)
-                {
-                    cnt = pendingGraphQueue.Count;
-                }
-                Console.WriteLine(cnt);
-
-                while (cnt > 0)
-                {
-                    byte[] values;
-                    //lock (thisBlock)
-                    {
-                        values = pendingGraphQueue.Dequeue();
-                    }
-
-                    int pos = -1;
-                    if (pos >= 0)
-                    {
-                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), values.Length);
-                    }
-                    else
-                    {
-                        valueCnt++;
-                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Length);
-                        validPos = enqPos;
-                        enqPos++;
-                        if (enqPos >= bufferCount)
-                        {
-                            enqPos = 0;
-                            //this.startPos++;
-                        }
-                    }
-
-                    //lock (thisBlock)
-                    {
-                        cnt = pendingGraphQueue.Count;
-                    }
-                }
-                outBm.UnlockBits(bmpData);
+                applyBitmap(pendingGraphQueue);
 
                 const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
                 if (valueCnt > bufferCount)
@@ -368,17 +345,6 @@ namespace RTGraph
 
             width--; height--;
             float graphBaseY = startY + height;
-
-            //var lines = new List<GraphItem>();
-            ////lock (thisBlock)
-            //{
-            //    this.Values.ForEach(items => {
-            //        if (items.Items != null)
-            //        {
-            //            lines.Add(items.Clone() as GraphItem);
-            //        }
-            //    });
-            // }
 
             this.Values.ForEach(items => {
                 var gpen = new Pen(items.GraphColor, items.LineWidth);
