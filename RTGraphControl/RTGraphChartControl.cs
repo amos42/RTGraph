@@ -281,7 +281,7 @@ namespace RTGraph
         public void SetValueLine(int idx, byte[] values, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
-            if (pos >= this.BufferCount) return;
+            if (idx == 0 && IndexedMode && pos >= this.BufferCount) return;
 
             if (this.Values[idx]?.Items != null)
             {
