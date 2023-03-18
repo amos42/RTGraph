@@ -235,18 +235,10 @@ namespace RTGraph
             {
                 if (continusMode == 0)
                 {
-                    if (e.Packet.Option == 0x2) { 
+                    if (e.Packet.Option == 0x2) {
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
                         this.Invoke(new MethodInvoker(() => {
-                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
-                            try
-                            {
-                                //if (!refreshTimer.Enabled) refreshTimer.Start();
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                            chart1.Refresh();
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
                         }));
                     }
                 } 
@@ -255,17 +247,9 @@ namespace RTGraph
                     if (e.Packet.Option == 0x3)
                     {
                         int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                         this.Invoke(new MethodInvoker(() => {
-                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                            try
-                            {
-                                //if (!refreshTimer.Enabled) refreshTimer.Start();
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                            chart1.Refresh();
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
                         }));
                     }
                 }
@@ -372,14 +356,8 @@ namespace RTGraph
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            try 
-            { 
-                refreshTimer.Stop();
-                chart1.Refresh();
-            } 
-            catch (Exception ex)  
-            { 
-            }
+            refreshTimer.Stop();
+            chart1.Refresh();
         }
     }
 }

@@ -174,15 +174,15 @@ namespace DeviceSimulator
                 comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
                 comm.OpenComm();
 
-                SocketOpenBtn.Text = "Socket Close";
-                SocketOpenBtn.Tag = comm;
+                socketOpenBtn.Text = "Socket Close";
+                socketOpenBtn.Tag = comm;
             }
             else
             {
                 comm.CloseComm();
                 comm.PacketReceived -= ReceivePacket;
-                SocketOpenBtn.Text = "Socket Open";
-                SocketOpenBtn.Tag = null;
+                socketOpenBtn.Text = "Socket Open";
+                socketOpenBtn.Tag = null;
             }
         }
 
@@ -223,18 +223,18 @@ namespace DeviceSimulator
             if (cnt > 0)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    if (!timer1.Enabled) timer1.Start();
+                    if (!grabSendTimer.Enabled) grabSendTimer.Start();
                 }));
             }
             else
             {
                 this.Invoke(new MethodInvoker(() => {
-                    if (timer1.Enabled) timer1.Stop();
+                    if (grabSendTimer.Enabled) grabSendTimer.Stop();
                 }));
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void grabSendTimer_Tick(object sender, EventArgs e)
         {
             foreach (var xx in endPtrDic)
             {
@@ -271,15 +271,15 @@ namespace DeviceSimulator
             {
                 socketOpen(true);
 
-                SocketOpenBtn.Text = "Socket Close";
-                SocketOpenBtn.Tag = comm;
+                socketOpenBtn.Text = "Socket Close";
+                socketOpenBtn.Tag = comm;
             }
             else
             {
                 socketOpen(false);
 
-                SocketOpenBtn.Text = "Socket Open";
-                SocketOpenBtn.Tag = null;
+                socketOpenBtn.Text = "Socket Open";
+                socketOpenBtn.Tag = null;
             }
         }
 

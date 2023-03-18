@@ -30,8 +30,8 @@ namespace DeviceSimulator
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.SocketOpenBtn = new System.Windows.Forms.Button();
+            this.grabSendTimer = new System.Windows.Forms.Timer(this.components);
+            this.socketOpenBtn = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -46,19 +46,20 @@ namespace DeviceSimulator
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
-            // timer1
+            // grabSendTimer
             // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.grabSendTimer.Interval = 50;
+            this.grabSendTimer.Tick += new System.EventHandler(this.grabSendTimer_Tick);
             // 
-            // SocketOpenBtn
+            // socketOpenBtn
             // 
-            this.SocketOpenBtn.Location = new System.Drawing.Point(12, 11);
-            this.SocketOpenBtn.Name = "SocketOpenBtn";
-            this.SocketOpenBtn.Size = new System.Drawing.Size(240, 42);
-            this.SocketOpenBtn.TabIndex = 1;
-            this.SocketOpenBtn.Text = "Open";
-            this.SocketOpenBtn.UseVisualStyleBackColor = true;
-            this.SocketOpenBtn.Click += new System.EventHandler(this.SocketOpenBtn_Click);
+            this.socketOpenBtn.Location = new System.Drawing.Point(12, 11);
+            this.socketOpenBtn.Name = "socketOpenBtn";
+            this.socketOpenBtn.Size = new System.Drawing.Size(240, 42);
+            this.socketOpenBtn.TabIndex = 1;
+            this.socketOpenBtn.Text = "Comm Open";
+            this.socketOpenBtn.UseVisualStyleBackColor = true;
+            this.socketOpenBtn.Click += new System.EventHandler(this.SocketOpenBtn_Click);
             // 
             // trackBar1
             // 
@@ -177,7 +178,7 @@ namespace DeviceSimulator
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.SocketOpenBtn);
+            this.Controls.Add(this.socketOpenBtn);
             this.Name = "MainForm";
             this.Text = "Device Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -190,8 +191,8 @@ namespace DeviceSimulator
 
         #endregion
 
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button SocketOpenBtn;
+        private System.Windows.Forms.Timer grabSendTimer;
+        private System.Windows.Forms.Button socketOpenBtn;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;

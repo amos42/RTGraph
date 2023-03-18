@@ -151,6 +151,7 @@ namespace RTGraph
         private Bitmap outBm = null;
         private int enqPos = 0;
         private int validPos = 0;
+        private readonly Object thisBlock = new Object();
 
         private void genImage()
         {
@@ -197,28 +198,31 @@ namespace RTGraph
             }
         }
 
-        public void Clear()
+        public void Clear(bool isRefresh = true)
         {
             if (outBm != null)
             {
                 Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                for (int i = 0; i < outBm.Height; i++)
+                lock (thisBlock)
                 {
-                    var ptr = IntPtr.Add(bmpData.Scan0, bmpData.Stride * i);
-                    for (int j = 0; j < outBm.Width; j++)
+                    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                    for (int i = 0; i < outBm.Height; i++)
                     {
-                        Marshal.WriteByte(ptr, j, 0);
+                        var ptr = IntPtr.Add(bmpData.Scan0, bmpData.Stride * i);
+                        for (int j = 0; j < outBm.Width; j++)
+                        {
+                            Marshal.WriteByte(ptr, j, 0);
+                        }
                     }
+                    outBm.UnlockBits(bmpData);
                 }
-                outBm.UnlockBits(bmpData);
 
                 validPos = enqPos;
                 enqPos = 0;
                 valueCnt = 0;
                 //this.startPos = 0;
 
-                this.Refresh();
+                if (isRefresh) this.Refresh();
             }
         }
 
@@ -235,29 +239,29 @@ namespace RTGraph
             if (idx == 0 && outBm != null)
             {
                 Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
-                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                if (pos >= 0)
+                lock (thisBlock)
                 {
-                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
-                } 
-                else
-                {
-                    valueCnt++;
-                    Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
-                    validPos = enqPos;
-                    enqPos++;
-                    if (enqPos >= bufferCount)
+                    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                    if (pos >= 0)
                     {
-                        enqPos = 0;
-                        //this.startPos++;
+                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), length);
                     }
+                    else
+                    {
+                        valueCnt++;
+                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), length);
+                        validPos = enqPos;
+                        enqPos++;
+                        if (enqPos >= bufferCount)
+                        {
+                            enqPos = 0;
+                            //this.startPos++;
+                        }
+                    }
+                    outBm.UnlockBits(bmpData);
                 }
-                outBm.UnlockBits(bmpData);
 
-                if (isRefresh)
-                {
-                    this.Refresh();
-                }
+                if (isRefresh) this.Refresh();
             }
         }
 
@@ -283,18 +287,21 @@ namespace RTGraph
 
             if (outBm != null)
             {
-                const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
-                if (valueCnt > bufferCount)
+                lock (thisBlock)
                 {
-                    int drawPos = this.ClientSize.Height * validPos / outBm.Height;
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX-errorTerm, START_COORD_POS, width+errorTerm, this.ClientSize.Height - drawPos),
-                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX- errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width+errorTerm, drawPos),
-                                                new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
-                }
-                else
-                {
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX-errorTerm, START_COORD_POS, width+errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
+                    if (valueCnt > bufferCount)
+                    {
+                        int drawPos = this.ClientSize.Height * validPos / outBm.Height;
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height - drawPos),
+                                                    new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
+                                                    new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    }
                 }
             }
 
