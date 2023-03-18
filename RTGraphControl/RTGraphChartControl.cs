@@ -239,6 +239,7 @@ namespace RTGraph
                     {
                         length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
                         Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                        this.Values[idx].Index = pos;
                     }
                     pendingGraphQueue.Enqueue(this.Values[idx].Items.Clone() as byte[]);
                 }
@@ -272,6 +273,10 @@ namespace RTGraph
 
             if (isRefresh) this.Refresh();
         }
+
+
+        private DateTime oldTime = DateTime.Now;
+        private int oldIdx = 0;
 
         private void RTGraphChartControl_Paint(object sender, PaintEventArgs e)
         {
@@ -397,6 +402,16 @@ namespace RTGraph
                 trigPen.DashStyle = DashStyle.Dash;
                 e.Graphics.DrawLine(trigPen, startX, v2, startX + width - 1, v2);
             }
+
+            var diff = DateTime.Now.Subtract(oldTime);
+            int idx = this.Values[0].Index;
+
+            float vv = (float)(idx - oldIdx) / diff.Ticks * TimeSpan.TicksPerSecond;
+
+            oldTime = DateTime.Now;
+            oldIdx = idx;
+
+            e.Graphics.DrawString($"index : {vv}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
         }
 
         private void RTGraphChartControl_Resize(object sender, EventArgs e)
@@ -407,6 +422,8 @@ namespace RTGraph
 
     public class GraphItem : ICloneable
     {
+        public int Index { get; set; } = 0;
+
         private byte[] items = null;
         public byte[] Items
         {
@@ -483,6 +500,7 @@ namespace RTGraph
         {
             var item =  new GraphItem(this.GraphColor, this.TriggerColor, this.LineWidth);
             item.items = this.items.Clone() as byte[];
+            item.Index = this.Index;
             return item;
         }
     }

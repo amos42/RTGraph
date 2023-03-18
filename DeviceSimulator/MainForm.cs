@@ -234,6 +234,8 @@ namespace DeviceSimulator
             }
         }
 
+        private static UInt16 idx = 0;
+
         private void grabSendTimer_Tick(object sender, EventArgs e)
         {
             foreach (var xx in endPtrDic)
@@ -241,6 +243,9 @@ namespace DeviceSimulator
                 if (!xx.Value) continue;
                 
                 var data = new byte[1024 + 2];
+                data[0] = (byte)(idx & 0xff);
+                data[1] = (byte)(idx >> 8);
+                idx++;
 
                 int limit = trackBar2.Value;
                 float divder = limit * limit / (float)255;
