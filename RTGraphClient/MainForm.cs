@@ -238,7 +238,14 @@ namespace RTGraph
                     if (e.Packet.Option == 0x2) { 
                         chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
                         this.Invoke(new MethodInvoker(() => {
-                            if (!timer2.Enabled) timer2.Start();
+                            try
+                            {
+                                if (!timer2.Enabled) timer2.Start();
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
                         }));
                     }
                 } 
@@ -249,7 +256,14 @@ namespace RTGraph
                         int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
                         chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                         this.Invoke(new MethodInvoker(() => {
-                            if (!timer2.Enabled) timer2.Start();
+                            try
+                            {
+                                if (!timer2.Enabled) timer2.Start();
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
                         }));
                     }
                 }
@@ -356,8 +370,14 @@ namespace RTGraph
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            timer2.Stop();
-            chart1.Refresh();
+            try 
+            { 
+                timer2.Stop();
+                chart1.Refresh();
+            } 
+            catch (Exception ex)  
+            { 
+            }
         }
     }
 }
