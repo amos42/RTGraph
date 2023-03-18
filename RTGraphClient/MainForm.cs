@@ -359,5 +359,18 @@ namespace RTGraph
             refreshTimer.Stop();
             chart1.Refresh();
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            chart1.StretchMode = !chart1.StretchMode;
+            if(chart1.StretchMode)
+            {
+                toolStripButton1.Text = "Stretch";
+            } 
+            else
+            {
+                toolStripButton1.Text = "1:1";
+            }
+        }
     }
 }

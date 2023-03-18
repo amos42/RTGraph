@@ -127,6 +127,8 @@ namespace RTGraph
 
         public bool IndexedMode {get; set;} = false;
 
+        public bool StretchMode { get; set; } = true;
+
         Padding graphMargin = new Padding(10, 100, 10, 100);
         public Padding GraphMargin {
             get { return graphMargin; }
@@ -255,7 +257,10 @@ namespace RTGraph
 
                 if (IndexedMode)
                 {
-                    Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
+                    if (values.Key < bmpData.Height)
+                    {
+                        Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
+                    }
                 }
                 else
                 {
@@ -276,6 +281,7 @@ namespace RTGraph
         public void SetValueLine(int idx, byte[] values, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
+            if (pos >= this.BufferCount) return;
 
             if (this.Values[idx]?.Items != null)
             {
@@ -324,15 +330,31 @@ namespace RTGraph
                 const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
                 if (valueCnt > bufferCount)
                 {
-                    int drawPos = this.ClientSize.Height * validPos / outBm.Height;
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height - drawPos),
-                                                new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
-                                                new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+                    if (StretchMode)
+                    {
+                        int drawPos = this.ClientSize.Height * validPos / outBm.Height;
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height - drawPos),
+                                                    new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
+                                                    new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+                    }
+                    else
+                    {
+                        
+                    }
                 }
                 else
                 {
-                    e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    if (StretchMode)
+                    {
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                    }
+                    else
+                    {
+                        var scrOnePixel = width / 1024f;
+                        var virHeight = height / scrOnePixel;
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, (int)virHeight), GraphicsUnit.Pixel);
+                    }
                 }
             }
 

@@ -48,6 +48,7 @@ namespace RTGraph
             this.calibrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.chart1 = new RTGraph.RTGraphChartControl();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,7 +67,8 @@ namespace RTGraph
             this.toolStripSeparator2,
             this.btnGrab,
             this.toolStripDropDownButton4,
-            this.toolStripDropDownButton2});
+            this.toolStripDropDownButton2,
+            this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1040, 31);
@@ -150,14 +152,14 @@ namespace RTGraph
             this.continuesToolStripMenuItem.Checked = true;
             this.continuesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.continuesToolStripMenuItem.Name = "continuesToolStripMenuItem";
-            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(215, 26);
+            this.continuesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.continuesToolStripMenuItem.Text = "Continuous mode";
             this.continuesToolStripMenuItem.Click += new System.EventHandler(this.continuesToolStripMenuItem_Click);
             // 
             // triggerModeToolStripMenuItem1
             // 
             this.triggerModeToolStripMenuItem1.Name = "triggerModeToolStripMenuItem1";
-            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(215, 26);
+            this.triggerModeToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
             this.triggerModeToolStripMenuItem1.Text = "Trigger mode";
             this.triggerModeToolStripMenuItem1.Click += new System.EventHandler(this.triggerModeToolStripMenuItem1_Click);
             // 
@@ -214,6 +216,17 @@ namespace RTGraph
             this.chart1.ValueCount = 1024;
             this.chart1.ValuesCount = 1;
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(60, 28);
+            this.toolStripButton1.Text = "Stretch";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -252,6 +265,7 @@ namespace RTGraph
         private System.Windows.Forms.ToolStripMenuItem triggerModeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripButton btnGrab;
         private System.Windows.Forms.Timer refreshTimer;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
 
