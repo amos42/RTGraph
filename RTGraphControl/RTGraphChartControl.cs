@@ -231,12 +231,15 @@ namespace RTGraph
         {
             if (idx >= this.Values.Count) return;
 
-            lock (thisBlock)
+            //lock (thisBlock)
             {
                 if (this.Values[idx]?.Items != null)
                 {
-                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
-                    Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                    lock (thisBlock)
+                    {
+                        length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
+                        Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                    }
                     pendingGraphQueue.Enqueue(this.Values[idx].Items.Clone() as byte[]);
                 }
             }
@@ -296,7 +299,7 @@ namespace RTGraph
 
                 BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
                 int cnt;
-                lock (thisBlock)
+                //lock (thisBlock)
                 {
                     cnt = pendingGraphQueue.Count;
                 }
@@ -304,7 +307,7 @@ namespace RTGraph
                 while (cnt > 0)
                 {
                     byte[] values;
-                    lock (thisBlock)
+                    //lock (thisBlock)
                     {
                         values = pendingGraphQueue.Dequeue();
                     }
@@ -327,7 +330,7 @@ namespace RTGraph
                         }
                     }
 
-                    lock (thisBlock)
+                    //lock (thisBlock)
                     {
                         cnt = pendingGraphQueue.Count;
                     }
@@ -360,18 +363,18 @@ namespace RTGraph
             width--; height--;
             float graphBaseY = startY + height;
 
-            var lines = new List<GraphItem>();
-            lock (thisBlock)
-            {
-                this.Values.ForEach(items => {
-                    if (items.Items != null)
-                    {
-                        lines.Add(items.Clone() as GraphItem);
-                    }
-                });
-             }
+            //var lines = new List<GraphItem>();
+            ////lock (thisBlock)
+            //{
+            //    this.Values.ForEach(items => {
+            //        if (items.Items != null)
+            //        {
+            //            lines.Add(items.Clone() as GraphItem);
+            //        }
+            //    });
+            // }
 
-            lines.ForEach(items => {
+            this.Values.ForEach(items => {
                 var gpen = new Pen(items.GraphColor, items.LineWidth);
                 var tpen = new Pen(items.TriggerColor, items.LineWidth);
 
