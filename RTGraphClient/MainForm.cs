@@ -26,9 +26,9 @@ namespace RTGraph
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comm.ErrorEvent += new ErrorEventHandler(CommError);
-            comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
-            comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
+            comm.ErrorEvent += new ErrorEventHandler(commError);
+            comm.PacketReceived += new PacketReceivedEventHandler(receivePacket);
+            comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(parameterChanged);
 
             var cfg = new AppConfig("network");
             var hostIP = cfg.GetValue("HostIP");
@@ -41,26 +41,26 @@ namespace RTGraph
 
             isActive = true;
 
-            DeviceCommOpen(true);
+            deviceCommOpen(true);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             isActive = false;
 
-            comm.ErrorEvent -= CommError;
-            comm.DeviceParameter.PropertyChanged -= ParameterChanged;
+            comm.ErrorEvent -= commError;
+            comm.DeviceParameter.PropertyChanged -= parameterChanged;
             comm.CloseComm();
         }
 
-        private void CommError(object sender, ErrorEventArgs e)
+        private void commError(object sender, ErrorEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
                 MessageBox.Show(e.GetException().Message);
             }));
         }
 
-        private void ParameterChanged(object sender, PropertyChangedEventArgs e)
+        private void parameterChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(RTGraphParameter.ThresholdLevel)) {
                 this.Invoke(new MethodInvoker(() => {
@@ -96,7 +96,7 @@ namespace RTGraph
             }
         }
 
-        private void DeviceCommOpen(bool isOpen)
+        private void deviceCommOpen(bool isOpen)
         {
             if (isOpen)
             {
@@ -112,14 +112,14 @@ namespace RTGraph
                 comm.CloseComm();
 
                 btnConnect.Enabled = false;
-                SetConnectState(false);
+                setConnectState(false);
 
                 toolStripDropDownButton1.Image = Properties.Resources.off;
                 openToolStripMenuItem.Checked = false;
             }
         }
 
-        private void DeviceConnect(int connectState)
+        private void deviceConnect(int connectState)
         {
             if (connectState == 1)
             {
@@ -128,25 +128,25 @@ namespace RTGraph
                 btnConnect.Text = "Connecting...";
                 btnConnect.CheckState = CheckState.Indeterminate;
 
-                timer1.Start();
+                connectionTimer.Start();
             }
             else if (connectState == 2)
             {
-                SetConnectState(true);
+                setConnectState(true);
 
-                timer1.Stop();
+                connectionTimer.Stop();
             }
             else
             {
                 comm.Disconnect();
 
-                SetConnectState(false);
+                setConnectState(false);
 
-                timer1.Stop();
+                connectionTimer.Stop();
             }
         }
 
-        private void DoGrab(int connectState)
+        private void doGrab(int connectState)
         {
             if (connectState == 1)
             {
@@ -156,16 +156,16 @@ namespace RTGraph
             }
             else if (connectState == 2)
             {
-                SetGrabState(true);
+                setGrabState(true);
             }
             else
             {
                 comm.StopCapture();
-                SetGrabState(false);
+                setGrabState(false);
             }
         }
 
-        private void SetConnectState(bool connected)
+        private void setConnectState(bool connected)
         {
             if (connected)
             {
@@ -180,13 +180,13 @@ namespace RTGraph
                 btnConnect.Text = "Connect";
                 btnConnect.CheckState = CheckState.Unchecked;
                 btnGrab.Enabled = false;
-                SetGrabState(false);
+                setGrabState(false);
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
             }
         }
 
-        private void SetGrabState(bool grab)
+        private void setGrabState(bool grab)
         {
             if (grab)
             {
@@ -202,33 +202,33 @@ namespace RTGraph
             }
         }
 
-        private void ReceivePacket(object sender, PacketReceivedEventArgs e)
+        private void receivePacket(object sender, PacketReceivedEventArgs e)
         {
             if (!isActive) return;
 
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    timer1.Stop();
-                    SetConnectState(true);
+                    connectionTimer.Stop();
+                    setConnectState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    SetConnectState(false);
+                    setConnectState(false);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    SetGrabState(true);
+                    setGrabState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    SetGrabState(false);
+                    setGrabState(false);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
@@ -236,16 +236,17 @@ namespace RTGraph
                 if (continusMode == 0)
                 {
                     if (e.Packet.Option == 0x2) { 
-                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
                         this.Invoke(new MethodInvoker(() => {
+                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, -1, false);
                             try
                             {
-                                if (!timer2.Enabled) timer2.Start();
+                                //if (!refreshTimer.Enabled) refreshTimer.Start();
                             }
                             catch (Exception ex)
                             {
 
                             }
+                            chart1.Refresh();
                         }));
                     }
                 } 
@@ -254,29 +255,20 @@ namespace RTGraph
                     if (e.Packet.Option == 0x3)
                     {
                         int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                         this.Invoke(new MethodInvoker(() => {
+                            chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                             try
                             {
-                                if (!timer2.Enabled) timer2.Start();
+                                //if (!refreshTimer.Enabled) refreshTimer.Start();
                             }
                             catch (Exception ex)
                             {
 
                             }
+                            chart1.Refresh();
                         }));
                     }
                 }
-            }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            timer1.Stop();
-            if (!comm.Connected)
-            {
-                MessageBox.Show("장치로부터 응답이 없습니다.");
-                DeviceConnect(0);
             }
         }
 
@@ -284,17 +276,17 @@ namespace RTGraph
         {
             if (btnGrab.CheckState == CheckState.Unchecked)
             {
-                DoGrab(1);
+                doGrab(1);
             }
             else if (btnGrab.CheckState == CheckState.Checked)
             {
-                DoGrab(0);
+                doGrab(0);
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DeviceCommOpen(!openToolStripMenuItem.Checked);
+            deviceCommOpen(!openToolStripMenuItem.Checked);
         }
 
         private void settingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -310,11 +302,11 @@ namespace RTGraph
         {
             if (btnConnect.CheckState == CheckState.Unchecked)
             {
-                DeviceConnect(1);
+                deviceConnect(1);
             }
             else if (btnConnect.CheckState == CheckState.Checked)
             {
-                DeviceConnect(0);
+                deviceConnect(0);
             }
         }
 
@@ -368,11 +360,21 @@ namespace RTGraph
             }
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void connectionTimer_Tick(object sender, EventArgs e)
+        {
+            connectionTimer.Stop();
+            if (!comm.Connected)
+            {
+                MessageBox.Show("장치로부터 응답이 없습니다.");
+                deviceConnect(0);
+            }
+        }
+
+        private void refreshTimer_Tick(object sender, EventArgs e)
         {
             try 
             { 
-                timer2.Stop();
+                refreshTimer.Stop();
                 chart1.Refresh();
             } 
             catch (Exception ex)  
