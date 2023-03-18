@@ -292,35 +292,47 @@ namespace RTGraph
 
             if (outBm != null)
             {
+                Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+
+                BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+                int cnt;
                 lock (thisBlock)
                 {
-                    Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+                    cnt = pendingGraphQueue.Count;
+                }
 
-                    BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
-                    while (pendingGraphQueue.Count > 0)
+                while (cnt > 0)
+                {
+                    byte[] values;
+                    lock (thisBlock)
                     {
-                        var values = pendingGraphQueue.Dequeue();
+                        values = pendingGraphQueue.Dequeue();
+                    }
 
-                        int pos = -1;
-                        if (pos >= 0)
+                    int pos = -1;
+                    if (pos >= 0)
+                    {
+                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), values.Length);
+                    }
+                    else
+                    {
+                        valueCnt++;
+                        Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Length);
+                        validPos = enqPos;
+                        enqPos++;
+                        if (enqPos >= bufferCount)
                         {
-                            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * pos), values.Length);
-                        }
-                        else
-                        {
-                            valueCnt++;
-                            Marshal.Copy(values, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Length);
-                            validPos = enqPos;
-                            enqPos++;
-                            if (enqPos >= bufferCount)
-                            {
-                                enqPos = 0;
-                                //this.startPos++;
-                            }
+                            enqPos = 0;
+                            //this.startPos++;
                         }
                     }
-                    outBm.UnlockBits(bmpData);
+
+                    lock (thisBlock)
+                    {
+                        cnt = pendingGraphQueue.Count;
+                    }
                 }
+                outBm.UnlockBits(bmpData);
 
                 const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
                 if (valueCnt > bufferCount)
