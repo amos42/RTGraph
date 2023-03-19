@@ -33,12 +33,6 @@ namespace RTGraph
         {
             this.comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
             ParamToUI(this.comm.DeviceParameter);
-
-            cboLineScanRate.Items.Clear();
-            for(int i = 20000; i >= 500; i -= 100)
-            {
-                cboLineScanRate.Items.Add(i);
-            }
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -62,9 +56,9 @@ namespace RTGraph
                 userHandle = false;
                 cboImageSelect.SelectedIndex = (int)camParam.ImageSelector;
                 cboTriggerSource.SelectedIndex = (int)camParam.TriggerSource;
-                // numExposureTime.Value = (int)camParam.ExposureLevel; // 현재 사용 안 함
-                cboLineScanRate.SelectedIndex = (int)camParam.LineScanRate;
-                comboBox4.SelectedIndex = (int)camParam.GainLevel;
+                trackBar1.Value = camParam.LineScanRate;
+                // cboExposureLevel.SelectedIndex = (int)camParam.ExposureLevel; // 현재 사용 안 함
+                cboGainLevel.SelectedIndex = (int)camParam.GainLevel;
                 numTde.Value = camParam.TDE;
                 numTch.Value = camParam.TCH;
                 numTre1.Value = camParam.TRE1;
@@ -86,10 +80,10 @@ namespace RTGraph
         private void UIToParam(RTGraphParameter camParam)
         {
             camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)cboImageSelect.SelectedIndex;
-            // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)comboBox2.SelectedIndex; // 현재 세팅 불가
-            // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)numExposureTime.Value; // 현재 사용 안 함
-            camParam.LineScanRate = (RTGraphParameter.LineScanRateEnum)cboLineScanRate.SelectedIndex;
-            camParam.GainLevel = (RTGraphParameter.GainLevelEnum)comboBox4.SelectedIndex;
+            // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)cboTriggerSource.SelectedIndex; // 현재 세팅 불가
+            camParam.LineScanRate = (UInt16)trackBar1.Value;
+            // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)cboExposureLevel.SelectedIndex; // 현재 사용 안 함
+            camParam.GainLevel = (RTGraphParameter.GainLevelEnum)cboGainLevel.SelectedIndex;
             camParam.TDE = (UInt16)numTde.Value;
             camParam.TCH = (UInt16)numTch.Value;
             camParam.TRE1 = (UInt16)numTre1.Value;
@@ -124,6 +118,13 @@ namespace RTGraph
             var camParam = new RTGraphParameter();
             UIToParam(camParam);
             comm.ApplyParam(camParam, true);
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            label22.Text = trackBar1.Value.ToString();
+
+            kickTimer();
         }
 
         private void Item_ValueChanged(object sender, EventArgs e)

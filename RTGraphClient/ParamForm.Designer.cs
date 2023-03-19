@@ -31,14 +31,15 @@ namespace RTGraph
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cboLineScanRate = new System.Windows.Forms.ComboBox();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.cboExposureLevel = new System.Windows.Forms.ComboBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.cboGainLevel = new System.Windows.Forms.ComboBox();
             this.Gain = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.numExposureLevel = new System.Windows.Forms.NumericUpDown();
             this.cboTriggerSource = new System.Windows.Forms.ComboBox();
             this.cboImageSelect = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -78,7 +79,7 @@ namespace RTGraph
             this.closeButton = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numExposureLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTpw)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTsl)).BeginInit();
@@ -97,14 +98,15 @@ namespace RTGraph
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.cboLineScanRate);
-            this.groupBox1.Controls.Add(this.comboBox4);
+            this.groupBox1.Controls.Add(this.cboExposureLevel);
+            this.groupBox1.Controls.Add(this.label22);
+            this.groupBox1.Controls.Add(this.trackBar1);
+            this.groupBox1.Controls.Add(this.cboGainLevel);
             this.groupBox1.Controls.Add(this.Gain);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.numExposureLevel);
             this.groupBox1.Controls.Add(this.cboTriggerSource);
             this.groupBox1.Controls.Add(this.cboImageSelect);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
@@ -114,29 +116,57 @@ namespace RTGraph
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Camera Setting";
             // 
-            // cboLineScanRate
+            // cboExposureLevel
             // 
-            this.cboLineScanRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboLineScanRate.FormattingEnabled = true;
-            this.cboLineScanRate.Items.AddRange(new object[] {
-            "30000",
-            "25000",
-            "20000",
-            "15000",
-            "10000",
-            "5000",
-            "2500"});
-            this.cboLineScanRate.Location = new System.Drawing.Point(144, 127);
-            this.cboLineScanRate.Name = "cboLineScanRate";
-            this.cboLineScanRate.Size = new System.Drawing.Size(164, 23);
-            this.cboLineScanRate.TabIndex = 14;
-            this.cboLineScanRate.SelectedIndexChanged += new System.EventHandler(this.Item_ValueChanged);
+            this.cboExposureLevel.FormattingEnabled = true;
+            this.cboExposureLevel.Items.AddRange(new object[] {
+            "0%",
+            "10%",
+            "20%",
+            "30%",
+            "40%",
+            "50%",
+            "60%",
+            "70%",
+            "80%",
+            "90%",
+            "100%"});
+            this.cboExposureLevel.Location = new System.Drawing.Point(140, 115);
+            this.cboExposureLevel.Name = "cboExposureLevel";
+            this.cboExposureLevel.Size = new System.Drawing.Size(163, 23);
+            this.cboExposureLevel.TabIndex = 16;
+            this.cboExposureLevel.Visible = false;
+            this.cboExposureLevel.SelectedIndexChanged += new System.EventHandler(this.Item_ValueChanged);
             // 
-            // comboBox4
+            // label22
             // 
-            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
+            this.label22.Location = new System.Drawing.Point(252, 84);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(52, 23);
+            this.label22.TabIndex = 15;
+            this.label22.Text = "30000";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.AutoSize = false;
+            this.trackBar1.LargeChange = 1000;
+            this.trackBar1.Location = new System.Drawing.Point(140, 86);
+            this.trackBar1.Maximum = 30000;
+            this.trackBar1.Minimum = 5000;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(115, 23);
+            this.trackBar1.SmallChange = 100;
+            this.trackBar1.TabIndex = 14;
+            this.trackBar1.TickFrequency = 100;
+            this.trackBar1.Value = 30000;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
+            // cboGainLevel
+            // 
+            this.cboGainLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboGainLevel.FormattingEnabled = true;
+            this.cboGainLevel.Items.AddRange(new object[] {
             "Level 0",
             "Level 1",
             "Level 2",
@@ -145,15 +175,15 @@ namespace RTGraph
             "Level 5",
             "Level 6",
             "Level 7"});
-            this.comboBox4.Location = new System.Drawing.Point(144, 158);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(164, 23);
-            this.comboBox4.TabIndex = 13;
-            this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.Item_ValueChanged);
+            this.cboGainLevel.Location = new System.Drawing.Point(140, 145);
+            this.cboGainLevel.Name = "cboGainLevel";
+            this.cboGainLevel.Size = new System.Drawing.Size(164, 23);
+            this.cboGainLevel.TabIndex = 13;
+            this.cboGainLevel.SelectedIndexChanged += new System.EventHandler(this.Item_ValueChanged);
             // 
             // Gain
             // 
-            this.Gain.Location = new System.Drawing.Point(17, 161);
+            this.Gain.Location = new System.Drawing.Point(13, 148);
             this.Gain.Name = "Gain";
             this.Gain.Size = new System.Drawing.Size(117, 23);
             this.Gain.TabIndex = 11;
@@ -162,7 +192,7 @@ namespace RTGraph
             // 
             // label8
             // 
-            this.label8.Location = new System.Drawing.Point(17, 130);
+            this.label8.Location = new System.Drawing.Point(13, 86);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(117, 23);
             this.label8.TabIndex = 10;
@@ -171,7 +201,7 @@ namespace RTGraph
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(17, 99);
+            this.label7.Location = new System.Drawing.Point(13, 117);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 23);
             this.label7.TabIndex = 9;
@@ -181,7 +211,7 @@ namespace RTGraph
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(17, 68);
+            this.label6.Location = new System.Drawing.Point(13, 55);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(117, 23);
             this.label6.TabIndex = 8;
@@ -190,37 +220,12 @@ namespace RTGraph
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(17, 37);
+            this.label5.Location = new System.Drawing.Point(13, 24);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(117, 23);
             this.label5.TabIndex = 7;
             this.label5.Text = "Image Select";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // numExposureLevel
-            // 
-            this.numExposureLevel.Location = new System.Drawing.Point(144, 95);
-            this.numExposureLevel.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numExposureLevel.Minimum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numExposureLevel.Name = "numExposureLevel";
-            this.numExposureLevel.Size = new System.Drawing.Size(164, 25);
-            this.numExposureLevel.TabIndex = 4;
-            this.numExposureLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numExposureLevel.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numExposureLevel.Visible = false;
-            this.numExposureLevel.ValueChanged += new System.EventHandler(this.Item_ValueChanged);
             // 
             // cboTriggerSource
             // 
@@ -230,7 +235,7 @@ namespace RTGraph
             this.cboTriggerSource.Items.AddRange(new object[] {
             "Image Trigger",
             "External Trigger"});
-            this.cboTriggerSource.Location = new System.Drawing.Point(144, 66);
+            this.cboTriggerSource.Location = new System.Drawing.Point(140, 53);
             this.cboTriggerSource.Name = "cboTriggerSource";
             this.cboTriggerSource.Size = new System.Drawing.Size(164, 23);
             this.cboTriggerSource.TabIndex = 3;
@@ -245,7 +250,7 @@ namespace RTGraph
             "Pattern 1",
             "Pattern 2",
             "Stop"});
-            this.cboImageSelect.Location = new System.Drawing.Point(144, 37);
+            this.cboImageSelect.Location = new System.Drawing.Point(140, 24);
             this.cboImageSelect.Name = "cboImageSelect";
             this.cboImageSelect.Size = new System.Drawing.Size(164, 23);
             this.cboImageSelect.TabIndex = 2;
@@ -694,7 +699,7 @@ namespace RTGraph
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ParamForm_FormClosed);
             this.Load += new System.EventHandler(this.ParamForm_Load);
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numExposureLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numTpw)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTsl)).EndInit();
@@ -716,7 +721,6 @@ namespace RTGraph
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown numExposureLevel;
         private System.Windows.Forms.ComboBox cboTriggerSource;
         private System.Windows.Forms.ComboBox cboImageSelect;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -758,9 +762,11 @@ namespace RTGraph
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.ComboBox cboLineScanRate;
+        private System.Windows.Forms.ComboBox cboGainLevel;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.ComboBox cboExposureLevel;
     }
 }
