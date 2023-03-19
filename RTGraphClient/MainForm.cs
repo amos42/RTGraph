@@ -67,7 +67,25 @@ namespace RTGraph
                 this.Invoke(new MethodInvoker(() => {
                     chart1.TriggerValue = comm.DeviceParameter.ThresholdLevel;
                 }));
-            } 
+            }
+            if (e.PropertyName == nameof(RTGraphParameter.ROIStart))
+            {
+                this.Invoke(new MethodInvoker(() => {
+                    chart1.ValideAreaStart = comm.DeviceParameter.ROIStart;
+                }));
+            }
+            if (e.PropertyName == nameof(RTGraphParameter.ROIEnd))
+            {
+                this.Invoke(new MethodInvoker(() => {
+                    chart1.ValideAreaEnd = comm.DeviceParameter.ROIEnd;
+                }));
+            }
+            if (e.PropertyName == nameof(RTGraphParameter.ThresholdLevel))
+            {
+                this.Invoke(new MethodInvoker(() => {
+                    chart1.TriggerValue = comm.DeviceParameter.ThresholdLevel;
+                }));
+            }
             else if (e.PropertyName == nameof(RTGraphParameter.TriggerSource))
             {
                 this.Invoke(new MethodInvoker(() => {

@@ -59,6 +59,34 @@ namespace RTGraph
             }
         }
 
+        private int valideAreaStart = -1;
+        public int ValideAreaStart
+        {
+            get { return valideAreaStart; }
+            set
+            {
+                if (valideAreaStart != value && value <= valideAreaEnd)
+                {
+                    valideAreaStart = value;
+                    this.Refresh();
+                }
+            }
+        }
+
+        private int valideAreaEnd = -1;
+        public int ValideAreaEnd
+        {
+            get { return valideAreaEnd; }
+            set
+            {
+                if (valideAreaEnd != value && value >= valideAreaStart)
+                {
+                    valideAreaEnd = value;
+                    this.Refresh();
+                }
+            }
+        }
+
         private int bufferCount = 0;
         public int BufferCount
         {
@@ -440,7 +468,18 @@ namespace RTGraph
                 }
             }
 
-            if(bufferAxisVisible)
+            if (valideAreaStart >= 0 && valideAreaStart <= 1023)
+            {
+                float v = startX + valideAreaStart * width / 1023;
+                e.Graphics.DrawLine(Pens.Gray, v, startY, v, startY + height);
+            }
+            if (valideAreaEnd >= 0 && valideAreaEnd <= 1023)
+            {
+                float v = startX + valideAreaEnd * width / 1023;
+                e.Graphics.DrawLine(Pens.Gray, v, startY, v, startY + height);
+            }
+
+            if (bufferAxisVisible)
             {
                 var virHeight = (float)this.ClientSize.Height / bufferCount;
                 for (int i = 10; i < bufferCount; i += 10)
