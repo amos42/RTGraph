@@ -73,7 +73,7 @@ namespace RTGraph
             }
         }
 
-        private int valideAreaEnd = -1;
+        private int valideAreaEnd = 1024;
         public int ValideAreaEnd
         {
             get { return valideAreaEnd; }
@@ -471,12 +471,12 @@ namespace RTGraph
             if (valideAreaStart >= 0 && valideAreaStart <= 1023)
             {
                 float v = startX + valideAreaStart * width / 1023;
-                e.Graphics.DrawLine(Pens.Gray, v, startY, v, startY + height);
+                e.Graphics.DrawLine(Pens.DarkGray, v, startY, v, startY + height);
             }
             if (valideAreaEnd >= 0 && valideAreaEnd <= 1023)
             {
                 float v = startX + valideAreaEnd * width / 1023;
-                e.Graphics.DrawLine(Pens.Gray, v, startY, v, startY + height);
+                e.Graphics.DrawLine(Pens.DarkGray, v, startY, v, startY + height);
             }
 
             if (bufferAxisVisible)
