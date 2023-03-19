@@ -73,7 +73,7 @@ namespace RTGraph
         private void button1_Click(object sender, EventArgs e)
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.serialize();
+            var data = packet.Serialize();
 
             udpClient.Send(data, data.Length);
 
@@ -93,7 +93,7 @@ namespace RTGraph
         private void button3_Click(object sender, EventArgs e)
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.serialize();
+            var data = packet.Serialize();
 
             udpClient.Send(data, data.Length);
 

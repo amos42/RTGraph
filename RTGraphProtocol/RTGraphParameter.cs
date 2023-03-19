@@ -411,7 +411,7 @@ namespace RTGraph
             }
         }
 
-        public byte[] serialize(byte[] packet = null, int startIdx = 0, int groupMask = MASK_GROUP_ALL)
+        public byte[] Serialize(byte[] packet = null, int startIdx = 0, int groupMask = MASK_GROUP_ALL)
         {
             if (packet == null)
             {

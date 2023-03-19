@@ -82,7 +82,7 @@ namespace RTGraph
             } 
         }
 
-        public byte[] serialize(byte[] packet = null)
+        public byte[] Serialize(byte[] packet = null)
         {
             int len = 0;
             if(Data != null)
@@ -115,7 +115,7 @@ namespace RTGraph
             }
             //if (camParam != null)
             //{
-            //    camParam.serialize(packet, 6);
+            //    camParam.Serialize(packet, 6);
             //}
 
             return packet;

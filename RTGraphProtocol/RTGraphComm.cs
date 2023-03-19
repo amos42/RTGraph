@@ -228,34 +228,34 @@ namespace RTGraphProtocol
         public void Connect()
         {
             var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.serialize();
+            var data = packet.Serialize();
             udpSender.Send(data, data.Length);
         }
 
         public void Disconnect()
         {
             var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.serialize();
+            var data = packet.Serialize();
             udpSender.Send(data, data.Length);
         }
 
         public void StartCapture()
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.serialize();
+            var data = packet.Serialize();
             udpSender.Send(data, data.Length);
         }
 
         public void StopCapture()
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.serialize();
+            var data = packet.Serialize();
             udpSender.Send(data, data.Length);
         }
 
         public void SendPacket(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
         {
-            var data = packet.serialize();
+            var data = packet.Serialize();
             SendStream(data, targetIPEndPoint);
         }
 
@@ -278,7 +278,7 @@ namespace RTGraphProtocol
         public void ApplyParam(RTGraphParameter camParam, bool isSave = false, byte groupMask = RTGraphParameter.MASK_GROUP_ALL)
         {
             pendingParam = camParam.Clone() as RTGraphParameter;
-            var data = pendingParam.serialize(null, 1);
+            var data = pendingParam.Serialize(null, 1);
             data[0] = groupMask;
             SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
         }

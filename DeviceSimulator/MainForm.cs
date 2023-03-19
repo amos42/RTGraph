@@ -32,7 +32,7 @@ namespace DeviceSimulator
             IPEndPoint ep = e.TargetIPEndPoint;
             if (comm.SendPort > 0) ep.Port = comm.SendPort;
 
-            addLogItem(LogControl.LogTypeEnum.Recv, "", packet.serialize());
+            addLogItem(LogControl.LogTypeEnum.Recv, "", packet.Serialize());
 
             if (packet.Class == PacketClass.CONN)
             {
@@ -44,10 +44,10 @@ namespace DeviceSimulator
                         applyTimer();
 
                         var data = new byte[RTGraphParameter.PARAMETERS_PACKET_SIZE + 1];
-                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.serialize(data, 1));
+                        packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.Serialize(data, 1));
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.serialize(), e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.serialize());
+                        //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.Serialize(), e.TargetIPEndPoint);
+                        addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x00)
@@ -58,7 +58,7 @@ namespace DeviceSimulator
                         var data = new byte[1] { 0x0 };
                         packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.serialize());
+                        addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                 }
@@ -69,12 +69,12 @@ namespace DeviceSimulator
                 {
                     if (packet.Option == 0x01 || packet.Option == 0x00)
                     {
-                        var data = comm.DeviceParameter.serialize(null, 1);
+                        var data = comm.DeviceParameter.Serialize(null, 1);
                         data[0] = RTGraphParameter.MASK_GROUP_ALL;
                         packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         // comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.serialize());
+                        addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
@@ -104,7 +104,7 @@ namespace DeviceSimulator
                         data[0] = 0;
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.serialize());
+                        addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x01)
@@ -114,7 +114,7 @@ namespace DeviceSimulator
                         data[0] = 0;
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.serialize());
+                        addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
@@ -266,7 +266,7 @@ namespace DeviceSimulator
 
                 var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
                 comm.SendPacket(packet, xx.Key);
-                addLogItem(0, "", packet.serialize());
+                addLogItem(0, "", packet.Serialize());
             }
         }
 
