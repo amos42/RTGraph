@@ -86,6 +86,7 @@ namespace RTGraph
                 toolStripDropDownButton4.Text = "Continuous Mode";
                 chart1.IndexedMode = false;
                 chart1.BufferCount = 100;
+                chart1.OSDVisible = true;
                 calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked);
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
@@ -96,6 +97,7 @@ namespace RTGraph
                 toolStripDropDownButton4.Text = "Trigger Mode";
                 chart1.IndexedMode = true;
                 chart1.BufferCount = 300;
+                chart1.OSDVisible = false;
                 chart1.Clear();
                 calibrationToolStripMenuItem.Enabled = false;
             }
