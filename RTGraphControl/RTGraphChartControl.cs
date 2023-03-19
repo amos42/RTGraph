@@ -442,7 +442,8 @@ namespace RTGraph
                 }
             });
 
-            if (TriggerValue > 0) {
+            if (TriggerValue > 0)
+            {
                 float v2 = graphBaseY - TriggerValue * height / 255;
                 var trigPen = new Pen(Color.Red, 1);
                 trigPen.DashStyle = DashStyle.Dash;
@@ -459,7 +460,7 @@ namespace RTGraph
                 oldTime = DateTime.Now;
                 oldIdx = idx;
 
-                e.Graphics.DrawString($"index : {vv}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
+                e.Graphics.DrawString($"index : {vv.ToString("N")}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
             }
         }
 
