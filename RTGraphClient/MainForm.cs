@@ -83,7 +83,7 @@ namespace RTGraph
                 continusMode = 0;
                 continuesToolStripMenuItem.Checked = true;
                 triggerModeToolStripMenuItem1.Checked = false;
-                toolStripDropDownButton4.Text = "Continues Mode";
+                toolStripDropDownButton4.Text = "Continuous Mode";
                 chart1.IndexedMode = false;
                 chart1.BufferCount = 100;
                 calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked);
