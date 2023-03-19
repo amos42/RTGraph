@@ -120,9 +120,9 @@ namespace RTGraph
             comm.ApplyParam(camParam, true);
         }
 
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        private void trkLineScanRate_ValueChanged(object sender, EventArgs e)
         {
-            label22.Text = $"{trkLineScanRate.Value * 100}";
+            lblLineScanRate.Text = $"{trkLineScanRate.Value * 100}";
 
             kickTimer();
         }

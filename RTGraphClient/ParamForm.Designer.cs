@@ -32,7 +32,7 @@ namespace RTGraph
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cboExposureLevel = new System.Windows.Forms.ComboBox();
-            this.label22 = new System.Windows.Forms.Label();
+            this.lblLineScanRate = new System.Windows.Forms.Label();
             this.trkLineScanRate = new System.Windows.Forms.TrackBar();
             this.cboGainLevel = new System.Windows.Forms.ComboBox();
             this.Gain = new System.Windows.Forms.Label();
@@ -99,7 +99,7 @@ namespace RTGraph
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.cboExposureLevel);
-            this.groupBox1.Controls.Add(this.label22);
+            this.groupBox1.Controls.Add(this.lblLineScanRate);
             this.groupBox1.Controls.Add(this.trkLineScanRate);
             this.groupBox1.Controls.Add(this.cboGainLevel);
             this.groupBox1.Controls.Add(this.Gain);
@@ -140,12 +140,12 @@ namespace RTGraph
             // 
             // label22
             // 
-            this.label22.Location = new System.Drawing.Point(252, 84);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(52, 23);
-            this.label22.TabIndex = 15;
-            this.label22.Text = "30000";
-            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblLineScanRate.Location = new System.Drawing.Point(252, 84);
+            this.lblLineScanRate.Name = "label22";
+            this.lblLineScanRate.Size = new System.Drawing.Size(52, 23);
+            this.lblLineScanRate.TabIndex = 15;
+            this.lblLineScanRate.Text = "30000";
+            this.lblLineScanRate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // trkLineScanRate
             // 
@@ -158,7 +158,7 @@ namespace RTGraph
             this.trkLineScanRate.Size = new System.Drawing.Size(115, 23);
             this.trkLineScanRate.TabIndex = 14;
             this.trkLineScanRate.Value = 300;
-            this.trkLineScanRate.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            this.trkLineScanRate.ValueChanged += new System.EventHandler(this.trkLineScanRate_ValueChanged);
             // 
             // cboGainLevel
             // 
@@ -764,7 +764,7 @@ namespace RTGraph
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TrackBar trkLineScanRate;
-        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label lblLineScanRate;
         private System.Windows.Forms.ComboBox cboExposureLevel;
     }
 }
