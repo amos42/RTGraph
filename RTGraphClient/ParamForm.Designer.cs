@@ -33,7 +33,7 @@ namespace RTGraph
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cboExposureLevel = new System.Windows.Forms.ComboBox();
             this.label22 = new System.Windows.Forms.Label();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.trkLineScanRate = new System.Windows.Forms.TrackBar();
             this.cboGainLevel = new System.Windows.Forms.ComboBox();
             this.Gain = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -79,7 +79,7 @@ namespace RTGraph
             this.closeButton = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trkLineScanRate)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTpw)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTsl)).BeginInit();
@@ -100,7 +100,7 @@ namespace RTGraph
             // 
             this.groupBox1.Controls.Add(this.cboExposureLevel);
             this.groupBox1.Controls.Add(this.label22);
-            this.groupBox1.Controls.Add(this.trackBar1);
+            this.groupBox1.Controls.Add(this.trkLineScanRate);
             this.groupBox1.Controls.Add(this.cboGainLevel);
             this.groupBox1.Controls.Add(this.Gain);
             this.groupBox1.Controls.Add(this.label8);
@@ -147,20 +147,18 @@ namespace RTGraph
             this.label22.Text = "30000";
             this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // trackBar1
+            // trkLineScanRate
             // 
-            this.trackBar1.AutoSize = false;
-            this.trackBar1.LargeChange = 1000;
-            this.trackBar1.Location = new System.Drawing.Point(140, 86);
-            this.trackBar1.Maximum = 30000;
-            this.trackBar1.Minimum = 5000;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(115, 23);
-            this.trackBar1.SmallChange = 100;
-            this.trackBar1.TabIndex = 14;
-            this.trackBar1.TickFrequency = 100;
-            this.trackBar1.Value = 30000;
-            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            this.trkLineScanRate.AutoSize = false;
+            this.trkLineScanRate.LargeChange = 10;
+            this.trkLineScanRate.Location = new System.Drawing.Point(140, 86);
+            this.trkLineScanRate.Maximum = 300;
+            this.trkLineScanRate.Minimum = 50;
+            this.trkLineScanRate.Name = "trkLineScanRate";
+            this.trkLineScanRate.Size = new System.Drawing.Size(115, 23);
+            this.trkLineScanRate.TabIndex = 14;
+            this.trkLineScanRate.Value = 300;
+            this.trkLineScanRate.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // cboGainLevel
             // 
@@ -699,7 +697,7 @@ namespace RTGraph
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ParamForm_FormClosed);
             this.Load += new System.EventHandler(this.ParamForm_Load);
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trkLineScanRate)).EndInit();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numTpw)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTsl)).EndInit();
@@ -765,7 +763,7 @@ namespace RTGraph
         private System.Windows.Forms.ComboBox cboGainLevel;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar trkLineScanRate;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.ComboBox cboExposureLevel;
     }

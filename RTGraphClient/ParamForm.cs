@@ -56,7 +56,7 @@ namespace RTGraph
                 userHandle = false;
                 cboImageSelect.SelectedIndex = (int)camParam.ImageSelector;
                 cboTriggerSource.SelectedIndex = (int)camParam.TriggerSource;
-                trackBar1.Value = camParam.LineScanRate;
+                trkLineScanRate.Value = camParam.LineScanRate / 100;
                 // cboExposureLevel.SelectedIndex = (int)camParam.ExposureLevel; // 현재 사용 안 함
                 cboGainLevel.SelectedIndex = (int)camParam.GainLevel;
                 numTde.Value = camParam.TDE;
@@ -81,7 +81,7 @@ namespace RTGraph
         {
             camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)cboImageSelect.SelectedIndex;
             // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)cboTriggerSource.SelectedIndex; // 현재 세팅 불가
-            camParam.LineScanRate = (UInt16)trackBar1.Value;
+            camParam.LineScanRate = (UInt16)(trkLineScanRate.Value * 100);
             // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)cboExposureLevel.SelectedIndex; // 현재 사용 안 함
             camParam.GainLevel = (RTGraphParameter.GainLevelEnum)cboGainLevel.SelectedIndex;
             camParam.TDE = (UInt16)numTde.Value;
@@ -122,7 +122,7 @@ namespace RTGraph
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            label22.Text = trackBar1.Value.ToString();
+            label22.Text = $"{trkLineScanRate.Value * 100}";
 
             kickTimer();
         }
