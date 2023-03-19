@@ -260,15 +260,13 @@ namespace RTGraph
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.chart1);
-            this.splitContainer1.Panel1MinSize = 250;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.logControl1);
             this.splitContainer1.Panel2Collapsed = true;
-            this.splitContainer1.Panel2MinSize = 50;
             this.splitContainer1.Size = new System.Drawing.Size(1030, 587);
-            this.splitContainer1.SplitterDistance = 250;
+            this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.SplitterWidth = 8;
             this.splitContainer1.TabIndex = 13;
             // 
