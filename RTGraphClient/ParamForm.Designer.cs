@@ -118,6 +118,7 @@ namespace RTGraph
             // 
             // cboExposureLevel
             // 
+            this.cboExposureLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboExposureLevel.FormattingEnabled = true;
             this.cboExposureLevel.Items.AddRange(new object[] {
             "0%",
@@ -135,13 +136,12 @@ namespace RTGraph
             this.cboExposureLevel.Name = "cboExposureLevel";
             this.cboExposureLevel.Size = new System.Drawing.Size(163, 23);
             this.cboExposureLevel.TabIndex = 16;
-            this.cboExposureLevel.Visible = false;
             this.cboExposureLevel.SelectedIndexChanged += new System.EventHandler(this.Item_ValueChanged);
             // 
-            // label22
+            // lblLineScanRate
             // 
             this.lblLineScanRate.Location = new System.Drawing.Point(252, 84);
-            this.lblLineScanRate.Name = "label22";
+            this.lblLineScanRate.Name = "lblLineScanRate";
             this.lblLineScanRate.Size = new System.Drawing.Size(52, 23);
             this.lblLineScanRate.TabIndex = 15;
             this.lblLineScanRate.Text = "30000";
@@ -205,7 +205,6 @@ namespace RTGraph
             this.label7.TabIndex = 9;
             this.label7.Text = "Exposure Level";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label7.Visible = false;
             // 
             // label6
             // 

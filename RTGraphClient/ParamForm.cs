@@ -57,7 +57,7 @@ namespace RTGraph
                 cboImageSelect.SelectedIndex = (int)camParam.ImageSelector;
                 cboTriggerSource.SelectedIndex = (int)camParam.TriggerSource;
                 trkLineScanRate.Value = camParam.LineScanRate / 100;
-                // cboExposureLevel.SelectedIndex = (int)camParam.ExposureLevel; // 현재 사용 안 함
+                cboExposureLevel.SelectedIndex = (int)camParam.ExposureLevel; // 현재 사용 안 함
                 cboGainLevel.SelectedIndex = (int)camParam.GainLevel;
                 numTde.Value = camParam.TDE;
                 numTch.Value = camParam.TCH;
@@ -82,7 +82,7 @@ namespace RTGraph
             camParam.ImageSelector = (RTGraphParameter.ImageSelectorEnum)cboImageSelect.SelectedIndex;
             // camParam.TriggerSource = (RTGraphParameter.TriggerSourceEnum)cboTriggerSource.SelectedIndex; // 현재 세팅 불가
             camParam.LineScanRate = (UInt16)(trkLineScanRate.Value * 100);
-            // camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)cboExposureLevel.SelectedIndex; // 현재 사용 안 함
+            camParam.ExposureLevel = (RTGraphParameter.ExposureLevelEnum)cboExposureLevel.SelectedIndex; // 현재 사용 안 함
             camParam.GainLevel = (RTGraphParameter.GainLevelEnum)cboGainLevel.SelectedIndex;
             camParam.TDE = (UInt16)numTde.Value;
             camParam.TCH = (UInt16)numTch.Value;
