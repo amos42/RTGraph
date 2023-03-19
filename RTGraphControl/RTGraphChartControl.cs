@@ -297,14 +297,17 @@ namespace RTGraph
                 }
                 else
                 {
-                    valueCnt++;
-                    Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Value.Length);
-                    validPos = enqPos;
-                    enqPos++;
-                    if (enqPos >= bufferCount)
+                    if (values.Value != null)
                     {
-                        enqPos = 0;
-                        //this.startPos++;
+                        valueCnt++;
+                        Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Value.Length);
+                        validPos = enqPos;
+                        enqPos++;
+                        if (enqPos >= bufferCount)
+                        {
+                            enqPos = 0;
+                            //this.startPos++;
+                        }
                     }
                 }
             }

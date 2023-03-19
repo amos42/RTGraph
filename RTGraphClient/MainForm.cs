@@ -57,7 +57,7 @@ namespace RTGraph
         private void commError(object sender, ErrorEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
-                MessageBox.Show(e.GetException().Message);
+                showNotiMessage(e.GetException().Message);
             }));
         }
 
@@ -329,7 +329,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    MessageBox.Show("You can't change the mode while a Grab is in progress.");
+                    showNotiMessage("You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    MessageBox.Show("You can't change the mode while a Grab is in progress.");
+                    showNotiMessage("You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -354,7 +354,7 @@ namespace RTGraph
             connectionTimer.Stop();
             if (!comm.Connected)
             {
-                MessageBox.Show("No response from the device.");
+                showNotiMessage("No response from the device.");
                 logControl1.AddItem(LogControl.LogTypeEnum.Error, "No response from the device.");
                 deviceConnect(0);
             }
@@ -399,6 +399,23 @@ namespace RTGraph
         private void toolStripButton3_CheckedChanged(object sender, EventArgs e)
         {
             splitContainer1.Panel2Collapsed = !toolStripButton3.Checked;
+        }
+
+        private void showNotiMessage(string message)
+        {
+            label1.Text = message;
+            panel1.Visible = true;
+            if (timer1.Enabled)
+            {
+                timer1.Stop();
+            }
+            timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            panel1.Visible = false;
         }
     }
 }
