@@ -51,11 +51,12 @@ namespace RTGraph
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.chart1 = new RTGraph.RTGraphChartControl();
-            this.logControl1 = new DeviceSimulator.LogControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.chart1 = new RTGraph.RTGraphChartControl();
+            this.logControl1 = new DeviceSimulator.LogControl();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -82,10 +83,11 @@ namespace RTGraph
             this.toolStripDropDownButton2,
             this.toolStripButton3,
             this.toolStripButton1,
-            this.toolStripButton2});
+            this.toolStripButton2,
+            this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1030, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1030, 31);
             this.toolStrip1.TabIndex = 12;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -98,7 +100,7 @@ namespace RTGraph
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 24);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 28);
             this.toolStripDropDownButton1.Text = "Open";
             // 
             // openToolStripMenuItem
@@ -224,7 +226,7 @@ namespace RTGraph
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(60, 24);
+            this.toolStripButton1.Size = new System.Drawing.Size(60, 28);
             this.toolStripButton1.Text = "Stretch";
             this.toolStripButton1.Visible = false;
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -237,8 +239,8 @@ namespace RTGraph
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(72, 28);
-            this.toolStripButton2.Text = "Axis Info";
+            this.toolStripButton2.Size = new System.Drawing.Size(40, 28);
+            this.toolStripButton2.Text = "Axis";
             this.toolStripButton2.CheckedChanged += new System.EventHandler(this.toolStripButton2_CheckedChanged);
             // 
             // refreshTimer
@@ -266,40 +268,9 @@ namespace RTGraph
             this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Panel2MinSize = 50;
             this.splitContainer1.Size = new System.Drawing.Size(1030, 587);
-            this.splitContainer1.SplitterDistance = 400;
+            this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.SplitterWidth = 8;
             this.splitContainer1.TabIndex = 13;
-            // 
-            // chart1
-            // 
-            this.chart1.AxisVisible = false;
-            this.chart1.BackColor = System.Drawing.Color.Black;
-            this.chart1.BorderLineWidth = 2;
-            this.chart1.BufferCount = 100;
-            this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chart1.GraphAreaMinHeight = 100;
-            this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
-            this.chart1.IndexedMode = false;
-            this.chart1.Location = new System.Drawing.Point(0, 0);
-            this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.chart1.Name = "chart1";
-            this.chart1.OSDVisible = true;
-            this.chart1.Size = new System.Drawing.Size(1030, 587);
-            this.chart1.StretchMode = true;
-            this.chart1.TabIndex = 6;
-            this.chart1.TriggerValue = 0;
-            this.chart1.ValueCount = 1024;
-            this.chart1.ValuesCount = 1;
-            // 
-            // logControl1
-            // 
-            this.logControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logControl1.ListViewAutoScroll = true;
-            this.logControl1.ListViewCapa = 100;
-            this.logControl1.Location = new System.Drawing.Point(0, 0);
-            this.logControl1.Name = "logControl1";
-            this.logControl1.Size = new System.Drawing.Size(1030, 179);
-            this.logControl1.TabIndex = 0;
             // 
             // panel1
             // 
@@ -325,6 +296,50 @@ namespace RTGraph
             // 
             this.timer1.Interval = 3000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // chart1
+            // 
+            this.chart1.AxisVisible = false;
+            this.chart1.BackColor = System.Drawing.Color.Black;
+            this.chart1.BorderLineWidth = 1;
+            this.chart1.BufferAxisVisible = false;
+            this.chart1.BufferCount = 100;
+            this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chart1.GraphAreaMinHeight = 100;
+            this.chart1.GraphMargin = new System.Windows.Forms.Padding(10, 200, 10, 10);
+            this.chart1.IndexedMode = false;
+            this.chart1.Location = new System.Drawing.Point(0, 0);
+            this.chart1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.chart1.Name = "chart1";
+            this.chart1.OSDVisible = true;
+            this.chart1.Size = new System.Drawing.Size(1030, 587);
+            this.chart1.StretchMode = true;
+            this.chart1.TabIndex = 6;
+            this.chart1.TriggerValue = 0;
+            this.chart1.ValueCount = 1024;
+            this.chart1.ValuesCount = 1;
+            // 
+            // logControl1
+            // 
+            this.logControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logControl1.ListViewAutoScroll = true;
+            this.logControl1.ListViewCapa = 100;
+            this.logControl1.Location = new System.Drawing.Point(0, 0);
+            this.logControl1.Name = "logControl1";
+            this.logControl1.Size = new System.Drawing.Size(150, 46);
+            this.logControl1.TabIndex = 0;
+            // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton4.CheckOnClick = true;
+            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(81, 28);
+            this.toolStripButton4.Text = "Line Ruler";
+            this.toolStripButton4.CheckedChanged += new System.EventHandler(this.toolStripButton4_CheckedChanged);
             // 
             // MainForm
             // 
@@ -378,6 +393,7 @@ namespace RTGraph
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
     }
 }
 

@@ -157,6 +157,20 @@ namespace RTGraph
             }
         }
 
+        private bool bufferAxisVisible = false;
+        public bool BufferAxisVisible
+        {
+            get { return bufferAxisVisible; }
+            set
+            {
+                if (value != bufferAxisVisible)
+                {
+                    bufferAxisVisible = value;
+                    this.Refresh();
+                }
+            }
+        }
+
         Padding graphMargin = new Padding(10, 100, 10, 100);
         public Padding GraphMargin {
             get { return graphMargin; }
@@ -354,7 +368,7 @@ namespace RTGraph
 
             float startX = START_COORD_POS + GraphMargin.Left;
             float startY = START_COORD_POS + GraphMargin.Top;
-            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - (AxisVisible ? 20 : 0);
+            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - (bufferAxisVisible ? 20 : 0);
             int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top);
 
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
@@ -406,7 +420,7 @@ namespace RTGraph
             int borderWidth = width + borderLineWidth;
             int borderHeight = height + borderLineWidth;
 
-            var areaPen = new Pen(Color.LightGray, borderLineWidth);
+            var areaPen = new Pen(Color.Gray, borderLineWidth);
             e.Graphics.DrawRectangle(areaPen, borderStartX, borderStartY, borderWidth, borderHeight);
 
             width--; height--;
@@ -417,18 +431,29 @@ namespace RTGraph
                 for (int i = 16; i < 256; i += 16)
                 {
                     float v = graphBaseY - i * height / 255;
-                    e.Graphics.DrawLine(Pens.DarkGray, startX, v, startX + width, v);
+                    e.Graphics.DrawLine(Pens.Gray, startX, v, startX + width, v);
                 }
                 for (int i = 16; i < 1024; i += 16)
                 {
                     float v = startX + i * width / 1023;
-                    e.Graphics.DrawLine(Pens.DarkGray, v, startY, v, startY + height);
+                    e.Graphics.DrawLine(Pens.Gray, v, startY, v, startY + height);
                 }
+            }
 
+            if(bufferAxisVisible)
+            {
                 var virHeight = (float)this.ClientSize.Height / bufferCount;
                 for (int i = 10; i < bufferCount; i += 10)
                 {
-                    e.Graphics.DrawString($"{i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 20, i * virHeight));
+                    var h = i * virHeight;
+                    int s;
+                    if (i % 100 == 0)
+                        s = 20;
+                    else if (i % 50 == 0)
+                        s = 10;
+                    else
+                        s = 5;
+                    e.Graphics.DrawLine(Pens.LightGray, this.ClientSize.Width - s, h, this.ClientSize.Width, h);
                 }
             }
 
@@ -466,7 +491,7 @@ namespace RTGraph
                 oldTime = DateTime.Now;
                 oldIdx = idx;
 
-                e.Graphics.DrawString($"index : {vv.ToString("N")}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
+                e.Graphics.DrawString($"{vv.ToString("N")}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
             }
         }
 

@@ -381,14 +381,12 @@ namespace RTGraph
 
         private void toolStripButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if (toolStripButton2.Checked)
-            {
-                chart1.AxisVisible = toolStripButton2.Checked;
-            } 
-            else
-            {
-                chart1.AxisVisible = toolStripButton2.Checked;
-            }
+            chart1.AxisVisible = toolStripButton2.Checked;
+        }
+
+        private void toolStripButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            chart1.BufferAxisVisible = toolStripButton4.Checked;
         }
 
         private void chart1_ErrorEvent(object sender, ErrorEventArgs e)
