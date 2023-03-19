@@ -354,7 +354,7 @@ namespace RTGraph
 
             float startX = START_COORD_POS + GraphMargin.Left;
             float startY = START_COORD_POS + GraphMargin.Top;
-            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - (AxisVisible ? 40 : 0);
+            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - (AxisVisible ? 20 : 0);
             int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top);
 
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
@@ -401,15 +401,6 @@ namespace RTGraph
                                                     new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
                         e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
                                                     new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
-
-                        if (axisVisible)
-                        {
-                            var virHeight = this.ClientSize.Height / bufferCount;
-                            for (int i = 0; i < valueCnt; i += 10)
-                            {
-                                e.Graphics.DrawString($"- {validPos + i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 40, i * virHeight));
-                            }
-                        }
                     }
                     else
                     {
@@ -428,6 +419,26 @@ namespace RTGraph
 
             width--; height--;
             float graphBaseY = startY + height;
+
+            if (axisVisible)
+            {
+                for (int i = 16; i < 256; i += 16)
+                {
+                    float v = graphBaseY - i * height / 255;
+                    e.Graphics.DrawLine(Pens.DarkGray, startX, v, startX + width, v);
+                }
+                for (int i = 16; i < 1024; i += 16)
+                {
+                    float v = startX + i * width / 1023;
+                    e.Graphics.DrawLine(Pens.DarkGray, v, startY, v, startY + height);
+                }
+
+                var virHeight = (float)this.ClientSize.Height / bufferCount;
+                for (int i = 10; i < bufferCount; i += 10)
+                {
+                    e.Graphics.DrawString($"{i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 20, i * virHeight));
+                }
+            }
 
             this.Values.ForEach(items => {
                 var gpen = new Pen(items.GraphColor, items.LineWidth);

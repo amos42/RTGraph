@@ -241,7 +241,7 @@ namespace DeviceSimulator
             foreach (var xx in endPtrDic)
             {
                 if (!xx.Value) continue;
-                
+
                 var data = new byte[1024 + 2];
                 data[0] = (byte)(idx & 0xff);
                 data[1] = (byte)(idx >> 8);
@@ -257,7 +257,7 @@ namespace DeviceSimulator
                     if (v != 0 && dist <= limit)
                     {
                         data[2 + i] = (byte)(255 - dist * dist / divder);
-                    } 
+                    }
                     else
                     {
                         data[2 + i] = 0;
@@ -265,7 +265,9 @@ namespace DeviceSimulator
                 }
 
                 var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
-                comm.SendPacket(packet, xx.Key);
+                // for(int i = 0; i < 20; i++) {
+                    comm.SendPacket(packet, xx.Key);
+                // }
                 addLogItem(0, "", packet.Serialize());
             }
         }
