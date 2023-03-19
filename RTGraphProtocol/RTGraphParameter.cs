@@ -25,6 +25,7 @@ namespace RTGraph
 
         public enum ExposureLevelEnum
         {
+            Level_0,
             Level_10,
             Level_20,
             Level_30,
@@ -35,17 +36,6 @@ namespace RTGraph
             Level_80,
             Level_90,
             Level_100
-        }
-
-        public enum LineScanRateEnum
-        {
-            Rate_30000_LPS,
-            Rate_25000_LPS,
-            Rate_20000_LPS,
-            Rate_15000_LPS,
-            Rate_10000_LPS,
-            Rate_5000_LPS,
-            Rate_2500_LPS
         }
 
         public enum GainLevelEnum
@@ -71,13 +61,13 @@ namespace RTGraph
         public int group_3_refCnt = 0;
         public int group_4_refCnt = 0;
 
-        public const int PARAMETERS_PACKET_SIZE = 25;
+        public const int PARAMETERS_PACKET_SIZE = 26;
 
         // camera setting			
         private ImageSelectorEnum image_selector = ImageSelectorEnum.RealImage;
         private TriggerSourceEnum trigger_source = TriggerSourceEnum.ImageTrigger;
+        private UInt16 line_scan_rate = 30000;
         private ExposureLevelEnum exposure_level = 0;
-        private LineScanRateEnum line_scan_rate = 0;
         private GainLevelEnum gain_level = 0;  // 감도			
 
         // trigger timing
@@ -129,6 +119,21 @@ namespace RTGraph
         }
 
         [CategoryAttribute("Camera Setting")]
+        public UInt16 LineScanRate
+        {
+            get { return line_scan_rate; }
+            set
+            {
+                if (line_scan_rate != value && value >= 5000 && value <= 30000)
+                {
+                    line_scan_rate = value;
+                    group_1_refCnt++;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [CategoryAttribute("Camera Setting")]
         public ExposureLevelEnum ExposureLevel
         {
             get { return exposure_level; }
@@ -137,20 +142,6 @@ namespace RTGraph
                 if (exposure_level != value)
                 {
                     exposure_level = value;
-                    group_1_refCnt++;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [CategoryAttribute("Camera Setting")]
-        public LineScanRateEnum LineScanRate
-        {
-            get { return line_scan_rate; }
-            set
-            {
-                if (line_scan_rate != value) {
-                    line_scan_rate = value;
                     group_1_refCnt++;
                     OnPropertyChanged();
                 }
@@ -369,8 +360,8 @@ namespace RTGraph
         {
             ImageSelector = src.image_selector;
             TriggerSource = src.trigger_source;
-            ExposureLevel = src.exposure_level;
             LineScanRate = src.line_scan_rate;
+            ExposureLevel = src.exposure_level;
             GainLevel = src.gain_level;
             TDE = src.tde;
             TCH = src.tch;
@@ -393,29 +384,29 @@ namespace RTGraph
                 {
                     ImageSelector = (ImageSelectorEnum)packet[startIdx + 0];
                     TriggerSource = (TriggerSourceEnum)packet[startIdx + 1];
-                    ExposureLevel = (ExposureLevelEnum)packet[startIdx + 2];
-                    LineScanRate = (LineScanRateEnum)packet[startIdx + 3];
-                    GainLevel = (GainLevelEnum)packet[startIdx + 4];
+                    LineScanRate = getUInt16Value(packet, startIdx + 2);
+                    ExposureLevel = (ExposureLevelEnum)packet[startIdx + 4];
+                    GainLevel = (GainLevelEnum)packet[startIdx + 5];
                 }
                 if ((groupMask & MASK_GROUP_2) != 0)
                 {
-                    TDE = getUInt16Value(packet, startIdx + 5);
-                    TCH = getUInt16Value(packet, startIdx + 7);
-                    TRE1 = getUInt16Value(packet, startIdx + 9);
-                    TRE2 = getUInt16Value(packet, startIdx + 11);
-                    TSL = getUInt16Value(packet, startIdx + 13);
-                    TPW = getUInt16Value(packet, startIdx + 15);
+                    TDE = getUInt16Value(packet, startIdx + 6);
+                    TCH = getUInt16Value(packet, startIdx + 8);
+                    TRE1 = getUInt16Value(packet, startIdx + 10);
+                    TRE2 = getUInt16Value(packet, startIdx + 12);
+                    TSL = getUInt16Value(packet, startIdx + 14);
+                    TPW = getUInt16Value(packet, startIdx + 16);
                 }
                 if ((groupMask & MASK_GROUP_3) != 0)
                 {
-                    ROIStart = getUInt16Value(packet, startIdx + 17);
-                    ROIEnd = getUInt16Value(packet, startIdx + 19);
-                    ThresholdLevel = packet[startIdx + 21];
-                    ThresholdWidth = getUInt16Value(packet, startIdx + 22);
+                    ROIStart = getUInt16Value(packet, startIdx + 18);
+                    ROIEnd = getUInt16Value(packet, startIdx + 20);
+                    ThresholdLevel = packet[startIdx + 22];
+                    ThresholdWidth = getUInt16Value(packet, startIdx + 23);
                 }
                 if ((groupMask & MASK_GROUP_4) != 0)
                 {
-                    CalibrationEnable = packet[startIdx + 24] != 0;
+                    CalibrationEnable = packet[startIdx + 25] != 0;
                 }
             }
         }
@@ -433,30 +424,30 @@ namespace RTGraph
                 {
                     packet[startIdx + 0] = (byte)image_selector;
                     packet[startIdx + 1] = (byte)trigger_source;
-                    packet[startIdx + 2] = (byte)exposure_level;
-                    packet[startIdx + 3] = (byte)line_scan_rate;
-                    packet[startIdx + 4] = (byte)gain_level;
+                    setUInt16Value(packet, startIdx + 2, line_scan_rate);
+                    packet[startIdx + 4] = (byte)exposure_level;
+                    packet[startIdx + 5] = (byte)gain_level;
                 }
                 if ((groupMask & MASK_GROUP_2) != 0)
                 {
-                    setUInt16Value(packet, startIdx + 5, tde);
+                    setUInt16Value(packet, startIdx + 6, tde);
                     setUInt16Value(packet, startIdx + 7, tch);
-                    setUInt16Value(packet, startIdx + 9, tre1);
-                    setUInt16Value(packet, startIdx + 11, tre2);
-                    setUInt16Value(packet, startIdx + 13, tsl);
-                    setUInt16Value(packet, startIdx + 15, tpw);
+                    setUInt16Value(packet, startIdx + 10, tre1);
+                    setUInt16Value(packet, startIdx + 12, tre2);
+                    setUInt16Value(packet, startIdx + 14, tsl);
+                    setUInt16Value(packet, startIdx + 16, tpw);
                 }
                 if ((groupMask & MASK_GROUP_3) != 0)
                 {
 
-                    setUInt16Value(packet, startIdx + 17, roi_start);
-                    setUInt16Value(packet, startIdx + 19, roi_end);
-                    packet[startIdx + 21] = threshold_level;
-                    setUInt16Value(packet, startIdx + 22, threshold_width);
+                    setUInt16Value(packet, startIdx + 18, roi_start);
+                    setUInt16Value(packet, startIdx + 20, roi_end);
+                    packet[startIdx + 22] = threshold_level;
+                    setUInt16Value(packet, startIdx + 23, threshold_width);
                 }
                 if ((groupMask & MASK_GROUP_4) != 0)
                 {
-                    packet[startIdx + 24] = (byte)(calibration_enable ? 1 : 0);
+                    packet[startIdx + 25] = (byte)(calibration_enable ? 1 : 0);
                 }
             }
 
