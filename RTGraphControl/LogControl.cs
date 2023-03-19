@@ -138,6 +138,10 @@ namespace DeviceSimulator
                 }
                 sw.Close();
             } 
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             finally
             {
                 MessageBox.Show($"Log Export Successful. ({logFileName})");
