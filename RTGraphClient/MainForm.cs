@@ -329,7 +329,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    MessageBox.Show("Grab이 진행 중일 땐 모드를 변경할 수 없습니다.");
+                    MessageBox.Show("You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    MessageBox.Show("Grab이 진행 중일 땐 모드를 변경할 수 없습니다.");
+                    MessageBox.Show("You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -354,8 +354,8 @@ namespace RTGraph
             connectionTimer.Stop();
             if (!comm.Connected)
             {
-                MessageBox.Show("장치로부터 응답이 없습니다.");
-                logControl1.AddItem(LogControl.LogTypeEnum.Error, "장치로부터 응답이 없습니다.");
+                MessageBox.Show("No response from the device.");
+                logControl1.AddItem(LogControl.LogTypeEnum.Error, "No response from the device.");
                 deviceConnect(0);
             }
         }

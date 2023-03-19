@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using RTGraph;
 using System.Reflection;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.IO;
 
 namespace DeviceSimulator
 {
@@ -44,7 +45,7 @@ namespace DeviceSimulator
             Error
         }
 
-        private static string[] dirStr = { "발신", "수신", "정보", "에러" };
+        private static string[] dirStr = { "Send", "Recv", "Info", "Error" };
 
         public LogControl()
         {
@@ -120,6 +121,27 @@ namespace DeviceSimulator
         private void autoScrollToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ListViewAutoScroll = !ListViewAutoScroll;
+        }
+
+        private void exportToCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var path = Path.GetDirectoryName(Application.ExecutablePath);
+            var date = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var logFileName = Path.Combine(path, $"log_{date}.csv");
+            try
+            {
+                var sw = new StreamWriter(logFileName, true);
+                sw.WriteLine("Time,Type,Message");
+                for (int i = 0; i < listView1.Items.Count; i++)
+                {
+                    sw.WriteLine($"{listView1.Items[i].Text},{listView1.Items[i].SubItems[1].Text},\"{listView1.Items[i].SubItems[2].Text}\"");
+                }
+                sw.Close();
+            } 
+            finally
+            {
+                MessageBox.Show($"Log Export Successful. ({logFileName})");
+            }
         }
     }
 }

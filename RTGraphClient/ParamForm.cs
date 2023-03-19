@@ -33,6 +33,12 @@ namespace RTGraph
         {
             this.comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
             ParamToUI(this.comm.DeviceParameter);
+
+            cboLineScanRate.Items.Clear();
+            for(int i = 20000; i >= 500; i -= 100)
+            {
+                cboLineScanRate.Items.Add(i);
+            }
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)

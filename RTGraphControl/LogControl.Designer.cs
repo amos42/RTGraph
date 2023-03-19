@@ -37,6 +37,7 @@ namespace DeviceSimulator
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip();
             this.copyDataToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoScrollToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,14 +84,15 @@ namespace DeviceSimulator
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyDataToClipboardToolStripMenuItem,
-            this.autoScrollToolStripMenuItem});
+            this.autoScrollToolStripMenuItem,
+            this.exportToCSVToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(242, 84);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(242, 110);
             // 
             // copyDataToClipboardToolStripMenuItem
             // 
             this.copyDataToClipboardToolStripMenuItem.Name = "copyDataToClipboardToolStripMenuItem";
-            this.copyDataToClipboardToolStripMenuItem.Size = new System.Drawing.Size(241, 24);
+            this.copyDataToClipboardToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             this.copyDataToClipboardToolStripMenuItem.Text = "Copy Data to Clipboard";
             this.copyDataToClipboardToolStripMenuItem.Click += new System.EventHandler(this.copyDataToClipboardToolStripMenuItem_Click);
             // 
@@ -102,6 +104,13 @@ namespace DeviceSimulator
             this.autoScrollToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             this.autoScrollToolStripMenuItem.Text = "Auto Scroll";
             this.autoScrollToolStripMenuItem.Click += new System.EventHandler(this.autoScrollToolStripMenuItem_Click);
+            // 
+            // exportToCSVToolStripMenuItem
+            // 
+            this.exportToCSVToolStripMenuItem.Name = "exportToCSVToolStripMenuItem";
+            this.exportToCSVToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
+            this.exportToCSVToolStripMenuItem.Text = "Export to CSV";
+            this.exportToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportToCSVToolStripMenuItem_Click);
             // 
             // LogControl
             // 
@@ -127,6 +136,7 @@ namespace DeviceSimulator
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyDataToClipboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoScrollToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToCSVToolStripMenuItem;
     }
 }
 
