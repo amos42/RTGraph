@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DeviceSimulator;
 using RTGraphProtocol;
 using static RTGraphProtocol.PacketReceivedEventArgs;
 
@@ -171,15 +172,16 @@ namespace RTGraph
 
         private void setConnectState(bool connected)
         {
-            if (connected)
+            if (connected && btnConnect.CheckState != CheckState.Checked)
             {
                 btnConnect.Text = "Disconnect";
                 btnConnect.CheckState = CheckState.Checked;
                 btnGrab.Enabled = true;
                 toolStripDropDownButton2.Enabled = true;
                 toolStripDropDownButton4.Enabled = true;
+                logControl1.AddItem(LogControl.LogTypeEnum.Info, "Connected");
             }
-            else
+            else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
                 btnConnect.Text = "Connect";
                 btnConnect.CheckState = CheckState.Unchecked;
@@ -187,22 +189,25 @@ namespace RTGraph
                 setGrabState(false);
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
+                logControl1.AddItem(LogControl.LogTypeEnum.Info, "Disconnected");
             }
         }
 
         private void setGrabState(bool grab)
         {
-            if (grab)
+            if (grab && btnGrab.CheckState != CheckState.Checked)
             {
                 btnGrab.Text = "Stop Grab";
                 btnGrab.CheckState = CheckState.Checked;
                 calibrationToolStripMenuItem.Enabled = (continusMode == 0);
+                logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
             }
-            else
+            else if (!grab && btnGrab.CheckState != CheckState.Unchecked)
             {
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
                 calibrationToolStripMenuItem.Enabled = false;
+                logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Stopped");
             }
         }
 
@@ -350,6 +355,7 @@ namespace RTGraph
             if (!comm.Connected)
             {
                 MessageBox.Show("장치로부터 응답이 없습니다.");
+                logControl1.AddItem(LogControl.LogTypeEnum.Error, "장치로부터 응답이 없습니다.");
                 deviceConnect(0);
             }
         }
@@ -371,6 +377,28 @@ namespace RTGraph
             {
                 toolStripButton1.Text = "1:1";
             }
+        }
+
+        private void toolStripButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (toolStripButton2.Checked)
+            {
+                chart1.AxisVisible = toolStripButton2.Checked;
+            } 
+            else
+            {
+                chart1.AxisVisible = toolStripButton2.Checked;
+            }
+        }
+
+        private void chart1_ErrorEvent(object sender, ErrorEventArgs e)
+        {
+            logControl1.AddItem(LogControl.LogTypeEnum.Error, e.GetException().Message);
+        }
+
+        private void toolStripButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            splitContainer1.Panel2Collapsed = !toolStripButton3.Checked;
         }
     }
 }

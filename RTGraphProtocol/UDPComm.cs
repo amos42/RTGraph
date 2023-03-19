@@ -48,11 +48,19 @@ namespace RTGraphProtocol
             this.RecvPort = recvPort;
         }
 
-        protected void RaiseEvent(byte[] stream, IPEndPoint targetIPEndPoint = null)
+        protected void raiseEvent(byte[] stream, IPEndPoint targetIPEndPoint = null)
         {
             if (StreamReceivedEvent != null)
             {
                 StreamReceivedEvent(this, new StreamReceivedEventArgs(stream, targetIPEndPoint));
+            }
+        }
+
+        protected void raiseErrorEvent(Exception ex)
+        {
+            if (ErrorEvent != null)
+            {
+                ErrorEvent(this, new ErrorEventArgs(ex));
             }
         }
 
@@ -82,11 +90,7 @@ namespace RTGraphProtocol
                 }
                 catch (Exception ex)
                 {
-                    //asyncResult = null;
-                    if (ErrorEvent != null)
-                    {
-                        ErrorEvent(this, new ErrorEventArgs(ex));
-                    }
+                    raiseErrorEvent(ex);
                 }
             }
         }

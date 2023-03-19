@@ -32,7 +32,7 @@ namespace DeviceSimulator
             IPEndPoint ep = e.TargetIPEndPoint;
             if (comm.SendPort > 0) ep.Port = comm.SendPort;
 
-            addLogItem(1, "", packet.serialize());
+            addLogItem(LogControl.LogTypeEnum.Recv, "", packet.serialize());
 
             if (packet.Class == PacketClass.CONN)
             {
@@ -202,10 +202,10 @@ namespace DeviceSimulator
             cfg2.GetArrayValue("Data", comm.CalibrationData);
         }
 
-        private void addLogItem(int direction, string message, byte[] byteData = null)
+        private void addLogItem(LogControl.LogTypeEnum logType, string message, byte[] byteData = null)
         {
             this.Invoke(new MethodInvoker(() => {
-                logControl1.AddItem(direction, message, byteData);
+                logControl1.AddItem(logType, message, byteData);
             }));
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeviceSimulator;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,9 +18,9 @@ namespace RTGraph
             InitializeComponent();
         }
 
-        public void AddItem(int direction, string message, byte[] byteData = null)
+        public void AddItem(LogControl.LogTypeEnum logType, string message, byte[] byteData = null)
         {
-            logControl1.AddItem(direction, message, byteData);
+            logControl1.AddItem(logType, message, byteData);
         }
     }
 }

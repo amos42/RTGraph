@@ -37,6 +37,13 @@ namespace DeviceSimulator
             } 
         }
 
+        public enum LogTypeEnum {
+            Send,
+            Recv,
+            Info,
+            Error
+        }
+
         private static string[] dirStr = { "발신", "수신", "정보", "에러" };
 
         public LogControl()
@@ -56,7 +63,7 @@ namespace DeviceSimulator
             if (!isUpdating) listView1.EndUpdate();
         }
 
-        public void AddItem(int direction, string message, byte[] byteData = null)
+        public void AddItem(LogTypeEnum logType, string message, byte[] byteData = null)
         {
             //this.Invoke(new Action(() =>
             {
@@ -72,7 +79,7 @@ namespace DeviceSimulator
                     new string[]
                     {
                             DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                            dirStr[direction],
+                            dirStr[(int)logType],
                             sb.ToString()
                     }
                 );

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -125,9 +126,36 @@ namespace RTGraph
             }
         }
 
-        public bool IndexedMode {get; set;} = false;
+        public bool IndexedMode { get; set; } = false;
 
         public bool StretchMode { get; set; } = true;
+
+        private bool osdVisible = false;
+        public bool OSDVisible { 
+            get { return osdVisible;  } 
+            set
+            {
+                if (value != osdVisible) 
+                { 
+                    osdVisible = value;
+                    this.Refresh();
+                }
+            } 
+        }
+
+        private bool axisVisible = false;
+        public bool AxisVisible
+        {
+            get { return axisVisible; }
+            set
+            {
+                if (value != axisVisible)
+                {
+                    axisVisible = value;
+                    this.Refresh();
+                }
+            }
+        }
 
         Padding graphMargin = new Padding(10, 100, 10, 100);
         public Padding GraphMargin {
@@ -138,6 +166,8 @@ namespace RTGraph
                 this.Refresh();
             } 
         }
+
+        public event ErrorEventHandler ErrorEvent;
 
         private Queue<KeyValuePair<int, byte[]>> pendingGraphQueue = new Queue<KeyValuePair<int, byte[]>>();
         private Bitmap outBm = null;
@@ -259,7 +289,10 @@ namespace RTGraph
                 {
                     if (values.Key < bmpData.Height)
                     {
-                        Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
+                        if (values.Value != null)
+                        {
+                            Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
+                        }
                     }
                 }
                 else
@@ -293,12 +326,19 @@ namespace RTGraph
                     this.Values[idx].Index = pos;
                 }
 
-                pendingGraphQueue.Enqueue(new KeyValuePair<int, byte[]>(pos, this.Values[idx].Items.Clone() as byte[]));
+                var itm = this.Values[idx].Items.Clone() as byte[];
+                if (itm != null)
+                {
+                    pendingGraphQueue.Enqueue(new KeyValuePair<int, byte[]>(pos, itm));
+                }
+                else
+                {
+                    raiseErrorEvent(new Exception("value is not array"));
+                }
             }
 
             if (isRefresh) this.Refresh();
         }
-
 
         private DateTime oldTime = DateTime.Now;
         private int oldIdx = 0;
@@ -311,7 +351,7 @@ namespace RTGraph
 
             float startX = START_COORD_POS + GraphMargin.Left;
             float startY = START_COORD_POS + GraphMargin.Top;
-            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right);
+            int width = this.ClientSize.Width - (GraphMargin.Left + GraphMargin.Right) - (AxisVisible ? 40 : 0);
             int height = this.ClientSize.Height - (GraphMargin.Bottom + GraphMargin.Top);
 
             if (graphAreaMinHeight > 0 && height < graphAreaMinHeight)
@@ -328,7 +368,28 @@ namespace RTGraph
                 applyBitmap(pendingGraphQueue);
 
                 const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
-                if (valueCnt > bufferCount)
+                if (valueCnt <= bufferCount)
+                {
+                    if (StretchMode)
+                    {
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
+                        if (axisVisible)
+                        {
+                            var virHeight = this.ClientSize.Height / bufferCount;
+                            for (int i = 0; i < valueCnt; i+= 10)
+                            {
+                                e.Graphics.DrawString($"- {i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 40, i * virHeight));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var scrOnePixel = width / 1024f;
+                        var virHeight = height / scrOnePixel;
+                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, (int)virHeight), GraphicsUnit.Pixel);
+                    }
+                }
+                else
                 {
                     if (StretchMode)
                     {
@@ -337,23 +398,19 @@ namespace RTGraph
                                                     new Rectangle(0, validPos + 1, outBm.Width, outBm.Height - (validPos + 1)), GraphicsUnit.Pixel);
                         e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS + this.ClientSize.Height - drawPos, width + errorTerm, drawPos),
                                                     new Rectangle(0, 0, outBm.Width, validPos), GraphicsUnit.Pixel);
+
+                        if (axisVisible)
+                        {
+                            var virHeight = this.ClientSize.Height / bufferCount;
+                            for (int i = 0; i < valueCnt; i += 10)
+                            {
+                                e.Graphics.DrawString($"- {validPos + i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 40, i * virHeight));
+                            }
+                        }
                     }
                     else
                     {
-                        
-                    }
-                }
-                else
-                {
-                    if (StretchMode)
-                    {
-                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
-                    }
-                    else
-                    {
-                        var scrOnePixel = width / 1024f;
-                        var virHeight = height / scrOnePixel;
-                        e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, (int)virHeight), GraphicsUnit.Pixel);
+
                     }
                 }
             }
@@ -392,15 +449,26 @@ namespace RTGraph
                 e.Graphics.DrawLine(trigPen, startX, v2, startX + width - 1, v2);
             }
 
-            var diff = DateTime.Now.Subtract(oldTime);
-            int idx = this.Values[0].Index;
+            if (OSDVisible)
+            {
+                var diff = DateTime.Now.Subtract(oldTime);
+                int idx = this.Values[0].Index;
 
-            float vv = (float)(idx - oldIdx) / diff.Ticks * TimeSpan.TicksPerSecond;
+                float vv = (float)(idx - oldIdx) / diff.Ticks * TimeSpan.TicksPerSecond;
 
-            oldTime = DateTime.Now;
-            oldIdx = idx;
+                oldTime = DateTime.Now;
+                oldIdx = idx;
 
-            e.Graphics.DrawString($"index : {vv}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
+                e.Graphics.DrawString($"index : {vv}/s", SystemFonts.DefaultFont, Brushes.Red, new PointF(10, 10));
+            }
+        }
+
+        protected void raiseErrorEvent(Exception ex)
+        {
+            if (ErrorEvent != null)
+            {
+                ErrorEvent(this, new ErrorEventArgs(ex));
+            }
         }
 
         private void RTGraphChartControl_Resize(object sender, EventArgs e)

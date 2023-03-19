@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DeviceSimulator;
 using RTGraphProtocol;
 
 namespace RTGraph
@@ -35,7 +36,7 @@ namespace RTGraph
                     chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2);
                 }
 
-                if (logForm != null) logForm.AddItem(1, null, e.Packet.Data);
+                if (logForm != null) logForm.AddItem(LogControl.LogTypeEnum.Recv, null, e.Packet.Data);
             }));
 
         }
