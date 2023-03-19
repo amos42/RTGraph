@@ -376,14 +376,6 @@ namespace RTGraph
                     if (StretchMode)
                     {
                         e.Graphics.DrawImage(outBm, new RectangleF(startX - errorTerm, START_COORD_POS, width + errorTerm, this.ClientSize.Height), new Rectangle(0, 0, outBm.Width, outBm.Height), GraphicsUnit.Pixel);
-                        if (axisVisible)
-                        {
-                            var virHeight = this.ClientSize.Height / bufferCount;
-                            for (int i = 0; i < valueCnt; i+= 10)
-                            {
-                                e.Graphics.DrawString($"- {i}", SystemFonts.DefaultFont, Brushes.Blue, new PointF(this.ClientSize.Width - 40, i * virHeight));
-                            }
-                        }
                     }
                     else
                     {
