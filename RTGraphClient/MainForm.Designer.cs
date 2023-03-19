@@ -85,7 +85,7 @@ namespace RTGraph
             this.toolStripButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1030, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(1030, 27);
             this.toolStrip1.TabIndex = 12;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -98,7 +98,7 @@ namespace RTGraph
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 28);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(34, 24);
             this.toolStripDropDownButton1.Text = "Open";
             // 
             // openToolStripMenuItem
@@ -256,7 +256,6 @@ namespace RTGraph
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.chart1);
             this.splitContainer1.Panel1MinSize = 250;
             // 
@@ -266,7 +265,7 @@ namespace RTGraph
             this.splitContainer1.Panel2Collapsed = true;
             this.splitContainer1.Panel2MinSize = 50;
             this.splitContainer1.Size = new System.Drawing.Size(1030, 587);
-            this.splitContainer1.SplitterDistance = 250;
+            this.splitContainer1.SplitterDistance = 400;
             this.splitContainer1.SplitterWidth = 8;
             this.splitContainer1.TabIndex = 13;
             // 
@@ -298,13 +297,15 @@ namespace RTGraph
             this.logControl1.ListViewCapa = 100;
             this.logControl1.Location = new System.Drawing.Point(0, 0);
             this.logControl1.Name = "logControl1";
-            this.logControl1.Size = new System.Drawing.Size(150, 46);
+            this.logControl1.Size = new System.Drawing.Size(1030, 179);
             this.logControl1.TabIndex = 0;
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(667, 490);
+            this.panel1.Location = new System.Drawing.Point(667, 520);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(360, 94);
             this.panel1.TabIndex = 7;
@@ -312,15 +313,16 @@ namespace RTGraph
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(19, 14);
+            this.label1.Location = new System.Drawing.Point(19, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(320, 59);
+            this.label1.Size = new System.Drawing.Size(321, 55);
             this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
+            this.label1.Text = "<message>";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // timer1
             // 
-            this.timer1.Interval = 2000;
+            this.timer1.Interval = 3000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
@@ -328,6 +330,7 @@ namespace RTGraph
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1030, 616);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);

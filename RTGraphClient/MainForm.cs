@@ -417,5 +417,11 @@ namespace RTGraph
             timer1.Stop();
             panel1.Visible = false;
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            panel1.Visible = false;
+        }
     }
 }
