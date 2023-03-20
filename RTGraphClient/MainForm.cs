@@ -16,6 +16,13 @@ namespace RTGraph
 {
     public partial class MainForm : Form
     {
+        enum NotiTypeEnum
+        {
+            Info,
+            Warning,
+            Error
+        }
+
         private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
         private int continusMode = 0;
         private bool isActive = false;
@@ -57,7 +64,7 @@ namespace RTGraph
         private void commError(object sender, ErrorEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
-                showNotiMessage(e.GetException().Message);
+                showNotiMessage(NotiTypeEnum.Error, e.GetException().Message);
             }));
         }
 
@@ -131,7 +138,7 @@ namespace RTGraph
                 } 
                 catch (Exception ex)
                 {
-                    showNotiMessage(ex.Message);
+                    showNotiMessage(NotiTypeEnum.Error, ex.Message);
                 }
                 finally
                 {
@@ -139,6 +146,8 @@ namespace RTGraph
 
                     toolStripDropDownButton1.Image = Properties.Resources.on;
                     openToolStripMenuItem.Checked = true;
+
+                    showNotiMessage(NotiTypeEnum.Info, "Comm Device Opend");
                 }
             }
             else
@@ -149,7 +158,7 @@ namespace RTGraph
                 }
                 catch (Exception ex)
                 {
-                    showNotiMessage(ex.Message);
+                    showNotiMessage(NotiTypeEnum.Error, ex.Message);
                 }
                 finally
                 {
@@ -158,6 +167,8 @@ namespace RTGraph
 
                     toolStripDropDownButton1.Image = Properties.Resources.off;
                     openToolStripMenuItem.Checked = false;
+
+                    showNotiMessage(NotiTypeEnum.Info, "Comm Device Closed");
                 }
             }
         }
@@ -367,7 +378,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    showNotiMessage("You can't change the mode while a Grab is in progress.");
+                    showNotiMessage(NotiTypeEnum.Error, "You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -382,7 +393,7 @@ namespace RTGraph
                 }
                 else
                 {
-                    showNotiMessage("You can't change the mode while a Grab is in progress.");
+                    showNotiMessage(NotiTypeEnum.Error, "You can't change the mode while a Grab is in progress.");
                 }
             }
         }
@@ -392,7 +403,7 @@ namespace RTGraph
             connectionTimer.Stop();
             if (!comm.Connected)
             {
-                showNotiMessage("No response from the device.");
+                showNotiMessage(NotiTypeEnum.Error, "No response from the device.");
                 logControl1.AddItem(LogControl.LogTypeEnum.Error, "No response from the device.");
                 deviceConnect(0);
             }
@@ -437,8 +448,21 @@ namespace RTGraph
             splitContainer1.Panel2Collapsed = !toolStripButton3.Checked;
         }
 
-        private void showNotiMessage(string message)
+        private void showNotiMessage(NotiTypeEnum type, string message)
         {
+            if (type == NotiTypeEnum.Info)
+            {
+                panel1.ForeColor = Color.Black;
+            }
+            else if (type == NotiTypeEnum.Warning)
+            {
+                panel1.ForeColor = Color.Yellow;
+            }
+            else if (type == NotiTypeEnum.Error)
+            {
+                panel1.ForeColor = Color.Red;
+            }
+
             label1.Text = message;
             panel1.Visible = true;
             if (timer1.Enabled)
