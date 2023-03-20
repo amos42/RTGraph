@@ -643,6 +643,7 @@ namespace RTGraph
             // 
             // loadButton
             // 
+            this.loadButton.Enabled = false;
             this.loadButton.Location = new System.Drawing.Point(291, 372);
             this.loadButton.Name = "loadButton";
             this.loadButton.Size = new System.Drawing.Size(75, 30);

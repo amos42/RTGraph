@@ -431,7 +431,7 @@ namespace RTGraph
                 if ((groupMask & MASK_GROUP_2) != 0)
                 {
                     setUInt16Value(packet, startIdx + 6, tde);
-                    setUInt16Value(packet, startIdx + 7, tch);
+                    setUInt16Value(packet, startIdx + 8, tch);
                     setUInt16Value(packet, startIdx + 10, tre1);
                     setUInt16Value(packet, startIdx + 12, tre2);
                     setUInt16Value(packet, startIdx + 14, tsl);

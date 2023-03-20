@@ -125,22 +125,40 @@ namespace RTGraph
         {
             if (isOpen)
             {
-                comm.OpenComm();
+                try
+                {
+                    comm.OpenComm();
+                } 
+                catch (Exception ex)
+                {
+                    showNotiMessage(ex.Message);
+                }
+                finally
+                {
+                    btnConnect.Enabled = true;
 
-                btnConnect.Enabled = true;
-
-                toolStripDropDownButton1.Image = Properties.Resources.on;
-                openToolStripMenuItem.Checked = true;
+                    toolStripDropDownButton1.Image = Properties.Resources.on;
+                    openToolStripMenuItem.Checked = true;
+                }
             }
             else
             {
-                comm.CloseComm();
+                try
+                {
+                    comm.CloseComm();
+                }
+                catch (Exception ex)
+                {
+                    showNotiMessage(ex.Message);
+                }
+                finally
+                {
+                    btnConnect.Enabled = false;
+                    setConnectState(false);
 
-                btnConnect.Enabled = false;
-                setConnectState(false);
-
-                toolStripDropDownButton1.Image = Properties.Resources.off;
-                openToolStripMenuItem.Checked = false;
+                    toolStripDropDownButton1.Image = Properties.Resources.off;
+                    openToolStripMenuItem.Checked = false;
+                }
             }
         }
 
