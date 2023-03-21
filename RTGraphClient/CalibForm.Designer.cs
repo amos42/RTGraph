@@ -63,7 +63,6 @@ namespace RTGraph
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button3.Location = new System.Drawing.Point(541, 279);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(103, 34);
@@ -111,16 +110,23 @@ namespace RTGraph
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.chart1.AxisVisible = false;
             this.chart1.BackColor = System.Drawing.Color.Black;
             this.chart1.BorderLineWidth = 1;
+            this.chart1.BufferAxisVisible = false;
             this.chart1.BufferCount = 0;
             this.chart1.GraphAreaMinHeight = 100;
             this.chart1.GraphMargin = new System.Windows.Forms.Padding(10);
+            this.chart1.IndexedMode = false;
             this.chart1.Location = new System.Drawing.Point(1, 2);
             this.chart1.Name = "chart1";
+            this.chart1.OSDVisible = false;
             this.chart1.Size = new System.Drawing.Size(866, 271);
+            this.chart1.StretchMode = true;
             this.chart1.TabIndex = 0;
             this.chart1.TriggerValue = 0;
+            this.chart1.ValideAreaEnd = 1024;
+            this.chart1.ValideAreaStart = -1;
             this.chart1.ValueCount = 1024;
             this.chart1.ValuesCount = 1;
             // 
