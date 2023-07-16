@@ -25,6 +25,11 @@ namespace DeviceSimulator
             InitializeComponent();
         }
 
+        private void SendPacket(object sender, PacketEventArgs e)
+        {
+            addLogItem(0, null, e.Packet.Serialize());
+        }
+
         private void ReceivePacket(object sender, PacketReceivedEventArgs e)
         {
             bool foward = true;
@@ -47,7 +52,7 @@ namespace DeviceSimulator
                         packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.DeviceParameter.Serialize(data, 1));
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         //comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, comm.camParam.Serialize(), e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.Serialize());
+                        //addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x00)
@@ -58,7 +63,7 @@ namespace DeviceSimulator
                         var data = new byte[1] { 0x0 };
                         packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.Serialize());
+                        //addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                 }
@@ -74,7 +79,7 @@ namespace DeviceSimulator
                         packet = new RTGraphPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         // comm.SendPacket(PacketClass.PARAM, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.Serialize());
+                        //addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
@@ -104,7 +109,7 @@ namespace DeviceSimulator
                         data[0] = 0;
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x0, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.Serialize());
+                        //addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x01)
@@ -114,7 +119,7 @@ namespace DeviceSimulator
                         data[0] = 0;
                         packet = new RTGraphPacket(PacketClass.CAL, PacketSubClass.RES, PacketClassBit.FIN, 0x1, data);
                         comm.SendPacket(packet, e.TargetIPEndPoint);
-                        addLogItem(0, null, packet.Serialize());
+                        //addLogItem(0, null, packet.Serialize());
                         foward = false;
                     }
                     else if (packet.Option == 0x02 || packet.Option == 0x03)
@@ -172,6 +177,7 @@ namespace DeviceSimulator
                 comm.RecvPort = Int32.Parse(textBox2.Text);
                 comm.SendPort = Int32.Parse(textBox3.Text);
                 comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
+                comm.PacketSended += new PacketSendedEventHandler(SendPacket);
                 comm.OpenComm();
 
                 socketOpenBtn.Text = "Socket Close";
@@ -181,6 +187,7 @@ namespace DeviceSimulator
             {
                 comm.CloseComm();
                 comm.PacketReceived -= ReceivePacket;
+                comm.PacketSended -= SendPacket;
                 socketOpenBtn.Text = "Socket Open";
                 socketOpenBtn.Tag = null;
             }
@@ -268,7 +275,7 @@ namespace DeviceSimulator
                 // for(int i = 0; i < 20; i++) {
                     comm.SendPacket(packet, xx.Key);
                 // }
-                addLogItem(0, "", packet.Serialize());
+                //addLogItem(0, "", packet.Serialize());
             }
         }
 

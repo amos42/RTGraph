@@ -1,4 +1,5 @@
-﻿using RTGraphProtocol;
+﻿using DeviceSimulator;
+using RTGraphProtocol;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -217,6 +218,9 @@ namespace RTGraph
                 else
                 {
                     MessageBox.Show("패킷 전송이 3회 실패했습니다.");
+                    //showNotiMessage(NotiTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
+                    //logControl1.AddItem(LogControl.LogTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
+
                     timer2.Stop();
                 }
             }
