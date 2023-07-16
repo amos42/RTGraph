@@ -308,7 +308,7 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x2);
         }
 
-        public void ChangeGrapMode(byte mode)
+        public void ChangeGrabMode(byte mode)
         {
             pendingParamTriggerSource = (RTGraphParameter.TriggerSourceEnum)mode;
             var data = new byte[1] { mode };

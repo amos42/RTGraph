@@ -24,6 +24,7 @@ namespace RTGraph
         }
 
         private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
+        private int grabState = 0;
         private int continusMode = 0;
         private bool isActive = false;
 
@@ -123,7 +124,7 @@ namespace RTGraph
                 chart1.IndexedMode = false;
                 chart1.BufferCount = 100;
                 chart1.OSDVisible = true;
-                // calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked); // 문제가 있어서 calibration 기능 막음.
+                // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
@@ -257,16 +258,18 @@ namespace RTGraph
 
         private void setGrabState(bool grab)
         {
-            if (grab && btnGrab.CheckState != CheckState.Checked)
+            if (grab && grabState != 1)
             {
+                grabState = 1;
                 btnGrab.Text = "Stop Grab";
                 btnGrab.CheckState = CheckState.Checked;
                 // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = continusMode == 0; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
             }
-            else if (!grab && btnGrab.CheckState != CheckState.Unchecked)
+            else if (!grab && grabState != 0)
             {
+                grabState = 0;
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
                 calibrationToolStripMenuItem.Enabled = false;
@@ -310,21 +313,26 @@ namespace RTGraph
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
             {
-                if (e.Packet.Option == 0x2 && continusMode == 0)
+                if (grabState == 1)
                 {
-                    int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                    chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                    this.Invoke(new MethodInvoker(() => {
-                        if (!refreshTimer.Enabled) refreshTimer.Start();
-                    }));
-                } 
-                else if (e.Packet.Option == 0x3 && continusMode == 1)
-                {
-                    int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                    chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                    this.Invoke(new MethodInvoker(() => {
-                        if (!refreshTimer.Enabled) refreshTimer.Start();
-                    }));
+                    if (e.Packet.Option == 0x2 && continusMode == 0)
+                    {
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
+                        }));
+                    }
+                    else if (e.Packet.Option == 0x3 && continusMode == 1)
+                    {
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
+                        }));
+                    }
                 }
             }
         }
@@ -400,9 +408,9 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ImageTrigger)
             {
-                if(btnGrab.CheckState != CheckState.Checked)
+                if(grabState == 0)
                 {
-                    comm.ChangeGrapMode(0);
+                    comm.ChangeGrabMode(0);
                 }
                 else
                 {
@@ -415,9 +423,9 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
-                if (btnGrab.CheckState != CheckState.Checked)
+                if (grabState == 0)
                 {
-                    comm.ChangeGrapMode(1);
+                    comm.ChangeGrabMode(1);
                 }
                 else
                 {
