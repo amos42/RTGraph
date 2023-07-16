@@ -282,9 +282,9 @@ namespace RTGraph
         {
             if (!isActive) return;
 
-            this.Invoke(new MethodInvoker(() => {
-                logControl1.AddItem(LogControl.LogTypeEnum.Recv, BitConverter.ToString(e.Packet.Serialize()).Replace('-',' '));
-            }));
+            //this.Invoke(new MethodInvoker(() => {
+            //    logControl1.AddItem(LogControl.LogTypeEnum.Recv, BitConverter.ToString(e.Packet.Serialize()).Replace('-',' '));
+            //}));
 
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
             {
@@ -341,9 +341,9 @@ namespace RTGraph
         {
             if (!isActive) return;
 
-            this.Invoke(new MethodInvoker(() => {
-                logControl1.AddItem(LogControl.LogTypeEnum.Send, BitConverter.ToString(e.Packet.Serialize()).Replace('-', ' '));
-            }));
+            //this.Invoke(new MethodInvoker(() => {
+            //    logControl1.AddItem(LogControl.LogTypeEnum.Send, BitConverter.ToString(e.Packet.Serialize()).Replace('-', ' '));
+            //}));
         }
 
         private void btnGrab_Click(object sender, EventArgs e)
