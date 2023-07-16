@@ -203,6 +203,8 @@ namespace RTGraph
                 setConnectState(true);
 
                 connectionTimer.Stop();
+
+                comm.RequestParam(false);
             }
             else
             {
