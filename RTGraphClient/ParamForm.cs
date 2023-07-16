@@ -18,6 +18,11 @@ namespace RTGraph
         private RTGraphComm comm;
         private bool userHandle = true;
 
+        private RTGraphParameter latestCamParam;
+        private byte latestCamParamMask;
+        private DateTime latestCamParamSendTime;
+        private int retryCount;
+
         public ParamForm(RTGraphComm comm)
         {
             this.comm = comm;
@@ -99,6 +104,7 @@ namespace RTGraph
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
+                timer2.Stop();
                 ParamToUI(comm.DeviceParameter);
             }));
         }
@@ -190,6 +196,30 @@ namespace RTGraph
             if (camParam.group_4_refCnt > 0)
                 msk |= RTGraphParameter.MASK_GROUP_4;
             comm.ApplyParam(camParam, false, msk);
+
+            latestCamParam = camParam;
+            latestCamParamMask = msk;
+            latestCamParamSendTime = DateTime.Now;
+            retryCount = 0;
+            timer2.Start();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now - latestCamParamSendTime > TimeSpan.FromSeconds(3))
+            {
+                if (retryCount < 3)
+                {
+                    comm.ApplyParam(latestCamParam, false, latestCamParamMask);
+                    latestCamParamSendTime = DateTime.Now;
+                    retryCount++;
+                }
+                else
+                {
+                    MessageBox.Show("패킷 전송이 3회 실패했습니다.");
+                    timer2.Stop();
+                }
+            }
         }
     }
 }

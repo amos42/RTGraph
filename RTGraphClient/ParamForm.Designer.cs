@@ -78,6 +78,7 @@ namespace RTGraph
             this.saveButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trkLineScanRate)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -677,6 +678,10 @@ namespace RTGraph
             this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // timer2
+            // 
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // ParamForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -765,5 +770,6 @@ namespace RTGraph
         private System.Windows.Forms.TrackBar trkLineScanRate;
         private System.Windows.Forms.Label lblLineScanRate;
         private System.Windows.Forms.ComboBox cboExposureLevel;
+        private System.Windows.Forms.Timer timer2;
     }
 }
