@@ -37,12 +37,14 @@ namespace RTGraph
 
         private void ParamForm_Load(object sender, EventArgs e)
         {
+            this.comm.PacketReceived += new PacketReceivedEventHandler(PackageReceived);
             this.comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
             ParamToUI(this.comm.DeviceParameter);
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            this.comm.PacketReceived -= PackageReceived;
             this.comm.DeviceParameter.PropertyChanged -= ParameterChanged;
         }
 
@@ -176,6 +178,11 @@ namespace RTGraph
             numRoiStart.Value = trkRoiStart.Value;
         }
 
+        private void PackageReceived(object sender, PacketReceivedEventArgs e)
+        {
+            timer2.Stop();
+        }
+
         private void trkRoiEnd_ValueChanged(object sender, EventArgs e)
         {
             numRoiEnd.Value = trkRoiEnd.Value;
@@ -214,14 +221,16 @@ namespace RTGraph
                     comm.ApplyParam(latestCamParam, false, latestCamParamMask);
                     latestCamParamSendTime = DateTime.Now;
                     retryCount++;
+                    kickTimer();
                 }
                 else
                 {
+                    timer1.Stop();
+                    timer2.Stop();
+
                     MessageBox.Show("패킷 전송이 3회 실패했습니다.");
                     //showNotiMessage(NotiTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
                     //logControl1.AddItem(LogControl.LogTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
-
-                    timer2.Stop();
                 }
             }
         }
