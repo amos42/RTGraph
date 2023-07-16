@@ -44,6 +44,8 @@ namespace RTGraph
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            timer1.Stop();
+            timer2.Stop();
             this.comm.PacketReceived -= PackageReceived;
             this.comm.DeviceParameter.PropertyChanged -= ParameterChanged;
         }
