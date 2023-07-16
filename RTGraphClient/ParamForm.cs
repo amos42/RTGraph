@@ -112,6 +112,13 @@ namespace RTGraph
             }));
         }
 
+        private void PackageReceived(object sender, PacketReceivedEventArgs e)
+        {
+            this.Invoke(new MethodInvoker(() => {
+                timer2.Stop();
+            }));
+        }
+
         private void defaultButton_Click(object sender, EventArgs e)
         {
             comm.RequestParam(true);
@@ -176,11 +183,6 @@ namespace RTGraph
         private void trkRoiStart_ValueChanged(object sender, EventArgs e)
         {
             numRoiStart.Value = trkRoiStart.Value;
-        }
-
-        private void PackageReceived(object sender, PacketReceivedEventArgs e)
-        {
-            timer2.Stop();
         }
 
         private void trkRoiEnd_ValueChanged(object sender, EventArgs e)
