@@ -206,6 +206,7 @@ namespace RTGraph
             this.calibrationToolStripMenuItem.Name = "calibrationToolStripMenuItem";
             this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.calibrationToolStripMenuItem.Text = "Calibration";
+            this.calibrationToolStripMenuItem.Visible = false;
             this.calibrationToolStripMenuItem.Click += new System.EventHandler(this.calibrationToolStripMenuItem_Click);
             // 
             // toolStripButton3
