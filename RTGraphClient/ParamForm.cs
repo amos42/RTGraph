@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static RTGraphProtocol.PacketReceivedEventArgs;
 
 namespace RTGraph
 {
@@ -116,9 +117,12 @@ namespace RTGraph
 
         private void PackageReceived(object sender, PacketReceivedEventArgs e)
         {
-            this.Invoke(new MethodInvoker(() => {
-                timer2.Stop();
-            }));
+            if (e.Type == ReceiveTypeEnum.ParameterReceived)
+            {
+                this.Invoke(new MethodInvoker(() => {
+                    timer2.Stop();
+                }));
+            }
         }
 
         private void defaultButton_Click(object sender, EventArgs e)
