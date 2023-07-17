@@ -23,7 +23,8 @@ namespace RTGraph
             Error
         }
 
-        private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
+        private RTGraphComm comm = new RTGraphComm("169.254.100.100", 11000, 12000);
+        private int grabState = 0;
         private int continusMode = 0;
         private bool isActive = false;
 
@@ -36,6 +37,7 @@ namespace RTGraph
         {
             comm.ErrorEvent += new ErrorEventHandler(commError);
             comm.PacketReceived += new PacketReceivedEventHandler(receivePacket);
+            comm.PacketSended += new PacketSendedEventHandler(sendPacket);
             comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(parameterChanged);
 
             var cfg = new AppConfig("network");
@@ -54,9 +56,19 @@ namespace RTGraph
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            isActive = false;
+            if (isActive)
+            {
+                if (btnConnect.CheckState == CheckState.Checked)
+                {
+                    deviceConnect(0);
+                }
+
+                isActive = false;
+            }
 
             comm.ErrorEvent -= commError;
+            comm.PacketReceived -= receivePacket;
+            comm.PacketSended -= sendPacket;
             comm.DeviceParameter.PropertyChanged -= parameterChanged;
             comm.CloseComm();
         }
@@ -112,7 +124,8 @@ namespace RTGraph
                 chart1.IndexedMode = false;
                 chart1.BufferCount = 100;
                 chart1.OSDVisible = true;
-                calibrationToolStripMenuItem.Enabled = (btnGrab.CheckState == CheckState.Checked);
+                // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
@@ -125,6 +138,7 @@ namespace RTGraph
                 chart1.OSDVisible = false;
                 chart1.Clear();
                 calibrationToolStripMenuItem.Enabled = false;
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드에서만 활성화
             }
         }
 
@@ -189,6 +203,8 @@ namespace RTGraph
                 setConnectState(true);
 
                 connectionTimer.Stop();
+
+                comm.RequestParam(false);
             }
             else
             {
@@ -244,18 +260,22 @@ namespace RTGraph
 
         private void setGrabState(bool grab)
         {
-            if (grab && btnGrab.CheckState != CheckState.Checked)
+            if (grab && grabState != 1)
             {
+                grabState = 1;
                 btnGrab.Text = "Stop Grab";
                 btnGrab.CheckState = CheckState.Checked;
-                calibrationToolStripMenuItem.Enabled = (continusMode == 0);
+                // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
+                parametersToolStripMenuItem.Enabled = continusMode == 0; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
             }
-            else if (!grab && btnGrab.CheckState != CheckState.Unchecked)
+            else if (!grab && grabState != 0)
             {
+                grabState = 0;
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
                 calibrationToolStripMenuItem.Enabled = false;
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Stopped");
             }
         }
@@ -263,6 +283,10 @@ namespace RTGraph
         private void receivePacket(object sender, PacketReceivedEventArgs e)
         {
             if (!isActive) return;
+
+            //this.Invoke(new MethodInvoker(() => {
+            //    logControl1.AddItem(LogControl.LogTypeEnum.Recv, BitConverter.ToString(e.Packet.Serialize()).Replace('-',' '));
+            //}));
 
             if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Connected)
             {
@@ -291,23 +315,37 @@ namespace RTGraph
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
             {
-                if (e.Packet.Option == 0x2 && continusMode == 0)
+                if (grabState == 1)
                 {
-                    int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                    chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                    this.Invoke(new MethodInvoker(() => {
-                        if (!refreshTimer.Enabled) refreshTimer.Start();
-                    }));
-                } 
-                else if (e.Packet.Option == 0x3 && continusMode == 1)
-                {
-                    int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                    chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                    this.Invoke(new MethodInvoker(() => {
-                        if (!refreshTimer.Enabled) refreshTimer.Start();
-                    }));
+                    if (e.Packet.Option == 0x2 && continusMode == 0)
+                    {
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
+                        }));
+                    }
+                    else if (e.Packet.Option == 0x3 && continusMode == 1)
+                    {
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            if (!refreshTimer.Enabled) refreshTimer.Start();
+                        }));
+                    }
                 }
             }
+        }
+
+        private void sendPacket(object sender, PacketEventArgs e)
+        {
+            if (!isActive) return;
+
+            //this.Invoke(new MethodInvoker(() => {
+            //    logControl1.AddItem(LogControl.LogTypeEnum.Send, BitConverter.ToString(e.Packet.Serialize()).Replace('-', ' '));
+            //}));
         }
 
         private void btnGrab_Click(object sender, EventArgs e)
@@ -372,9 +410,9 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ImageTrigger)
             {
-                if(btnGrab.CheckState != CheckState.Checked)
+                if(grabState == 0)
                 {
-                    comm.ChangeGrapMode(0);
+                    comm.ChangeGrabMode(0);
                 }
                 else
                 {
@@ -387,9 +425,9 @@ namespace RTGraph
         {
             if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
-                if (btnGrab.CheckState != CheckState.Checked)
+                if (grabState == 0)
                 {
-                    comm.ChangeGrapMode(1);
+                    comm.ChangeGrabMode(1);
                 }
                 else
                 {

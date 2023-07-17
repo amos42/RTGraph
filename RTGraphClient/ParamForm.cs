@@ -1,4 +1,5 @@
-﻿using RTGraphProtocol;
+﻿using DeviceSimulator;
+using RTGraphProtocol;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static RTGraphProtocol.PacketReceivedEventArgs;
 
 namespace RTGraph
 {
@@ -17,6 +19,11 @@ namespace RTGraph
     {
         private RTGraphComm comm;
         private bool userHandle = true;
+
+        private RTGraphParameter latestCamParam;
+        private byte latestCamParamMask;
+        private DateTime latestCamParamSendTime;
+        private int retryCount;
 
         public ParamForm(RTGraphComm comm)
         {
@@ -31,12 +38,16 @@ namespace RTGraph
 
         private void ParamForm_Load(object sender, EventArgs e)
         {
+            this.comm.PacketReceived += new PacketReceivedEventHandler(PackageReceived);
             this.comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(ParameterChanged);
             ParamToUI(this.comm.DeviceParameter);
         }
 
         private void ParamForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            timer1.Stop();
+            timer2.Stop();
+            this.comm.PacketReceived -= PackageReceived;
             this.comm.DeviceParameter.PropertyChanged -= ParameterChanged;
         }
 
@@ -99,8 +110,19 @@ namespace RTGraph
         private void ParameterChanged(object sender, PropertyChangedEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => {
+                timer2.Stop();
                 ParamToUI(comm.DeviceParameter);
             }));
+        }
+
+        private void PackageReceived(object sender, PacketReceivedEventArgs e)
+        {
+            if (e.Type == ReceiveTypeEnum.ParameterReceived)
+            {
+                this.Invoke(new MethodInvoker(() => {
+                    timer2.Stop();
+                }));
+            }
         }
 
         private void defaultButton_Click(object sender, EventArgs e)
@@ -190,6 +212,35 @@ namespace RTGraph
             if (camParam.group_4_refCnt > 0)
                 msk |= RTGraphParameter.MASK_GROUP_4;
             comm.ApplyParam(camParam, false, msk);
+
+            latestCamParam = camParam;
+            latestCamParamMask = msk;
+            latestCamParamSendTime = DateTime.Now;
+            retryCount = 0;
+            timer2.Start();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now - latestCamParamSendTime > TimeSpan.FromSeconds(3))
+            {
+                if (retryCount < 3)
+                {
+                    comm.ApplyParam(latestCamParam, false, latestCamParamMask);
+                    latestCamParamSendTime = DateTime.Now;
+                    retryCount++;
+                    kickTimer();
+                }
+                else
+                {
+                    timer1.Stop();
+                    timer2.Stop();
+
+                    MessageBox.Show("패킷 전송이 3회 실패했습니다.");
+                    //showNotiMessage(NotiTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
+                    //logControl1.AddItem(LogControl.LogTypeEnum.Error, "패킷 전송이 3회 실패했습니다.");
+                }
+            }
         }
     }
 }

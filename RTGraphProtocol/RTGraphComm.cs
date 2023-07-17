@@ -9,7 +9,19 @@ using static RTGraph.RTGraphParameter;
 
 namespace RTGraphProtocol
 {
-    public class PacketReceivedEventArgs : EventArgs
+    public class PacketEventArgs : EventArgs
+    {
+        public RTGraphPacket Packet { get; set; }
+        public IPEndPoint TargetIPEndPoint { get; set; } = null;
+
+        public PacketEventArgs(RTGraphPacket packet, IPEndPoint targetEP = null)
+        {
+            this.Packet = packet;
+            this.TargetIPEndPoint = targetEP;
+        }
+    }
+
+    public class PacketReceivedEventArgs : PacketEventArgs
     {
         public enum ReceiveTypeEnum
         {
@@ -22,21 +34,17 @@ namespace RTGraphProtocol
             ParameterReceived
         }
 
-
-        public RTGraphPacket Packet { get; set; }
         public ReceiveTypeEnum Type { get; set; } = 0;
         public int Result { get; set; } = 0;
-        public IPEndPoint TargetIPEndPoint {get; set;} = null;
 
-        public PacketReceivedEventArgs(RTGraphPacket packet, ReceiveTypeEnum type, int result = 0, IPEndPoint targetEP = null) 
+        public PacketReceivedEventArgs(RTGraphPacket packet, ReceiveTypeEnum type, int result = 0, IPEndPoint targetEP = null) : base(packet, targetEP)
         {
-            this.Packet = packet;
             this.Type = type;
             this.Result = result;
-            this.TargetIPEndPoint = targetEP;
         }
     }
 
+    public delegate void PacketSendedEventHandler(object sender, PacketEventArgs e);
     public delegate void PacketReceivedEventHandler(object sender, PacketReceivedEventArgs e);
 
     public class RTGraphComm : UDPComm
@@ -52,6 +60,8 @@ namespace RTGraphProtocol
 
         // 패킷을 받았을 때 발생
         public event PacketReceivedEventHandler PacketReceived;
+        // 패킷을 전송했을 때 발생
+        public event PacketSendedEventHandler PacketSended;
         // Calibration 값이 변경되었을 때 발생
         public event EventHandler CalibrationChanged;
         // 통신 상태가 변경되었을 때 발생
@@ -225,6 +235,14 @@ namespace RTGraphProtocol
             }
         }
 
+        private void RaisePacketSendEvent(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
+        {
+            if (PacketSended != null)
+            {
+                PacketSended(this, new PacketEventArgs(packet, targetIPEndPoint));
+            }
+        }
+
         public void Connect()
         {
             var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
@@ -257,6 +275,8 @@ namespace RTGraphProtocol
         {
             var data = packet.Serialize();
             SendStream(data, targetIPEndPoint);
+
+            RaisePacketSendEvent(packet, targetIPEndPoint);
         }
 
         public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data = null, IPEndPoint targetIPEndPoint = null)
@@ -288,7 +308,7 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x2);
         }
 
-        public void ChangeGrapMode(byte mode)
+        public void ChangeGrabMode(byte mode)
         {
             pendingParamTriggerSource = (RTGraphParameter.TriggerSourceEnum)mode;
             var data = new byte[1] { mode };
