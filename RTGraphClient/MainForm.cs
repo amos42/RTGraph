@@ -125,7 +125,7 @@ namespace RTGraph
                 chart1.BufferCount = 100;
                 chart1.OSDVisible = true;
                 // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
@@ -138,7 +138,7 @@ namespace RTGraph
                 chart1.OSDVisible = false;
                 chart1.Clear();
                 calibrationToolStripMenuItem.Enabled = false;
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
             }
         }
 
@@ -266,7 +266,7 @@ namespace RTGraph
                 btnGrab.Text = "Stop Grab";
                 btnGrab.CheckState = CheckState.Checked;
                 // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
-                parametersToolStripMenuItem.Enabled = continusMode == 0; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = true; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
             }
             else if (!grab && grabState != 0)
@@ -275,7 +275,7 @@ namespace RTGraph
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
                 calibrationToolStripMenuItem.Enabled = false;
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Stopped");
             }
         }
