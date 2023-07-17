@@ -23,7 +23,7 @@ namespace RTGraph
             Error
         }
 
-        private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
+        private RTGraphComm comm = new RTGraphComm("169.254.100.100", 11000, 12000);
         private int grabState = 0;
         private int continusMode = 0;
         private bool isActive = false;
