@@ -72,7 +72,7 @@ namespace DeviceSimulator
             {
                 if (packet.SubClass == PacketSubClass.REQ)
                 {
-                    packet = new RTGraphPacket(PacketClass.PING, PacketSubClass.RES, PacketClassBit.FIN, 0x1);
+                    packet = new RTGraphPacket(PacketClass.PING, PacketSubClass.RES, PacketClassBit.FIN, 0x0);
                     comm.SendPacket(packet, e.TargetIPEndPoint);
                     //addLogItem(0, null, packet.Serialize());
                     foward = false;

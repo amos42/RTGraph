@@ -278,7 +278,7 @@ namespace RTGraphProtocol
 
         public void SendPing()
         {
-            SendPacket(PacketClass.PING, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            SendPacket(PacketClass.PING, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
         }
 
         public void StartCapture()

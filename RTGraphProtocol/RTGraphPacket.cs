@@ -6,7 +6,7 @@ namespace RTGraph
     public enum PacketClass
     {
         CONN = 0x11,
-        PING = 0x12,
+        PING = 0x15,
         PARAM = 0x20,
         CAL = 0x30,
         GRAB = 0x40
