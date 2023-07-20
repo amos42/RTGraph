@@ -27,11 +27,14 @@ namespace RTGraphProtocol
         {
             Dummy,
             Connected,
+            PingReceived,
             Disconnected,
             GrabStarted,
             GrabStopped,
+            GrabModeChanged,
             GrabDataReceivced,
-            ParameterReceived
+            ParameterReceived,
+            CalDataReceived
         }
 
         public ReceiveTypeEnum Type { get; set; } = 0;
@@ -52,6 +55,9 @@ namespace RTGraphProtocol
         public bool Connected { get; set; } = false;
         public RTGraphParameter DeviceParameter { get; set; } = new RTGraphParameter();
         public byte[] CalibrationData { get; set; } = new byte[1024];
+
+        public DateTime LatestPacketSendTime { get; set; }
+        public DateTime LatestPacketRecvTime { get; set; }
 
         // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
         private TriggerSourceEnum pendingParamTriggerSource;
@@ -121,6 +127,13 @@ namespace RTGraphProtocol
                     }
                 }
             }
+            else if (packet.Class == PacketClass.PING)
+            {
+                if (packet.SubClass == PacketSubClass.RES)
+                {
+                    type = ReceiveTypeEnum.PingReceived;
+                }
+            }
             else if (packet.Class == PacketClass.PARAM)
             {
                 if (packet.SubClass == PacketSubClass.RES)
@@ -170,6 +183,8 @@ namespace RTGraphProtocol
                             }
                         }
                     }
+
+                    type = ReceiveTypeEnum.CalDataReceived;
                 }
             }
             else if (packet.Class == PacketClass.GRAB)
@@ -198,8 +213,8 @@ namespace RTGraphProtocol
                         if (packet.Data?[0] == 0)
                         {
                             DeviceParameter.TriggerSource = pendingParamTriggerSource;
+                            type = ReceiveTypeEnum.GrabModeChanged;
                         }
-
                     }
                 }
                 else if (packet.SubClass == PacketSubClass.NTY)
@@ -208,7 +223,11 @@ namespace RTGraphProtocol
                 }
             }
 
-            RaisePacketReceivedEvent(packet, type, 0, endpt);
+            //if (type != 0)
+            {
+                LatestPacketRecvTime = DateTime.Now;
+                RaisePacketReceivedEvent(packet, type, 0, endpt);
+            }
         }
 
         private void RaiseStateEvent()
@@ -257,6 +276,11 @@ namespace RTGraphProtocol
             udpSender.Send(data, data.Length);
         }
 
+        public void SendPing()
+        {
+            SendPacket(PacketClass.PING, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+        }
+
         public void StartCapture()
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
@@ -275,6 +299,8 @@ namespace RTGraphProtocol
         {
             var data = packet.Serialize();
             SendStream(data, targetIPEndPoint);
+
+            LatestPacketSendTime = DateTime.Now;
 
             RaisePacketSendEvent(packet, targetIPEndPoint);
         }
