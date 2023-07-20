@@ -246,7 +246,7 @@ namespace RTGraph
                 toolStripDropDownButton2.Enabled = true;
                 toolStripDropDownButton4.Enabled = true;
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Connected");
-                timer2.Start();
+                // timer2.Start();
             }
             else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
@@ -257,7 +257,7 @@ namespace RTGraph
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Disconnected");
-                timer2.Stop();
+                // timer2.Stop();
             }
         }
 
@@ -527,22 +527,22 @@ namespace RTGraph
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            if (!comm.Connected)
-            {
-                timer2.Stop();
-                return;
-            }
+            //if (!comm.Connected)
+            //{
+            //    timer2.Stop();
+            //    return;
+            //}
 
-            if (DateTime.Now - comm.LatestPacketRecvTime > TimeSpan.FromSeconds(10))
-            {
-                showNotiMessage(NotiTypeEnum.Info, "No Reply from Device");
-                setConnectState(false);
-                // deviceCommOpen(false);
-            }
-            else if (DateTime.Now - comm.LatestPacketSendTime > TimeSpan.FromSeconds(5))
-            {
-                comm.SendPing();
-            }
+            //if (DateTime.Now - comm.LatestPacketRecvTime > TimeSpan.FromSeconds(10))
+            //{
+            //    showNotiMessage(NotiTypeEnum.Info, "No Reply from Device");
+            //    setConnectState(false);
+            //    // deviceCommOpen(false);
+            //}
+            //else if (DateTime.Now - comm.LatestPacketSendTime > TimeSpan.FromSeconds(5))
+            //{
+            //    comm.SendPing();
+            //}
         }
     }
 }
