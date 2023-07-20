@@ -535,9 +535,10 @@ namespace RTGraph
 
             if (DateTime.Now - comm.LatestPacketRecvTime > TimeSpan.FromSeconds(10))
             {
-                // showNotiMessage(NotiTypeEnum.Info, "No Reply from Device");
-                deviceCommOpen(false);
-            } 
+                showNotiMessage(NotiTypeEnum.Info, "No Reply from Device");
+                setConnectState(false);
+                // deviceCommOpen(false);
+            }
             else if (DateTime.Now - comm.LatestPacketSendTime > TimeSpan.FromSeconds(5))
             {
                 comm.SendPing();
