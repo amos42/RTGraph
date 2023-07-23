@@ -120,7 +120,7 @@ namespace RTGraph
                 chart1.OSDVisible = true;
                 // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
-            }
+            }   
             else if (continusMode != 1 && grabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
                 continusMode = 1;
@@ -196,9 +196,6 @@ namespace RTGraph
             {
                 setConnectState(true);
                 //connectionTimer.Stop();
-
-                comm.RequestGrabInfo();
-                comm.RequestParam(false);
             }
             else
             {
@@ -240,6 +237,9 @@ namespace RTGraph
                 toolStripDropDownButton4.Enabled = true;
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Connected");
                 // timer2.Start();
+
+                comm.RequestGrabInfo();
+                comm.RequestParam(false);
             }
             else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
