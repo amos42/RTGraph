@@ -23,6 +23,7 @@ namespace RTGraph
             Error
         }
 
+        // private RTGraphComm comm = new RTGraphComm("127.0.0.1", 11000, 12000);
         private RTGraphComm comm = new RTGraphComm("169.254.100.100", 11000, 12000);
         private int grabState = 0;
         private int continusMode = 0;
@@ -125,7 +126,7 @@ namespace RTGraph
                 chart1.BufferCount = 100;
                 chart1.OSDVisible = true;
                 // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
             }
             else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
             {
@@ -138,7 +139,7 @@ namespace RTGraph
                 chart1.OSDVisible = false;
                 chart1.Clear();
                 calibrationToolStripMenuItem.Enabled = false;
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
             }
         }
 
@@ -245,6 +246,7 @@ namespace RTGraph
                 toolStripDropDownButton2.Enabled = true;
                 toolStripDropDownButton4.Enabled = true;
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Connected");
+                // timer2.Start();
             }
             else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
@@ -255,6 +257,7 @@ namespace RTGraph
                 toolStripDropDownButton2.Enabled = false;
                 toolStripDropDownButton4.Enabled = false;
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Disconnected");
+                // timer2.Stop();
             }
         }
 
@@ -266,7 +269,7 @@ namespace RTGraph
                 btnGrab.Text = "Stop Grab";
                 btnGrab.CheckState = CheckState.Checked;
                 // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
-                parametersToolStripMenuItem.Enabled = continusMode == 0; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = true; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
             }
             else if (!grab && grabState != 0)
@@ -275,7 +278,7 @@ namespace RTGraph
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
                 calibrationToolStripMenuItem.Enabled = false;
-                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 continus 모드 start 된 상황에서만 활성화
+                parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Stopped");
             }
         }
@@ -520,6 +523,26 @@ namespace RTGraph
         {
             timer1.Stop();
             panel1.Visible = false;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            //if (!comm.Connected)
+            //{
+            //    timer2.Stop();
+            //    return;
+            //}
+
+            //if (DateTime.Now - comm.LatestPacketRecvTime > TimeSpan.FromSeconds(10))
+            //{
+            //    showNotiMessage(NotiTypeEnum.Info, "No Reply from Device");
+            //    setConnectState(false);
+            //    // deviceCommOpen(false);
+            //}
+            //else if (DateTime.Now - comm.LatestPacketSendTime > TimeSpan.FromSeconds(5))
+            //{
+            //    comm.SendPing();
+            //}
         }
     }
 }

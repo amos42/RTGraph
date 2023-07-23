@@ -57,6 +57,7 @@ namespace RTGraph
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -196,7 +197,7 @@ namespace RTGraph
             // 
             this.parametersToolStripMenuItem.Enabled = false;
             this.parametersToolStripMenuItem.Name = "parametersToolStripMenuItem";
-            this.parametersToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.parametersToolStripMenuItem.Size = new System.Drawing.Size(167, 26);
             this.parametersToolStripMenuItem.Text = "Parameters";
             this.parametersToolStripMenuItem.Click += new System.EventHandler(this.parametersToolStripMenuItem_Click);
             // 
@@ -204,7 +205,7 @@ namespace RTGraph
             // 
             this.calibrationToolStripMenuItem.Enabled = false;
             this.calibrationToolStripMenuItem.Name = "calibrationToolStripMenuItem";
-            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.calibrationToolStripMenuItem.Size = new System.Drawing.Size(167, 26);
             this.calibrationToolStripMenuItem.Text = "Calibration";
             this.calibrationToolStripMenuItem.Visible = false;
             this.calibrationToolStripMenuItem.Click += new System.EventHandler(this.calibrationToolStripMenuItem_Click);
@@ -343,6 +344,11 @@ namespace RTGraph
             this.timer1.Interval = 3000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // timer2
+            // 
+            this.timer2.Interval = 1000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -396,6 +402,7 @@ namespace RTGraph
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 

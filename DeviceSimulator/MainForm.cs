@@ -68,6 +68,16 @@ namespace DeviceSimulator
                     }
                 }
             }
+            else if (packet.Class == PacketClass.PING)
+            {
+                if (packet.SubClass == PacketSubClass.REQ)
+                {
+                    packet = new RTGraphPacket(PacketClass.PING, PacketSubClass.RES, PacketClassBit.FIN, 0x0);
+                    comm.SendPacket(packet, e.TargetIPEndPoint);
+                    //addLogItem(0, null, packet.Serialize());
+                    foward = false;
+                }
+            }
             else if (packet.Class == PacketClass.PARAM)
             {
                 if (packet.SubClass == PacketSubClass.REQ)
