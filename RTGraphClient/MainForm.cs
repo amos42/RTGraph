@@ -171,8 +171,7 @@ namespace RTGraph
                 finally
                 {
                     btnConnect.Enabled = false;
-                    //setConnectState(false);
-                    deviceConnect(0);
+                    setConnectState(false);
 
                     toolStripDropDownButton1.Image = Properties.Resources.off;
                     openToolStripMenuItem.Checked = false;
@@ -196,8 +195,7 @@ namespace RTGraph
             else if (connectState == 2)
             {
                 setConnectState(true);
-
-                connectionTimer.Stop();
+                //connectionTimer.Stop();
 
                 comm.RequestGrabInfo();
                 comm.RequestParam(false);
@@ -207,8 +205,7 @@ namespace RTGraph
                 comm.Disconnect();
 
                 setConnectState(false);
-
-                connectionTimer.Stop();
+                //connectionTimer.Stop();
             }
         }
 
@@ -235,6 +232,7 @@ namespace RTGraph
         {
             if (connected && btnConnect.CheckState != CheckState.Checked)
             {
+                connectionTimer.Stop();
                 btnConnect.Text = "Disconnect";
                 btnConnect.CheckState = CheckState.Checked;
                 btnGrab.Enabled = true;
@@ -245,6 +243,7 @@ namespace RTGraph
             }
             else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
+                connectionTimer.Stop();
                 btnConnect.Text = "Connect";
                 btnConnect.CheckState = CheckState.Unchecked;
                 btnGrab.Enabled = false;
@@ -290,15 +289,13 @@ namespace RTGraph
             {
                 this.Invoke(new MethodInvoker(() => {
                     connectionTimer.Stop();
-                    deviceConnect(2);
-                    //setConnectState(true);
+                    setConnectState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    //setConnectState(false);
-                    deviceConnect(0);
+                    setConnectState(false);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStateChanged)
