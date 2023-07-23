@@ -167,7 +167,7 @@ namespace DeviceSimulator
                     }
                     else if (packet.Option == 0x02)
                     {
-                        packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.RES, PacketClassBit.FIN, 0x3, new byte[3] { 0x00, (byte)comm.GrabState, (byte)comm.GrabMode});
+                        packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.RES, PacketClassBit.FIN, 0x2, new byte[3] { 0x00, (byte)comm.GrabState, (byte)comm.GrabMode});
                         comm.SendPacket(packet, e.TargetIPEndPoint);
                         foward = false;
                     }
