@@ -171,7 +171,8 @@ namespace RTGraph
                 finally
                 {
                     btnConnect.Enabled = false;
-                    setConnectState(false);
+                    //setConnectState(false);
+                    deviceConnect(0);
 
                     toolStripDropDownButton1.Image = Properties.Resources.off;
                     openToolStripMenuItem.Checked = false;
@@ -198,6 +199,7 @@ namespace RTGraph
 
                 connectionTimer.Stop();
 
+                comm.RequestGrabInfo();
                 comm.RequestParam(false);
             }
             else
@@ -288,13 +290,15 @@ namespace RTGraph
             {
                 this.Invoke(new MethodInvoker(() => {
                     connectionTimer.Stop();
-                    setConnectState(true);
+                    deviceConnect(2);
+                    //setConnectState(true);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.Disconnected)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    setConnectState(false);
+                    //setConnectState(false);
+                    deviceConnect(0);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStateChanged)
