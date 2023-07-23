@@ -29,8 +29,7 @@ namespace RTGraphProtocol
             Connected,
             PingReceived,
             Disconnected,
-            GrabStarted,
-            GrabStopped,
+            GrabStateChanged,
             GrabModeChanged,
             GrabDataReceivced,
             ParameterReceived,
@@ -52,6 +51,17 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
+        public enum GrabModeEnum {
+            ContinuoussMode,
+            TriggerMode
+        };
+
+        public enum GrabStateEnum
+        {
+            Stop,
+            Start
+        };
+
         public bool Connected { get; set; } = false;
         public RTGraphParameter DeviceParameter { get; set; } = new RTGraphParameter();
         public byte[] CalibrationData { get; set; } = new byte[1024];
@@ -59,8 +69,11 @@ namespace RTGraphProtocol
         public DateTime LatestPacketSendTime { get; set; }
         public DateTime LatestPacketRecvTime { get; set; }
 
+        public GrabModeEnum GrabMode { get; set; }
+        public GrabStateEnum GrabState { get; set; }
+
         // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
-        private TriggerSourceEnum pendingParamTriggerSource;
+        private GrabModeEnum pendingGrabMode;
         private RTGraphParameter pendingParam = null;
         private byte[] pendingCalibrationData = null;
 
@@ -196,7 +209,8 @@ namespace RTGraphProtocol
                         // 캡춰 시작
                         if (packet.Data?[0] == 0)
                         {
-                            type = ReceiveTypeEnum.GrabStarted;
+                            GrabState = GrabStateEnum.Start;
+                            type = ReceiveTypeEnum.GrabStateChanged;
                         }
                     }
                     else if (packet.Option == 0x01)
@@ -204,7 +218,29 @@ namespace RTGraphProtocol
                         // 캡춰 끝
                         if (packet.Data?[0] == 0)
                         {
-                            type = ReceiveTypeEnum.GrabStopped;
+                            GrabState = GrabStateEnum.Stop;
+                            type = ReceiveTypeEnum.GrabStateChanged;
+                        }
+                    }
+                    else if (packet.Option == 0x02)
+                    {
+                        // 현재 모드 정보
+                        if (packet.Data?[0] == 0)
+                        {
+                            var oldGrabMode = GrabMode;
+                            var oldGrabState = GrabState;
+                            GrabMode = packet.Data[2] == 0 ? GrabModeEnum.ContinuoussMode : GrabModeEnum.TriggerMode;
+                            GrabState = packet.Data[1] == 0 ? GrabStateEnum.Stop : GrabStateEnum.Start;
+
+                            if (GrabState != oldGrabState) 
+                            { 
+                                RaisePacketReceivedEvent(packet, ReceiveTypeEnum.GrabStateChanged, 0, endpt);
+                            }
+
+                            if (GrabMode != oldGrabMode)
+                            {
+                                type = ReceiveTypeEnum.GrabModeChanged;
+                            }
                         }
                     }
                     else if (packet.Option == 0x03)
@@ -212,7 +248,7 @@ namespace RTGraphProtocol
                         // 모드 변경
                         if (packet.Data?[0] == 0)
                         {
-                            DeviceParameter.TriggerSource = pendingParamTriggerSource;
+                            GrabMode = pendingGrabMode;
                             type = ReceiveTypeEnum.GrabModeChanged;
                         }
                     }
@@ -223,7 +259,7 @@ namespace RTGraphProtocol
                 }
             }
 
-            //if (type != 0)
+            // if (type != 0)
             {
                 LatestPacketRecvTime = DateTime.Now;
                 RaisePacketReceivedEvent(packet, type, 0, endpt);
@@ -281,6 +317,13 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.PING, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
         }
 
+        public void RequestGrabInfo()
+        {
+            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x02);
+            var data = packet.Serialize();
+            udpSender.Send(data, data.Length);
+        }
+
         public void StartCapture()
         {
             var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
@@ -336,7 +379,7 @@ namespace RTGraphProtocol
 
         public void ChangeGrabMode(byte mode)
         {
-            pendingParamTriggerSource = (RTGraphParameter.TriggerSourceEnum)mode;
+            pendingGrabMode = (GrabModeEnum)mode;
             var data = new byte[1] { mode };
             SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x3, data);
         }

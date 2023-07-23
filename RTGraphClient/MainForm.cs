@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DeviceSimulator;
 using RTGraphProtocol;
-using static RTGraphProtocol.PacketReceivedEventArgs;
 
 namespace RTGraph
 {
@@ -106,17 +105,11 @@ namespace RTGraph
                     chart1.TriggerValue = comm.DeviceParameter.ThresholdLevel;
                 }));
             }
-            else if (e.PropertyName == nameof(RTGraphParameter.TriggerSource))
-            {
-                this.Invoke(new MethodInvoker(() => {
-                    setGraphDrawMode(comm.DeviceParameter.TriggerSource);
-                }));
-            }
         }
 
-        private void setGraphDrawMode(RTGraphParameter.TriggerSourceEnum triggerSource)
+        private void setGraphDrawMode(RTGraphComm.GrabModeEnum grabMode)
         {
-            if (continusMode != 0 && triggerSource == RTGraphParameter.TriggerSourceEnum.ImageTrigger)
+            if (continusMode != 0 && grabMode == RTGraphComm.GrabModeEnum.ContinuoussMode)
             {
                 continusMode = 0;
                 continuesToolStripMenuItem.Checked = true;
@@ -128,7 +121,7 @@ namespace RTGraph
                 // calibrationToolStripMenuItem.Enabled = (grabState == 1); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = false; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
             }
-            else if (continusMode != 1 && triggerSource == RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
+            else if (continusMode != 1 && grabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
                 continusMode = 1;
                 continuesToolStripMenuItem.Checked = false;
@@ -304,16 +297,16 @@ namespace RTGraph
                     setConnectState(false);
                 }));
             }
-            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStarted)
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStateChanged)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    setGrabState(true);
+                    setGrabState(comm.GrabState == RTGraphComm.GrabStateEnum.Start);
                 }));
             }
-            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabStopped)
+            else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabModeChanged)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    setGrabState(false);
+                    setGraphDrawMode(comm.GrabMode);
                 }));
             }
             else if (e.Type == PacketReceivedEventArgs.ReceiveTypeEnum.GrabDataReceivced)
@@ -411,7 +404,7 @@ namespace RTGraph
 
         private void continuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ImageTrigger)
+            if (comm.GrabMode != RTGraphComm.GrabModeEnum.ContinuoussMode)
             {
                 if(grabState == 0)
                 {
@@ -426,7 +419,7 @@ namespace RTGraph
 
         private void triggerModeToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (comm.DeviceParameter.TriggerSource != RTGraphParameter.TriggerSourceEnum.ExternalTrigger)
+            if (comm.GrabMode != RTGraphComm.GrabModeEnum.TriggerMode)
             {
                 if (grabState == 0)
                 {

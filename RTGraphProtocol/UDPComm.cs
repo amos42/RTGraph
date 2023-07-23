@@ -81,16 +81,18 @@ namespace RTGraphProtocol
                     var byteData = client.EndReceive(result, ref targetEP); // 버퍼에 있는 데이터 취득
 
                     processPacket(byteData, targetEP);
-
-                    if (udpClient.Client != null)
-                    {
-                        //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
-                    }
                 }
                 catch (Exception ex)
                 {
                     raiseErrorEvent(ex);
+                }
+                finally
+                {
+                    if (udpClient?.Client != null)
+                    {
+                        //asyncResult = udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                        udpClient.BeginReceive(new AsyncCallback(receiveText), udpClient);
+                    }
                 }
             }
         }

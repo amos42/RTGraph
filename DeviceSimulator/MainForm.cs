@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using RTGraph;
 using System.Reflection;
 using RTGraphProtocol;
+using static RTGraphProtocol.RTGraphComm;
 
 namespace DeviceSimulator
 {
@@ -164,10 +165,15 @@ namespace DeviceSimulator
                             applyTimer();
                         }
                     }
+                    else if (packet.Option == 0x02)
+                    {
+                        packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.RES, PacketClassBit.FIN, 0x3, new byte[3] { 0x00, (byte)comm.GrabState, (byte)comm.GrabMode});
+                        comm.SendPacket(packet, e.TargetIPEndPoint);
+                        foward = false;
+                    }
                     else if (packet.Option == 0x03)
                     {
-                        comm.DeviceParameter.TriggerSource = (RTGraphParameter.TriggerSourceEnum)packet.Data?[0];
-                        comm.DeviceParameter.TriggerSource = (RTGraphParameter.TriggerSourceEnum)packet.Data?[0];
+                        comm.GrabMode = (GrabModeEnum)packet.Data?[0];
                     }
                 }
             }
