@@ -211,7 +211,7 @@ namespace RTGraph
 
         public event ErrorEventHandler ErrorEvent;
 
-        private Queue<KeyValuePair<int, byte[]>> pendingGraphQueue = new Queue<KeyValuePair<int, byte[]>>();
+        //private Queue<KeyValuePair<int, byte[]>> pendingGraphQueue = new Queue<KeyValuePair<int, byte[]>>();
         private Bitmap outBm = null;
         private int enqPos = 0;
         private int validPos = 0;
@@ -355,8 +355,8 @@ namespace RTGraph
             BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
             while (graphQueue.Count > 0)
             {
-                var values = graphQueue.Dequeue();
-                _applyBitmapOne(bmpData, values.Key, values.Value);
+                var value = graphQueue.Dequeue();
+                _applyBitmapOne(bmpData, value.Key, value.Value);
             }
             outBm.UnlockBits(bmpData);
         }
@@ -372,7 +372,7 @@ namespace RTGraph
             outBm.UnlockBits(bmpData);
         }
 
-        public void SetValueLine(int idx, byte[] values, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
+        public void SetValueLine(int idx, byte[] value, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
         {
             if (idx >= this.Values.Count) return;
             if (idx == 0 && IndexedMode && pos >= this.BufferCount) return;
@@ -381,12 +381,12 @@ namespace RTGraph
             {
                 lock (thisBlock)
                 {
-                    if (length <= 0) length = values.Length;
-                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
-                    Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
+                    if (length <= 0) length = value.Length;
+                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, value.Length - startIdx));
+                    Array.Copy(value, startIdx, this.Values[idx].Items, 0, length);
                     this.Values[idx].Index = pos;
 
-                    applyBitmapOne(pos, values, startIdx);
+                    applyBitmapOne(pos, value, startIdx);
                 }
 
                 //var itm = this.Values[idx].Items.Clone() as byte[];
@@ -428,7 +428,7 @@ namespace RTGraph
 
             if (outBm != null)
             {
-                applyBitmap(pendingGraphQueue);
+                //applyBitmap(pendingGraphQueue);
 
                 const int errorTerm = 2; // 이유를 알 수 없는 좌표 보정 값. 원인 분석 필요
                 if (valueCnt <= bufferCount)

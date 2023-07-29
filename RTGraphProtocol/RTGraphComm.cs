@@ -111,191 +111,198 @@ namespace RTGraphProtocol
 
         protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
-            ReceiveTypeEnum type = 0;
+            int idx = 0;
 
-            var packet = new RTGraphPacket(byteData);
-            if (packet.Class == PacketClass.CONN)
+            while (idx < byteData.Length)
             {
-                if (packet.SubClass == PacketSubClass.RES)
+                ReceiveTypeEnum type = 0;
+
+                var packet = new RTGraphPacket();
+                idx += packet.SetPacketFromStream(byteData, idx);
+
+                if (packet.Class == PacketClass.CONN)
                 {
-                    if (packet.Option == 0x01)
+                    if (packet.SubClass == PacketSubClass.RES)
                     {
-                        // 연결
-                        bool result;
-                        if (packet.Data?.Length > 0)
+                        if (packet.Option == 0x01)
                         {
-                            result = packet.Data[0] == 0;
-                        } 
-                        else
-                        {
-                            result = true;
-                        }
-
-                        if (result)
-                        {
-                            type = ReceiveTypeEnum.Connected;
-                            Connected = true;
-                            RaiseStateEvent();
-
-                            if (packet.Data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
+                            // 연결
+                            bool result;
+                            if (packet.Data?.Length > 0)
                             {
-                                DeviceParameter.Parse(packet.Data, 1);
+                                result = packet.Data[0] == 0;
+                            }
+                            else
+                            {
+                                result = true;
+                            }
+
+                            if (result)
+                            {
+                                type = ReceiveTypeEnum.Connected;
+                                Connected = true;
+                                RaiseStateEvent();
+
+                                if (packet.Data?.Length + 1 >= RTGraphParameter.PARAMETERS_PACKET_SIZE)
+                                {
+                                    DeviceParameter.Parse(packet.Data, 1);
+                                }
+                            }
+                        }
+                        else if (packet.Option == 0x00)
+                        {
+                            // 연결 종료
+                            bool result = packet.Data[0] == 0;
+                            if (result)
+                            {
+                                GrabDataQueue.Clear();
+                                type = ReceiveTypeEnum.Disconnected;
+                                Connected = false;
                             }
                         }
                     }
-                    else if (packet.Option == 0x00)
+                }
+                else if (packet.Class == PacketClass.PING)
+                {
+                    if (packet.SubClass == PacketSubClass.RES)
                     {
-                        // 연결 종료
-                        bool result = packet.Data[0] == 0;
-                        if (result)
-                        {
-                            GrabDataQueue.Clear();
-                            type = ReceiveTypeEnum.Disconnected;
-                            Connected = false;
-                        }
+                        type = ReceiveTypeEnum.PingReceived;
                     }
                 }
-            }
-            else if (packet.Class == PacketClass.PING)
-            {
-                if (packet.SubClass == PacketSubClass.RES)
+                else if (packet.Class == PacketClass.PARAM)
                 {
-                    type = ReceiveTypeEnum.PingReceived;
-                }
-            }
-            else if (packet.Class == PacketClass.PARAM)
-            {
-                if (packet.SubClass == PacketSubClass.RES)
-                {
-                    if (packet.Option == 0x00)
+                    if (packet.SubClass == PacketSubClass.RES)
                     {
-                        // default
-                        DeviceParameter.Parse(packet.Data, 1);
-                    }
-                    else if (packet.Option == 0x01)
-                    {
-                        // Load
-                        DeviceParameter.Parse(packet.Data, 1);
-                    }
-                    else if (packet.Option == 0x02 || packet.Option == 0x03)
-                    {
-                        // apply, save success
-                        if (packet.Data?[0] == 0)
+                        if (packet.Option == 0x00)
                         {
-                            DeviceParameter.Assign(pendingParam);
+                            // default
+                            DeviceParameter.Parse(packet.Data, 1);
                         }
-                    }
-
-                    type = ReceiveTypeEnum.ParameterReceived;
-                }
-            }
-            else if (packet.Class == PacketClass.CAL)
-            {
-                if (packet.SubClass == PacketSubClass.RES)
-                {
-                    if (packet.Option == 0x01)
-                    {
-                        if (packet.Data?[0] == 0) 
+                        else if (packet.Option == 0x01)
                         {
-                            Array.Copy(packet.Data, 1, CalibrationData, 0, 1024);
-                            RaiseCalEvent();
+                            // Load
+                            DeviceParameter.Parse(packet.Data, 1);
                         }
-                    }
-                    else if (packet.Option == 0x02 || packet.Option == 0x03)
-                    {
-                        if (packet.Data?[0] == 0)
+                        else if (packet.Option == 0x02 || packet.Option == 0x03)
                         {
-                            if (pendingCalibrationData != null) 
+                            // apply, save success
+                            if (packet.Data?[0] == 0)
                             {
-                                Array.Copy(pendingCalibrationData, CalibrationData, 1024);
+                                DeviceParameter.Assign(pendingParam);
+                            }
+                        }
+
+                        type = ReceiveTypeEnum.ParameterReceived;
+                    }
+                }
+                else if (packet.Class == PacketClass.CAL)
+                {
+                    if (packet.SubClass == PacketSubClass.RES)
+                    {
+                        if (packet.Option == 0x01)
+                        {
+                            if (packet.Data?[0] == 0)
+                            {
+                                Array.Copy(packet.Data, 1, CalibrationData, 0, 1024);
                                 RaiseCalEvent();
                             }
                         }
-                    }
-
-                    type = ReceiveTypeEnum.CalDataReceived;
-                }
-            }
-            else if (packet.Class == PacketClass.GRAB)
-            {
-                if (packet.SubClass == PacketSubClass.RES)
-                {
-                    if (packet.Option == 0x00)
-                    {
-                        // 캡춰 시작
-                        if (packet.Data?[0] == 0)
+                        else if (packet.Option == 0x02 || packet.Option == 0x03)
                         {
-                            GrabState = GrabStateEnum.Start;
-                            type = ReceiveTypeEnum.GrabStateChanged;
-                        }
-                    }
-                    else if (packet.Option == 0x01)
-                    {
-                        // 캡춰 끝
-                        if (packet.Data?[0] == 0)
-                        {
-                            GrabState = GrabStateEnum.Stop;
-                            GrabDataQueue.Clear();
-                            type = ReceiveTypeEnum.GrabStateChanged;
-                        }
-                    }
-                    else if (packet.Option == 0x02)
-                    {
-                        // 현재 모드 정보
-                        if (packet.Data?[0] == 0)
-                        {
-                            var oldGrabMode = GrabMode;
-                            var oldGrabState = GrabState;
-                            GrabMode = packet.Data[2] == 0 ? GrabModeEnum.ContinuoussMode : GrabModeEnum.TriggerMode;
-                            GrabState = packet.Data[1] == 0 ? GrabStateEnum.Stop : GrabStateEnum.Start;
-
-                            if (GrabState != oldGrabState) 
-                            { 
-                                RaisePacketReceivedEvent(packet, ReceiveTypeEnum.GrabStateChanged, 0, endpt);
-                            }
-
-                            if (GrabMode != oldGrabMode)
+                            if (packet.Data?[0] == 0)
                             {
+                                if (pendingCalibrationData != null)
+                                {
+                                    Array.Copy(pendingCalibrationData, CalibrationData, 1024);
+                                    RaiseCalEvent();
+                                }
+                            }
+                        }
+
+                        type = ReceiveTypeEnum.CalDataReceived;
+                    }
+                }
+                else if (packet.Class == PacketClass.GRAB)
+                {
+                    if (packet.SubClass == PacketSubClass.RES)
+                    {
+                        if (packet.Option == 0x00)
+                        {
+                            // 캡춰 시작
+                            if (packet.Data?[0] == 0)
+                            {
+                                GrabState = GrabStateEnum.Start;
+                                type = ReceiveTypeEnum.GrabStateChanged;
+                            }
+                        }
+                        else if (packet.Option == 0x01)
+                        {
+                            // 캡춰 끝
+                            if (packet.Data?[0] == 0)
+                            {
+                                GrabState = GrabStateEnum.Stop;
+                                GrabDataQueue.Clear();
+                                type = ReceiveTypeEnum.GrabStateChanged;
+                            }
+                        }
+                        else if (packet.Option == 0x02)
+                        {
+                            // 현재 모드 정보
+                            if (packet.Data?[0] == 0)
+                            {
+                                var oldGrabMode = GrabMode;
+                                var oldGrabState = GrabState;
+                                GrabMode = packet.Data[2] == 0 ? GrabModeEnum.ContinuoussMode : GrabModeEnum.TriggerMode;
+                                GrabState = packet.Data[1] == 0 ? GrabStateEnum.Stop : GrabStateEnum.Start;
+
+                                if (GrabState != oldGrabState)
+                                {
+                                    RaisePacketReceivedEvent(packet, ReceiveTypeEnum.GrabStateChanged, 0, endpt);
+                                }
+
+                                if (GrabMode != oldGrabMode)
+                                {
+                                    type = ReceiveTypeEnum.GrabModeChanged;
+                                }
+                            }
+                        }
+                        else if (packet.Option == 0x03)
+                        {
+                            // 모드 변경
+                            if (packet.Data?[0] == 0)
+                            {
+                                GrabDataQueue.Clear();
+                                GrabMode = pendingGrabMode;
                                 type = ReceiveTypeEnum.GrabModeChanged;
                             }
                         }
                     }
-                    else if (packet.Option == 0x03)
+                    else if (packet.SubClass == PacketSubClass.NTY)
                     {
-                        // 모드 변경
-                        if (packet.Data?[0] == 0)
-                        {
-                            GrabDataQueue.Clear();
-                            GrabMode = pendingGrabMode;
-                            type = ReceiveTypeEnum.GrabModeChanged;
-                        }
-                    }
-                }
-                else if (packet.SubClass == PacketSubClass.NTY)
-                {
-                    type = ReceiveTypeEnum.GrabDataReceivced;
+                        type = ReceiveTypeEnum.GrabDataReceivced;
 
-                    if (GrabState == GrabStateEnum.Start)
-                    {
-                        if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
+                        if (GrabState == GrabStateEnum.Start)
                         {
-                            int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
-                            GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
-                        }
-                        else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
+                            if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
                             {
-                            int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
-                            GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                                GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                            }
+                            else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
+                            {
+                                int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                                GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                            }
                         }
+
                     }
-
                 }
-            }
 
-            // if (type != 0)
-            {
-                LatestPacketRecvTime = DateTime.Now;
-                RaisePacketReceivedEvent(packet, type, 0, endpt);
+                // if (type != 0)
+                {
+                    LatestPacketRecvTime = DateTime.Now;
+                    RaisePacketReceivedEvent(packet, type, 0, endpt);
+                }
             }
         }
 

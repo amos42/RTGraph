@@ -29,7 +29,8 @@ namespace DeviceSimulator
         /// </summary>
         private void InitializeComponent()
         {
-            this.grabSendTimer = new System.Windows.Forms.Timer();
+            this.components = new System.ComponentModel.Container();
+            this.grabSendTimer = new System.Windows.Forms.Timer(this.components);
             this.socketOpenBtn = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.textBox3 = new System.Windows.Forms.TextBox();

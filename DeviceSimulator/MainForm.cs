@@ -261,14 +261,13 @@ namespace DeviceSimulator
 
         private void grabSendTimer_Tick(object sender, EventArgs e)
         {
+            if (endPtrDic == null) return;
+
             foreach (var xx in endPtrDic)
             {
                 if (!xx.Value) continue;
 
                 var data = new byte[1024 + 2];
-                data[0] = (byte)(idx & 0xff);
-                data[1] = (byte)(idx >> 8);
-                idx++;
 
                 int limit = trackBar2.Value;
                 float divder = limit * limit / (float)255;
@@ -287,11 +286,25 @@ namespace DeviceSimulator
                     }
                 }
 
-                var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, 0x02, data);
-                // for(int i = 0; i < 20; i++) {
+                int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 100 : 1;
+
+                for (int i = 0; i < loopCnt; i++)
+                {
+                    data[0] = (byte)(idx & 0xff);
+                    data[1] = (byte)(idx >> 8);
+
+                    idx++;
+                    if (comm.GrabMode == GrabModeEnum.TriggerMode)
+                    {
+                        if (idx >= 320) idx = 0;
+                    }
+
+                    int opt = (comm.GrabMode == GrabModeEnum.ContinuoussMode) ? 0x02 : 0x03;
+
+                    var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, opt, data);
                     comm.SendPacket(packet, xx.Key);
-                // }
-                //addLogItem(0, "", packet.Serialize());
+                    //addLogItem(0, "", packet.Serialize());
+                }
             }
         }
 

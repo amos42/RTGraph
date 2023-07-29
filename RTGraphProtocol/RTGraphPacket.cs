@@ -40,6 +40,8 @@ namespace RTGraph
         public byte[] Data = null;
         //public CamParam camParam = null;
 
+        public RTGraphPacket() { }
+
         public RTGraphPacket(PacketClass Class, PacketSubClass SubClass, PacketClassBit Control, int Option, byte[] data = null)
         {
             this.Class = Class;
@@ -58,14 +60,19 @@ namespace RTGraph
             //this.camParam = camParam;
         }
 
-        public RTGraphPacket(byte[] packet)
+        public RTGraphPacket(byte[] stream)
         {
-            Class = (PacketClass)packet[0];
-            SubClass = (PacketSubClass)packet[1];
-            Control = (PacketClassBit)packet[2];
-            Option = packet[3];
+            SetPacketFromStream(stream);
+        }
 
-            int len = packet[4] | ((int)packet[5] << 8);
+        public int SetPacketFromStream(byte[] stream, int idx = 0)
+        {
+            Class = (PacketClass)stream[idx++];
+            SubClass = (PacketSubClass)stream[idx++];
+            Control = (PacketClassBit)stream[idx++];
+            Option = stream[idx++];
+
+            int len = stream[idx++] | ((int)stream[idx++] << 8);
             if (len > 0)
             {
                 //if (Class == PacketClass.PARAM)
@@ -74,13 +81,15 @@ namespace RTGraph
                 //}
                 //else
                 //{
-                    Data = new byte[len];
-                    for (int i = 0; i < len; i++)
-                    {
-                        Data[i] = packet[6 + i];
-                    }
+                Data = new byte[len];
+                for (int i = 0; i < len; i++)
+                {
+                    Data[i] = stream[6 + i];
+                }
                 //}
-            } 
+            }
+
+            return idx + len;
         }
 
         public byte[] Serialize(byte[] packet = null)
