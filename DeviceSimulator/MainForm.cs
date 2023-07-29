@@ -26,12 +26,12 @@ namespace DeviceSimulator
             InitializeComponent();
         }
 
-        private void SendPacket(object sender, PacketEventArgs e)
+        private void packetSended(object sender, PacketEventArgs e)
         {
             addLogItem(0, null, e.Packet.Serialize());
         }
 
-        private void ReceivePacket(object sender, PacketReceivedEventArgs e)
+        private void packetReceived(object sender, PacketReceivedEventArgs e)
         {
             bool foward = true;
             RTGraphPacket packet = e.Packet;
@@ -192,8 +192,8 @@ namespace DeviceSimulator
             {
                 comm.RecvPort = Int32.Parse(textBox2.Text);
                 comm.SendPort = Int32.Parse(textBox3.Text);
-                comm.PacketReceived += new PacketReceivedEventHandler(ReceivePacket);
-                comm.PacketSended += new PacketSendedEventHandler(SendPacket);
+                comm.PacketReceived += new PacketReceivedEventHandler(packetReceived);
+                comm.PacketSended += new PacketSendedEventHandler(packetSended);
                 comm.OpenComm();
 
                 socketOpenBtn.Text = "Socket Close";
@@ -202,8 +202,8 @@ namespace DeviceSimulator
             else
             {
                 comm.CloseComm();
-                comm.PacketReceived -= ReceivePacket;
-                comm.PacketSended -= SendPacket;
+                comm.PacketReceived -= packetReceived;
+                comm.PacketSended -= packetSended;
                 socketOpenBtn.Text = "Socket Open";
                 socketOpenBtn.Tag = null;
             }

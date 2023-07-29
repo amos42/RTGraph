@@ -37,8 +37,8 @@ namespace RTGraph
         private void Form1_Load(object sender, EventArgs e)
         {
             comm.ErrorEvent += new ErrorEventHandler(commError);
-            comm.PacketReceived += new PacketReceivedEventHandler(receivePacket);
-            comm.PacketSended += new PacketSendedEventHandler(sendPacket);
+            comm.PacketReceived += new PacketReceivedEventHandler(packetReceived);
+            comm.PacketSended += new PacketSendedEventHandler(packetSended);
             comm.DeviceParameter.PropertyChanged += new PropertyChangedEventHandler(parameterChanged);
 
             var cfg = new AppConfig("network");
@@ -68,8 +68,8 @@ namespace RTGraph
             }
 
             comm.ErrorEvent -= commError;
-            comm.PacketReceived -= receivePacket;
-            comm.PacketSended -= sendPacket;
+            comm.PacketReceived -= packetReceived;
+            comm.PacketSended -= packetSended;
             comm.DeviceParameter.PropertyChanged -= parameterChanged;
             comm.CloseComm();
         }
@@ -278,7 +278,7 @@ namespace RTGraph
             }
         }
 
-        private void receivePacket(object sender, PacketReceivedEventArgs e)
+        private void packetReceived(object sender, PacketReceivedEventArgs e)
         {
             if (!isActive) return;
 
@@ -335,7 +335,7 @@ namespace RTGraph
             }
         }
 
-        private void sendPacket(object sender, PacketEventArgs e)
+        private void packetSended(object sender, PacketEventArgs e)
         {
             if (!isActive) return;
 
