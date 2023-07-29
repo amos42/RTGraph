@@ -447,7 +447,7 @@ namespace RTGraph
         {
             refreshTimer.Stop();
 
-            while(comm.GrabDataQueue.Any())
+            while(comm.GrabDataQueue.Count > 0)
             {
                 var grp = comm.GrabDataQueue.Dequeue();
                 chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
