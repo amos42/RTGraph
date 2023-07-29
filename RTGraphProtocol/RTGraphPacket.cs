@@ -75,6 +75,8 @@ namespace RTGraph
             int len = stream[idx++] | ((int)stream[idx++] << 8);
             if (len > 0)
             {
+                if (len > stream.Length - idx) return 0;
+
                 //if (Class == PacketClass.PARAM)
                 //{
                 //    camParam = new CamParam(data, 6);
@@ -84,12 +86,12 @@ namespace RTGraph
                 Data = new byte[len];
                 for (int i = 0; i < len; i++)
                 {
-                    Data[i] = stream[6 + i];
+                    Data[i] = stream[idx++];
                 }
                 //}
             }
 
-            return idx + len;
+            return idx;
         }
 
         public byte[] Serialize(byte[] packet = null)

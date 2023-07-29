@@ -6,6 +6,7 @@ using System.Text;
 using RTGraph;
 using static RTGraphProtocol.PacketReceivedEventArgs;
 using static RTGraph.RTGraphParameter;
+using System.IO;
 
 namespace RTGraphProtocol
 {
@@ -109,16 +110,34 @@ namespace RTGraphProtocol
         {
         }
 
+        byte[] stream = null;
+
         protected override void processPacket(byte[] byteData, IPEndPoint endpt)
         {
             int idx = 0;
+            byte[] data = byteData;
+            if(stream != null)
+            {
+                data = new byte[stream.Length + byteData.Length];
+                Array.Copy(stream, 0, data, 0, stream.Length);
+                Array.Copy(byteData, 0, data, stream.Length, byteData.Length);
+                stream = null;
+            }
 
-            while (idx < byteData.Length)
+            while (idx < data.Length)
             {
                 ReceiveTypeEnum type = 0;
 
                 var packet = new RTGraphPacket();
-                idx += packet.SetPacketFromStream(byteData, idx);
+                int len = packet.SetPacketFromStream(data, idx);
+                if (len <= 0)
+                {
+                    stream = new byte[data.Length - idx];
+                    Array.Copy(data, idx, stream, 0, data.Length - idx);
+                    break;
+                }
+
+                idx += len;
 
                 if (packet.Class == PacketClass.CONN)
                 {
