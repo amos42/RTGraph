@@ -496,43 +496,43 @@ namespace RTGraph
         {
             if (type == NotiTypeEnum.Info)
             {
-                panel1.ForeColor = Color.Black;
+                notifyMessagePanel.ForeColor = Color.Black;
             }
             else if (type == NotiTypeEnum.Warning)
             {
-                panel1.ForeColor = Color.Yellow;
+                notifyMessagePanel.ForeColor = Color.Yellow;
             }
             else if (type == NotiTypeEnum.Error)
             {
-                panel1.ForeColor = Color.Red;
+                notifyMessagePanel.ForeColor = Color.Red;
             }
 
-            label1.Text = message;
-            panel1.Visible = true;
-            if (timer1.Enabled)
+            notifyMessageLabel.Text = message;
+            notifyMessagePanel.Visible = true;
+            if (notifyMsgTimer.Enabled)
             {
-                timer1.Stop();
+                notifyMsgTimer.Stop();
             }
-            timer1.Start();
+            notifyMsgTimer.Start();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void notifyMsgTimer_Tick(object sender, EventArgs e)
         {
-            timer1.Stop();
-            panel1.Visible = false;
+            notifyMsgTimer.Stop();
+            notifyMessagePanel.Visible = false;
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void notifyMessageLabel_Click(object sender, EventArgs e)
         {
-            timer1.Stop();
-            panel1.Visible = false;
+            notifyMsgTimer.Stop();
+            notifyMessagePanel.Visible = false;
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void keepAliveTimer_Tick(object sender, EventArgs e)
         {
             //if (!comm.Connected)
             //{
-            //    timer2.Stop();
+            //    keepAliveTimer.Stop();
             //    return;
             //}
 

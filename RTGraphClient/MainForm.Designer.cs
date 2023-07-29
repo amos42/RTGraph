@@ -54,16 +54,16 @@ namespace RTGraph
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chart1 = new RTGraph.RTGraphChartControl();
             this.logControl1 = new DeviceSimulator.LogControl();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.notifyMessagePanel = new System.Windows.Forms.Panel();
+            this.notifyMessageLabel = new System.Windows.Forms.Label();
+            this.notifyMsgTimer = new System.Windows.Forms.Timer(this.components);
+            this.keepAliveTimer = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.notifyMessagePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // connectionTimer
@@ -319,42 +319,42 @@ namespace RTGraph
             this.logControl1.Size = new System.Drawing.Size(150, 46);
             this.logControl1.TabIndex = 0;
             // 
-            // panel1
+            // notifyMessagePanel
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(667, 554);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(360, 60);
-            this.panel1.TabIndex = 7;
-            this.panel1.Visible = false;
+            this.notifyMessagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.notifyMessagePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.notifyMessagePanel.Controls.Add(this.notifyMessageLabel);
+            this.notifyMessagePanel.Location = new System.Drawing.Point(667, 554);
+            this.notifyMessagePanel.Name = "notifyMessagePanel";
+            this.notifyMessagePanel.Size = new System.Drawing.Size(360, 60);
+            this.notifyMessagePanel.TabIndex = 7;
+            this.notifyMessagePanel.Visible = false;
             // 
-            // label1
+            // notifyMessageLabel
             // 
-            this.label1.Location = new System.Drawing.Point(11, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(339, 37);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "<message>";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.notifyMessageLabel.Location = new System.Drawing.Point(11, 10);
+            this.notifyMessageLabel.Name = "notifyMessageLabel";
+            this.notifyMessageLabel.Size = new System.Drawing.Size(339, 37);
+            this.notifyMessageLabel.TabIndex = 0;
+            this.notifyMessageLabel.Text = "<message>";
+            this.notifyMessageLabel.Click += new System.EventHandler(this.notifyMessageLabel_Click);
             // 
-            // timer1
+            // notifyMsgTimer
             // 
-            this.timer1.Interval = 3000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.notifyMsgTimer.Interval = 3000;
+            this.notifyMsgTimer.Tick += new System.EventHandler(this.notifyMsgTimer_Tick);
             // 
-            // timer2
+            // keepAliveTimer
             // 
-            this.timer2.Interval = 1000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.keepAliveTimer.Interval = 1000;
+            this.keepAliveTimer.Tick += new System.EventHandler(this.keepAliveTimer_Tick);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1030, 616);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.notifyMessagePanel);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -369,7 +369,7 @@ namespace RTGraph
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this.notifyMessagePanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -398,11 +398,11 @@ namespace RTGraph
         private RTGraphChartControl chart1;
         private DeviceSimulator.LogControl logControl1;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Panel notifyMessagePanel;
+        private System.Windows.Forms.Label notifyMessageLabel;
+        private System.Windows.Forms.Timer notifyMsgTimer;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer keepAliveTimer;
     }
 }
 
