@@ -181,6 +181,7 @@ namespace DeviceSimulator
             this.Controls.Add(this.socketOpenBtn);
             this.Name = "MainForm";
             this.Text = "Device Simulator";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();

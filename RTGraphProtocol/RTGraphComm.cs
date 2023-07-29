@@ -59,8 +59,10 @@ namespace RTGraphProtocol
 
             public GrabDataItem(byte[] data, int startIndex, int pos)
             {
-                this.Data = new byte[1024];
-                Array.Copy(data, startIndex, this.Data, 0, 1024);
+                int len = data.Length - startIndex;
+                this.Data = new byte[len];
+                Array.Copy(data, startIndex, this.Data, 0, len);
+
                 this.Position = pos;
             }
         }
@@ -300,20 +302,22 @@ namespace RTGraphProtocol
                     {
                         type = ReceiveTypeEnum.GrabDataReceivced;
 
-                        if (GrabState == GrabStateEnum.Start)
+                        if (packet.Data != null && packet.Data.Length > 2)
                         {
-                            if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
+                            if (GrabState == GrabStateEnum.Start)
                             {
-                                int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
-                                GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
-                            }
-                            else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
-                            {
-                                int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
-                                GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
+                                {
+                                    int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                                    GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                }
+                                else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
+                                {
+                                    int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                                    GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                }
                             }
                         }
-
                     }
                 }
 

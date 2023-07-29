@@ -225,6 +225,12 @@ namespace DeviceSimulator
             cfg2.GetArrayValue("Data", comm.CalibrationData);
         }
 
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            grabSendTimer.Stop();
+            socketOpen(false);
+        }
+
         private void addLogItem(LogControl.LogTypeEnum logType, string message, byte[] byteData = null)
         {
             this.Invoke(new MethodInvoker(() => {
@@ -263,46 +269,45 @@ namespace DeviceSimulator
         {
             if (endPtrDic == null) return;
 
-            foreach (var xx in endPtrDic)
+            var data = new byte[1024 + 2];
+
+            int limit = trackBar2.Value;
+            float divder = limit * limit / (float)255;
+
+            int v = trackBar1.Value;
+            for (int i = 0; i < 1024; i++)
             {
-                if (!xx.Value) continue;
-
-                var data = new byte[1024 + 2];
-
-                int limit = trackBar2.Value;
-                float divder = limit * limit / (float)255;
-
-                int v = trackBar1.Value;
-                for (int i = 0; i < 1024; i++)
+                int dist = Math.Abs(i - v);
+                if (v != 0 && dist <= limit)
                 {
-                    int dist = Math.Abs(i - v);
-                    if (v != 0 && dist <= limit)
-                    {
-                        data[2 + i] = (byte)(255 - dist * dist / divder);
-                    }
-                    else
-                    {
-                        data[2 + i] = 0;
-                    }
+                    data[2 + i] = (byte)(255 - dist * dist / divder);
+                }
+                else
+                {
+                    data[2 + i] = 0;
+                }
+            }
+
+            int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 100 : 1;
+            int opt = (comm.GrabMode == GrabModeEnum.ContinuoussMode) ? 0x02 : 0x03;
+
+            for (int i = 0; i < loopCnt; i++)
+            {
+                data[0] = (byte)(idx & 0xff);
+                data[1] = (byte)(idx >> 8);
+
+                idx++;
+                if (comm.GrabMode == GrabModeEnum.TriggerMode)
+                {
+                    if (idx >= 320) idx = 0;
                 }
 
-                int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 100 : 1;
-
-                for (int i = 0; i < loopCnt; i++)
+                foreach (var ep in endPtrDic)
                 {
-                    data[0] = (byte)(idx & 0xff);
-                    data[1] = (byte)(idx >> 8);
-
-                    idx++;
-                    if (comm.GrabMode == GrabModeEnum.TriggerMode)
-                    {
-                        if (idx >= 320) idx = 0;
-                    }
-
-                    int opt = (comm.GrabMode == GrabModeEnum.ContinuoussMode) ? 0x02 : 0x03;
+                    if (!ep.Value) continue;
 
                     var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.NTY, PacketClassBit.FIN, opt, data);
-                    comm.SendPacket(packet, xx.Key);
+                    comm.SendPacket(packet, ep.Key);
                     //addLogItem(0, "", packet.Serialize());
                 }
             }
