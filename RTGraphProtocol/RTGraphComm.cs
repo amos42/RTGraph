@@ -51,6 +51,19 @@ namespace RTGraphProtocol
 
     public class RTGraphComm : UDPComm
     {
+        public class GrabDataItem
+        {
+            public int Position;
+            public byte[] Data;
+
+            public GrabDataItem(byte[] data, int startIndex, int pos)
+            {
+                this.Data = new byte[1024];
+                Array.Copy(data, startIndex, this.Data, 0, 1024);
+                this.Position = pos;
+            }
+        }
+
         public enum GrabModeEnum {
             ContinuoussMode,
             TriggerMode
@@ -65,6 +78,8 @@ namespace RTGraphProtocol
         public bool Connected { get; set; } = false;
         public RTGraphParameter DeviceParameter { get; set; } = new RTGraphParameter();
         public byte[] CalibrationData { get; set; } = new byte[1024];
+
+        public Queue<GrabDataItem> GrabDataQueue { get; set; } = new Queue<GrabDataItem>();
 
         public DateTime LatestPacketSendTime { get; set; }
         public DateTime LatestPacketRecvTime { get; set; }
@@ -134,6 +149,7 @@ namespace RTGraphProtocol
                         bool result = packet.Data[0] == 0;
                         if (result)
                         {
+                            GrabDataQueue.Clear();
                             type = ReceiveTypeEnum.Disconnected;
                             Connected = false;
                         }
@@ -219,6 +235,7 @@ namespace RTGraphProtocol
                         if (packet.Data?[0] == 0)
                         {
                             GrabState = GrabStateEnum.Stop;
+                            GrabDataQueue.Clear();
                             type = ReceiveTypeEnum.GrabStateChanged;
                         }
                     }
@@ -248,6 +265,7 @@ namespace RTGraphProtocol
                         // 모드 변경
                         if (packet.Data?[0] == 0)
                         {
+                            GrabDataQueue.Clear();
                             GrabMode = pendingGrabMode;
                             type = ReceiveTypeEnum.GrabModeChanged;
                         }
@@ -256,6 +274,21 @@ namespace RTGraphProtocol
                 else if (packet.SubClass == PacketSubClass.NTY)
                 {
                     type = ReceiveTypeEnum.GrabDataReceivced;
+
+                    if (GrabState == GrabStateEnum.Start)
+                    {
+                        if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
+                        {
+                            int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                            GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                        }
+                        else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
+                            {
+                            int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
+                            GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                        }
+                    }
+
                 }
             }
 

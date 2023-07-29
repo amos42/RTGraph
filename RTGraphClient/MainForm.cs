@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -316,19 +317,17 @@ namespace RTGraph
                 {
                     if (e.Packet.Option == 0x2 && continusMode == 0)
                     {
-                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                        this.Invoke(new MethodInvoker(() =>
-                        {
+                        //int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() => {
                             if (!refreshTimer.Enabled) refreshTimer.Start();
                         }));
                     }
                     else if (e.Packet.Option == 0x3 && continusMode == 1)
                     {
-                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                        chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                        this.Invoke(new MethodInvoker(() =>
-                        {
+                        //int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
+                        this.Invoke(new MethodInvoker(() => {
                             if (!refreshTimer.Enabled) refreshTimer.Start();
                         }));
                     }
@@ -447,6 +446,13 @@ namespace RTGraph
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
             refreshTimer.Stop();
+
+            while(comm.GrabDataQueue.Any())
+            {
+                var grp = comm.GrabDataQueue.Dequeue();
+                chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+            }
+
             chart1.Refresh();
         }
 
