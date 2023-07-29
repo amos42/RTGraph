@@ -302,7 +302,8 @@ namespace DeviceSimulator
                     if (idx >= 320) idx = 0;
                 }
 
-                foreach (var ep in endPtrDic)
+                var lst = endPtrDic.ToList();
+                foreach (var ep in lst)
                 {
                     if (!ep.Value) continue;
 
