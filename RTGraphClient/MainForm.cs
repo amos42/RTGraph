@@ -450,7 +450,10 @@ namespace RTGraph
             while(comm.GrabDataQueue.Count > 0)
             {
                 var grp = comm.GrabDataQueue.Dequeue();
-                chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                if (grp != null && grp.Data != null)
+                {
+                    chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                }
             }
 
             chart1.Refresh();
