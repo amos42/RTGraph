@@ -316,6 +316,36 @@ namespace RTGraph
             outBm.UnlockBits(bmpData);
         }
 
+        private void _applyBitmapOne(BitmapData bmpData, int idx, byte[] data, int stIdx = 0)
+        {
+            if (IndexedMode)
+            {
+                if (idx < bmpData.Height)
+                {
+                    if (data != null)
+                    {
+                        Marshal.Copy(data, stIdx, IntPtr.Add(bmpData.Scan0, bmpData.Stride * idx), data.Length);
+                    }
+                }
+            }
+            else
+            {
+                if (data != null)
+                {
+                    valueCnt++;
+                    Marshal.Copy(data, stIdx, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), data.Length);
+                    validPos = enqPos;
+                    enqPos++;
+                    if (enqPos >= bufferCount)
+                    {
+                        enqPos = 0;
+                        //this.startPos++;
+                    }
+                }
+            }
+        }
+
+
         private void applyBitmap(Queue<KeyValuePair<int, byte[]>> graphQueue)
         {
             if (outBm == null) return;
@@ -326,33 +356,19 @@ namespace RTGraph
             while (graphQueue.Count > 0)
             {
                 var values = graphQueue.Dequeue();
-
-                if (IndexedMode)
-                {
-                    if (values.Key < bmpData.Height)
-                    {
-                        if (values.Value != null)
-                        {
-                            Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * values.Key), values.Value.Length);
-                        }
-                    }
-                }
-                else
-                {
-                    if (values.Value != null)
-                    {
-                        valueCnt++;
-                        Marshal.Copy(values.Value, 0, IntPtr.Add(bmpData.Scan0, bmpData.Stride * enqPos), values.Value.Length);
-                        validPos = enqPos;
-                        enqPos++;
-                        if (enqPos >= bufferCount)
-                        {
-                            enqPos = 0;
-                            //this.startPos++;
-                        }
-                    }
-                }
+                _applyBitmapOne(bmpData, values.Key, values.Value);
             }
+            outBm.UnlockBits(bmpData);
+        }
+
+        private void applyBitmapOne(int idx, byte[] data, int stIdx = 0)
+        {
+            if (outBm == null) return;
+
+            Rectangle rect = new Rectangle(0, 0, outBm.Width, outBm.Height);
+
+            BitmapData bmpData = outBm.LockBits(rect, ImageLockMode.WriteOnly, outBm.PixelFormat);
+            _applyBitmapOne(bmpData, idx, data, stIdx);
             outBm.UnlockBits(bmpData);
         }
 
@@ -369,17 +385,19 @@ namespace RTGraph
                     length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, values.Length - startIdx));
                     Array.Copy(values, startIdx, this.Values[idx].Items, 0, length);
                     this.Values[idx].Index = pos;
+
+                    applyBitmapOne(pos, values, startIdx);
                 }
 
-                var itm = this.Values[idx].Items.Clone() as byte[];
-                if (itm != null)
-                {
-                    pendingGraphQueue.Enqueue(new KeyValuePair<int, byte[]>(pos, itm));
-                }
-                else
-                {
-                    raiseErrorEvent(new Exception("value is not array"));
-                }
+                //var itm = this.Values[idx].Items.Clone() as byte[];
+                //if (itm != null)
+                //{
+                //    pendingGraphQueue.Enqueue(new KeyValuePair<int, byte[]>(pos, itm));
+                //}
+                //else
+                //{
+                //    raiseErrorEvent(new Exception("value is not array"));
+                //}
             }
 
             if (isRefresh) this.Refresh();
