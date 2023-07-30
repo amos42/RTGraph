@@ -266,9 +266,11 @@ namespace RTGraph
                 // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = true; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
+                if (!refreshTimer.Enabled) refreshTimer.Start();
             }
             else if (!grab && grabState != 0)
             {
+                refreshTimer.Stop();
                 grabState = 0;
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
@@ -319,17 +321,17 @@ namespace RTGraph
                     {
                         //int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
                         //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                        this.Invoke(new MethodInvoker(() => {
-                            if (!refreshTimer.Enabled) refreshTimer.Start();
-                        }));
+                        //this.Invoke(new MethodInvoker(() => {
+                        //    if (!refreshTimer.Enabled) refreshTimer.Start();
+                        //}));
                     }
                     else if (e.Packet.Option == 0x3 && continusMode == 1)
                     {
                         //int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
                         //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
-                        this.Invoke(new MethodInvoker(() => {
-                            if (!refreshTimer.Enabled) refreshTimer.Start();
-                        }));
+                        //this.Invoke(new MethodInvoker(() => {
+                        //    if (!refreshTimer.Enabled) refreshTimer.Start();
+                        //}));
                     }
                 }
             }
@@ -445,18 +447,51 @@ namespace RTGraph
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            refreshTimer.Stop();
+            //refreshTimer.Stop();
+            if (comm.GrabDataQueue.Count <= 0) return;
 
-            while(comm.GrabDataQueue.Count > 0)
+            int touch = 0;
+            if (comm.GrabMode == RTGraphComm.GrabModeEnum.ContinuoussMode)
             {
-                var grp = comm.GrabDataQueue.Dequeue();
-                if (grp != null && grp.Data != null)
+                while (comm.GrabDataQueue.Count > 0) 
+                { 
+                    var grp = comm.GrabDataQueue.Dequeue();
+                    if (grp != null && grp.Data != null)
+                    {
+                        chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                        touch++;
+                    }
+                }
+            }
+            else if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode)
+            {
+                var q = comm.GrabDataQueue.OrderBy(x => x?.Position);
+                int beforeIdx = -1; ;
+                byte[] beforeData = null;
+                foreach(var grp in q)
                 {
-                    chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                    if (grp != null && grp.Data != null)
+                    {
+                        if(beforeIdx >= 0 && grp.Position - beforeIdx > 1)
+                        {
+                            for(int i = beforeIdx + 1; i <  grp.Position; i++ )
+                            {
+                                chart1.SetValueLine(0, beforeData, 0, 1024, i, false);
+                                touch++;
+                            }
+                        }
+                        chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                        beforeIdx = grp.Position;
+                        beforeData = grp.Data;
+                        touch++;
+                    }
                 }
             }
 
-            chart1.Refresh();
+            if (touch > 0)
+            {
+                chart1.Refresh();
+            }
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)

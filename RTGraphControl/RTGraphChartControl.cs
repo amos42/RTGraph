@@ -372,19 +372,19 @@ namespace RTGraph
             outBm.UnlockBits(bmpData);
         }
 
-        public void SetValueLine(int idx, byte[] value, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
+        public void SetValueLine(int valueSetIdx, byte[] value, int startIdx = 0, int length = -1, int pos = -1, bool isRefresh = true)
         {
-            if (idx >= this.Values.Count) return;
-            if (idx == 0 && IndexedMode && pos >= this.BufferCount) return;
+            if (valueSetIdx >= this.Values.Count) return;
+            if (valueSetIdx == 0 && IndexedMode && pos >= this.BufferCount) return;
 
-            if (this.Values[idx]?.Items != null)
+            if (this.Values[valueSetIdx]?.Items != null)
             {
                 lock (thisBlock)
                 {
                     if (length <= 0) length = value.Length;
-                    length = Math.Min(this.Values[idx].Items.Length, Math.Min(length, value.Length - startIdx));
-                    Array.Copy(value, startIdx, this.Values[idx].Items, 0, length);
-                    this.Values[idx].Index = pos;
+                    length = Math.Min(this.Values[valueSetIdx].Items.Length, Math.Min(length, value.Length - startIdx));
+                    Array.Copy(value, startIdx, this.Values[valueSetIdx].Items, 0, length);
+                    this.Values[valueSetIdx].Index = pos;
 
                     applyBitmapOne(pos, value, startIdx);
                 }
