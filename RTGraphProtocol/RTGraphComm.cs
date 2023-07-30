@@ -83,6 +83,7 @@ namespace RTGraphProtocol
         public byte[] CalibrationData { get; set; } = new byte[1024];
 
         public Queue<GrabDataItem> GrabDataQueue { get; set; } = new Queue<GrabDataItem>();
+        public readonly Object thisBlock = new Object();
 
         public DateTime LatestPacketSendTime { get; set; }
         public DateTime LatestPacketRecvTime { get; set; }
@@ -314,7 +315,10 @@ namespace RTGraphProtocol
                                 else if (packet.Option == 0x3 && GrabMode == GrabModeEnum.TriggerMode)
                                 {
                                     int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
-                                    GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                    lock (thisBlock)
+                                    {
+                                        GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));
+                                    }
                                 }
                             }
                         }

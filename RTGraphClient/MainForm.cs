@@ -5,12 +5,14 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DeviceSimulator;
 using RTGraphProtocol;
+using static RTGraphProtocol.RTGraphComm;
 
 namespace RTGraph
 {
@@ -465,7 +467,12 @@ namespace RTGraph
             }
             else if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
-                var q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
+                List<GrabDataItem> q = null;
+                lock (comm.thisBlock)
+                {
+                    q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
+                }
+
                 int beforeIdx = -1; ;
                 byte[] beforeData = null;
                 int cnt = q.Count();
