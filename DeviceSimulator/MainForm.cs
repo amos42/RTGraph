@@ -292,7 +292,7 @@ namespace DeviceSimulator
                 }
             }
 
-            int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 250 : 1;
+            int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? RTGraphComm.TriggerGrabPacketCount : 1;
             int opt = (comm.GrabMode == GrabModeEnum.ContinuousMode) ? 0x02 : 0x03;
 
             for (int i = 0; i < loopCnt; i++)
@@ -303,7 +303,7 @@ namespace DeviceSimulator
                 idx++;
                 if (comm.GrabMode == GrabModeEnum.TriggerMode)
                 {
-                    if (idx >= 250) idx = 0;
+                    if (idx >= RTGraphComm.TriggerGrabPacketCount) idx = 0;
                 }
 
                 var lst = endPtrDic.ToList();

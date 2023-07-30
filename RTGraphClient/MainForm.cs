@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DeviceSimulator;
 using RTGraphProtocol;
-using static RTGraphProtocol.RTGraphComm;
 
 namespace RTGraph
 {
@@ -146,6 +145,7 @@ namespace RTGraph
                 try
                 {
                     comm.OpenComm();
+                    timer1.Start();
                 } 
                 catch (Exception ex)
                 {
@@ -166,6 +166,7 @@ namespace RTGraph
                 try
                 {
                     comm.CloseComm();
+                    timer1.Stop();
                 }
                 catch (Exception ex)
                 {
@@ -334,22 +335,22 @@ namespace RTGraph
                     else if (e.Packet.Option == 0x3 && continusMode == 1)
                     {
                         int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
-                        if(pos >= 250-1)
+                        if (pos >= RTGraphComm.TriggerGrabPacketCount - 1)
                         {
                             this.Invoke(new MethodInvoker(() => {
                                 refreshTimer.Stop();
                                 refreshTriggerMode();
                                 chart1.Refresh();
                             }));
-                        } 
+                        }
                         else
                         {
-                            if (pos > 230)
+                            if (pos > (RTGraphComm.TriggerGrabPacketCount - 20))
                             {
                                 this.Invoke(new MethodInvoker(() =>
                                 {
                                     refreshTimer.Stop();
-                                    refreshTimer.Interval = (250 - pos) / 3 + 10; // 남은 패킷 수 / 3 (ms당 패킷 수) + 10ms (추가 여유 시간)
+                                    refreshTimer.Interval = (RTGraphComm.TriggerGrabPacketCount - pos) / 3 + 50; // 남은 패킷 수 / 3 (ms당 패킷 수) + 50ms (추가 여유 시간)
                                     refreshTimer.Start();
                                 }));
                             }
@@ -492,7 +493,7 @@ namespace RTGraph
         {
             int touch = 0;
 
-            List<GrabDataItem> q = null;
+            List<RTGraphComm.GrabDataItem> q = null;
             lock (comm.thisBlock)
             {
                 q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
@@ -635,6 +636,11 @@ namespace RTGraph
             //{
             //    comm.SendPing();
             //}
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            comm.TickProcess();
         }
     }
 }

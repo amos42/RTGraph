@@ -7,6 +7,7 @@ using RTGraph;
 using static RTGraphProtocol.PacketReceivedEventArgs;
 using static RTGraph.RTGraphParameter;
 using System.IO;
+using System.Data;
 
 namespace RTGraphProtocol
 {
@@ -78,6 +79,8 @@ namespace RTGraphProtocol
             Start
         };
 
+        public const int TriggerGrabPacketCount = 250;
+
         public bool Connected { get; set; } = false;
         public RTGraphParameter DeviceParameter { get; set; } = new RTGraphParameter();
         public byte[] CalibrationData { get; set; } = new byte[1024];
@@ -90,6 +93,21 @@ namespace RTGraphProtocol
 
         public GrabModeEnum GrabMode { get; set; }
         public GrabStateEnum GrabState { get; set; }
+
+        private class SendedPacket
+        {
+            public byte[] stream;
+            public DateTime sendTime;
+            public int retryCount;
+
+            public SendedPacket(byte[] stream)
+            {
+                this.stream = stream;
+                sendTime = DateTime.Now;
+                retryCount = 0;
+            }
+        }
+        private Dictionary<int, SendedPacket> needResponsePackets = new Dictionary<int, SendedPacket>();
 
         // 파라미터 세팅 시, 장치로부터 응답이 올 때까지 잠시 저장해 놓는 파라미터 값
         private GrabModeEnum pendingGrabMode;
@@ -141,6 +159,11 @@ namespace RTGraphProtocol
                 }
 
                 idx += len;
+
+                if (packet.SubClass == PacketSubClass.RES)
+                {
+                    needResponsePackets.Remove((int)packet.Class << 8 + packet.Option);
+                }
 
                 if (packet.Class == PacketClass.CONN)
                 {
@@ -365,18 +388,42 @@ namespace RTGraphProtocol
             }
         }
 
+        public byte[] SendPacket(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
+        {
+            if (!Opened) return null;
+
+            var data = packet.Serialize();
+            SendStream(data, targetIPEndPoint);
+
+            LatestPacketSendTime = DateTime.Now;
+
+            RaisePacketSendEvent(packet, targetIPEndPoint);
+
+            return data;
+        }
+
+        public byte[] SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data = null, IPEndPoint targetIPEndPoint = null)
+        {
+            var packet = new RTGraphPacket(cls, subCls, pktBit, opts, data);
+            return SendPacket(packet, targetIPEndPoint);
+        }
+
         public void Connect()
         {
-            var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.Serialize();
-            udpSender.Send(data, data.Length);
+            var stream = SendPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            //var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            //var data = packet.Serialize();
+            //udpSender.Send(data, data.Length);
+            needResponsePackets.Add((int)PacketClass.CONN << 8 + 0x01, new SendedPacket(stream));
         }
 
         public void Disconnect()
         {
-            var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.Serialize();
-            udpSender.Send(data, data.Length);
+            var stream = SendPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+            //var packet = new RTGraphPacket(PacketClass.CONN, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+            //var data = packet.Serialize();
+            //udpSender.Send(data, data.Length);
+            needResponsePackets.Add((int)PacketClass.CONN << 8 + 0x00, new SendedPacket(stream));
         }
 
         public void SendPing()
@@ -384,51 +431,11 @@ namespace RTGraphProtocol
             SendPacket(PacketClass.PING, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
         }
 
-        public void RequestGrabInfo()
-        {
-            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x02);
-            var data = packet.Serialize();
-            udpSender.Send(data, data.Length);
-        }
-
-        public void StartCapture()
-        {
-            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
-            var data = packet.Serialize();
-            udpSender.Send(data, data.Length);
-        }
-
-        public void StopCapture()
-        {
-            var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
-            var data = packet.Serialize();
-            udpSender.Send(data, data.Length);
-        }
-
-        public void SendPacket(RTGraphPacket packet, IPEndPoint targetIPEndPoint = null)
-        {
-            var data = packet.Serialize();
-            SendStream(data, targetIPEndPoint);
-
-            LatestPacketSendTime = DateTime.Now;
-
-            RaisePacketSendEvent(packet, targetIPEndPoint);
-        }
-
-        public void SendPacket(PacketClass cls, PacketSubClass subCls, PacketClassBit pktBit, int opts, byte[] data = null, IPEndPoint targetIPEndPoint = null)
-        {
-            var packet = new RTGraphPacket(cls, subCls, pktBit, opts, data);
-            SendPacket(packet, targetIPEndPoint);
-        }
-
         public void RequestParam(bool isDefault = false)
         {
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isDefault? 0x0 : 0x1);
-        }
-
-        public void RequesCalibration()
-        {
-            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 1);
+            int opt = isDefault ? 0x0 : 0x1;
+            var stream = SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, opt);
+            needResponsePackets.Add((int)PacketClass.PARAM << 8 + opt, new SendedPacket(stream));
         }
 
         public void ApplyParam(RTGraphParameter camParam, bool isSave = false, byte groupMask = RTGraphParameter.MASK_GROUP_ALL)
@@ -436,19 +443,49 @@ namespace RTGraphProtocol
             pendingParam = camParam.Clone() as RTGraphParameter;
             var data = pendingParam.Serialize(null, 1);
             data[0] = groupMask;
-            SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
+            var stream = SendPacket(PacketClass.PARAM, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, data);
+            needResponsePackets.Add((int)PacketClass.PARAM << 8 + 0x3, new SendedPacket(stream));
         }
 
-        public void RequestGrapInfo()
+        public void RequestGrabInfo()
         {
-            SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x2);
+            var stream = SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x02);
+            //var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x02);
+            //var data = packet.Serialize();
+            //udpSender.Send(data, data.Length);
+            needResponsePackets.Add((int)PacketClass.GRAB << 8 + 0x02, new SendedPacket(stream));
         }
 
         public void ChangeGrabMode(byte mode)
         {
             pendingGrabMode = (GrabModeEnum)mode;
             var data = new byte[1] { mode };
-            SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x3, data);
+            var stream = SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x3, data);
+            needResponsePackets.Add((int)PacketClass.GRAB << 8 + 0x3, new SendedPacket(stream));
+        }
+
+        public void StartCapture()
+        {
+            var stream = SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+            //var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x00);
+            //var data = packet.Serialize();
+            //udpSender.Send(data, data.Length);
+            needResponsePackets.Add((int)PacketClass.GRAB << 8 + 0x00, new SendedPacket(stream));
+        }
+
+        public void StopCapture()
+        {
+            var stream = SendPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            //var packet = new RTGraphPacket(PacketClass.GRAB, PacketSubClass.REQ, PacketClassBit.FIN, 0x01);
+            //var data = packet.Serialize();
+            //udpSender.Send(data, data.Length);
+            needResponsePackets.Add((int)PacketClass.GRAB << 8 + 0x01, new SendedPacket(stream));
+        }
+
+        public void RequesCalibration()
+        {
+            var stream = SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, 0x1);
+            needResponsePackets.Add((int)PacketClass.CAL << 8 + 0x1, new SendedPacket(stream));
         }
 
         public void ApplyCalibration(byte[] calData, bool isSave, bool calEnable)
@@ -456,7 +493,46 @@ namespace RTGraphProtocol
             //var data = new byte[1];
             //data[0] = (byte)(calEnable ? 0x1 : 0x0);
             pendingCalibrationData = calData.Clone() as byte[];
-            SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, isSave ? 0x2 : 0x3, calData);
+            int opt = isSave ? 0x2 : 0x3;
+            var stream = SendPacket(PacketClass.CAL, PacketSubClass.REQ, PacketClassBit.FIN, opt, calData);
+            needResponsePackets.Add((int)PacketClass.CAL << 8 + opt, new SendedPacket(stream));
+        }
+
+        public void TickProcess()
+        {
+            if (!Opened) return;
+
+            List<int> removeList = null;
+
+            foreach (var packet in needResponsePackets)
+            {
+                if (DateTime.Now - packet.Value.sendTime > TimeSpan.FromMilliseconds(500))
+                {
+                    if (packet.Value.retryCount < 3)
+                    {
+                        SendStream(packet.Value.stream);
+                        packet.Value.retryCount++;
+                        packet.Value.sendTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        if (removeList == null) 
+                        {
+                            removeList = new List<int>();
+                        }
+                        removeList.Add(packet.Key);
+                        raiseErrorEvent(new Exception("No Response Packet"));
+                    }
+                }
+            }
+
+            if (removeList != null) 
+            {
+                foreach (var key in removeList)
+                {
+                    needResponsePackets.Remove(key);
+                }
+            }
         }
     }
 }
