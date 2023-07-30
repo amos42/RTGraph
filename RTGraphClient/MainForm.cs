@@ -465,11 +465,13 @@ namespace RTGraph
             }
             else if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
-                var q = comm.GrabDataQueue.OrderBy(x => x?.Position);
+                var q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
                 int beforeIdx = -1; ;
                 byte[] beforeData = null;
-                foreach(var grp in q)
+                int cnt = q.Count();
+                for(int g = 0; g< cnt; g++)
                 {
+                    var grp = q[g];
                     if (grp != null && grp.Data != null)
                     {
                         if(beforeIdx >= 0 && grp.Position - beforeIdx > 1)
