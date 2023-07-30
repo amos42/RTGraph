@@ -68,7 +68,7 @@ namespace RTGraphProtocol
         }
 
         public enum GrabModeEnum {
-            ContinuoussMode,
+            ContinuousMode,
             TriggerMode
         };
 
@@ -274,7 +274,7 @@ namespace RTGraphProtocol
                             {
                                 var oldGrabMode = GrabMode;
                                 var oldGrabState = GrabState;
-                                GrabMode = packet.Data[2] == 0 ? GrabModeEnum.ContinuoussMode : GrabModeEnum.TriggerMode;
+                                GrabMode = packet.Data[2] == 0 ? GrabModeEnum.ContinuousMode : GrabModeEnum.TriggerMode;
                                 GrabState = packet.Data[1] == 0 ? GrabStateEnum.Stop : GrabStateEnum.Start;
 
                                 if (GrabState != oldGrabState)
@@ -307,7 +307,7 @@ namespace RTGraphProtocol
                         {
                             if (GrabState == GrabStateEnum.Start)
                             {
-                                if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuoussMode)
+                                if (packet.Option == 0x2 && GrabMode == GrabModeEnum.ContinuousMode)
                                 {
                                     int pos = (short)(packet.Data[0] | ((int)packet.Data[1] << 8));
                                     GrabDataQueue.Enqueue(new GrabDataItem(packet.Data, 2, pos));

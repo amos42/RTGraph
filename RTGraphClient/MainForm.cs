@@ -112,7 +112,7 @@ namespace RTGraph
 
         private void setGraphDrawMode(RTGraphComm.GrabModeEnum grabMode)
         {
-            if (continusMode != 0 && grabMode == RTGraphComm.GrabModeEnum.ContinuoussMode)
+            if (continusMode != 0 && grabMode == RTGraphComm.GrabModeEnum.ContinuousMode)
             {
                 continusMode = 0;
                 continuesToolStripMenuItem.Checked = true;
@@ -268,11 +268,14 @@ namespace RTGraph
                 // calibrationToolStripMenuItem.Enabled = (continusMode == 0); // 문제가 있어서 calibration 기능 막음.
                 parametersToolStripMenuItem.Enabled = true; // 문제가 있어서 parameter 세팅은 grab start 된 상황에서만 활성화
                 logControl1.AddItem(LogControl.LogTypeEnum.Info, "Grab Started");
-                if (!refreshTimer.Enabled) refreshTimer.Start();
+                refreshTimer.Stop();
+                refreshTimer.Interval = 50;
+                refreshTimer.Start();
             }
             else if (!grab && grabState != 0)
             {
                 refreshTimer.Stop();
+                refreshTimer.Interval = 200;
                 grabState = 0;
                 btnGrab.Text = "Start Grab";
                 btnGrab.CheckState = CheckState.Unchecked;
@@ -329,7 +332,14 @@ namespace RTGraph
                     }
                     else if (e.Packet.Option == 0x3 && continusMode == 1)
                     {
-                        //int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        int pos = (short)(e.Packet.Data[0] | ((int)e.Packet.Data[1] << 8));
+                        if(pos >= 250-1)
+                        {
+                            this.Invoke(new MethodInvoker(() => {
+                                refreshTriggerMode();
+                                chart1.Refresh();
+                            }));
+                        }
                         //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                         //this.Invoke(new MethodInvoker(() => {
                         //    if (!refreshTimer.Enabled) refreshTimer.Start();
@@ -408,7 +418,7 @@ namespace RTGraph
 
         private void continuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comm.GrabMode != RTGraphComm.GrabModeEnum.ContinuoussMode)
+            if (comm.GrabMode != RTGraphComm.GrabModeEnum.ContinuousMode)
             {
                 if(grabState == 0)
                 {
@@ -447,54 +457,72 @@ namespace RTGraph
             }
         }
 
+        private int refreshContinuousMode()
+        {
+            int touch = 0;
+
+            while (comm.GrabDataQueue.Count > 0)
+            {
+                var grp = comm.GrabDataQueue.Dequeue();
+                if (grp != null && grp.Data != null)
+                {
+                    chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                    touch++;
+                }
+            }
+
+            return touch;
+        }
+
+        private int refreshTriggerMode()
+        {
+            int touch = 0;
+
+            List<GrabDataItem> q = null;
+            lock (comm.thisBlock)
+            {
+                q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
+            }
+
+            int beforeIdx = -1; ;
+            byte[] beforeData = null;
+            int cnt = q.Count();
+            for (int g = 0; g < cnt; g++)
+            {
+                var grp = q[g];
+                if (grp != null && grp.Data != null)
+                {
+                    if (beforeIdx >= 0 && grp.Position - beforeIdx > 1)
+                    {
+                        for (int i = beforeIdx + 1; i < grp.Position; i++)
+                        {
+                            chart1.SetValueLine(0, beforeData, 0, 1024, i, false);
+                            touch++;
+                        }
+                    }
+                    chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
+                    beforeIdx = grp.Position;
+                    beforeData = grp.Data;
+                    touch++;
+                }
+            }
+
+            return touch;
+        }
+
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
             //refreshTimer.Stop();
             if (comm.GrabDataQueue.Count <= 0) return;
 
             int touch = 0;
-            if (comm.GrabMode == RTGraphComm.GrabModeEnum.ContinuoussMode)
+            if (comm.GrabMode == RTGraphComm.GrabModeEnum.ContinuousMode)
             {
-                while (comm.GrabDataQueue.Count > 0) 
-                { 
-                    var grp = comm.GrabDataQueue.Dequeue();
-                    if (grp != null && grp.Data != null)
-                    {
-                        chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
-                        touch++;
-                    }
-                }
+                touch = refreshContinuousMode();
             }
             else if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
-                List<GrabDataItem> q = null;
-                lock (comm.thisBlock)
-                {
-                    q = comm.GrabDataQueue.OrderBy(x => x?.Position).ToList();
-                }
-
-                int beforeIdx = -1; ;
-                byte[] beforeData = null;
-                int cnt = q.Count();
-                for(int g = 0; g< cnt; g++)
-                {
-                    var grp = q[g];
-                    if (grp != null && grp.Data != null)
-                    {
-                        if(beforeIdx >= 0 && grp.Position - beforeIdx > 1)
-                        {
-                            for(int i = beforeIdx + 1; i <  grp.Position; i++ )
-                            {
-                                chart1.SetValueLine(0, beforeData, 0, 1024, i, false);
-                                touch++;
-                            }
-                        }
-                        chart1.SetValueLine(0, grp.Data, 0, 1024, grp.Position, false);
-                        beforeIdx = grp.Position;
-                        beforeData = grp.Data;
-                        touch++;
-                    }
-                }
+                //touch = refreshTriggerMode();
             }
 
             if (touch > 0)

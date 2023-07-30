@@ -252,7 +252,11 @@ namespace DeviceSimulator
             if (cnt > 0)
             {
                 this.Invoke(new MethodInvoker(() => {
-                    if (!grabSendTimer.Enabled) grabSendTimer.Start();
+                    if (!grabSendTimer.Enabled)
+                    {
+                        grabSendTimer.Interval = comm.GrabMode == GrabModeEnum.ContinuousMode ? 50 : 300;
+                        grabSendTimer.Start();
+                    }
                 }));
             }
             else
@@ -288,8 +292,8 @@ namespace DeviceSimulator
                 }
             }
 
-            int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 100 : 1;
-            int opt = (comm.GrabMode == GrabModeEnum.ContinuoussMode) ? 0x02 : 0x03;
+            int loopCnt = (comm.GrabMode == GrabModeEnum.TriggerMode) ? 250 : 1;
+            int opt = (comm.GrabMode == GrabModeEnum.ContinuousMode) ? 0x02 : 0x03;
 
             for (int i = 0; i < loopCnt; i++)
             {
@@ -299,7 +303,7 @@ namespace DeviceSimulator
                 idx++;
                 if (comm.GrabMode == GrabModeEnum.TriggerMode)
                 {
-                    if (idx >= 320) idx = 0;
+                    if (idx >= 250) idx = 0;
                 }
 
                 var lst = endPtrDic.ToList();
