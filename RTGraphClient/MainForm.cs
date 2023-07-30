@@ -349,7 +349,7 @@ namespace RTGraph
                                 this.Invoke(new MethodInvoker(() =>
                                 {
                                     refreshTimer.Stop();
-                                    refreshTimer.Interval = (250 - pos) / 3 + 50;
+                                    refreshTimer.Interval = (250 - pos) / 3 + 10; // 남은 패킷 수 / 3 (ms당 패킷 수) + 10ms (추가 여유 시간)
                                     refreshTimer.Start();
                                 }));
                             }
