@@ -260,6 +260,7 @@ namespace RTGraph
             // 
             // refreshTimer
             // 
+            this.refreshTimer.Interval = 200;
             this.refreshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
             // splitContainer1
