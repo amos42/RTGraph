@@ -247,6 +247,7 @@ namespace RTGraph
             else if (!connected && btnConnect.CheckState != CheckState.Unchecked)
             {
                 connectionTimer.Stop();
+                refreshTimer.Stop();
                 btnConnect.Text = "Connect";
                 btnConnect.CheckState = CheckState.Unchecked;
                 btnGrab.Enabled = false;
@@ -336,9 +337,22 @@ namespace RTGraph
                         if(pos >= 250-1)
                         {
                             this.Invoke(new MethodInvoker(() => {
+                                refreshTimer.Stop();
                                 refreshTriggerMode();
                                 chart1.Refresh();
                             }));
+                        } 
+                        else
+                        {
+                            if (pos > 230)
+                            {
+                                this.Invoke(new MethodInvoker(() =>
+                                {
+                                    refreshTimer.Stop();
+                                    refreshTimer.Interval = (250 - pos) * 5;
+                                    refreshTimer.Start();
+                                }));
+                            }
                         }
                         //chart1.SetValueLine(0, e.Packet.Data, 2, e.Packet.Data.Length - 2, pos, false);
                         //this.Invoke(new MethodInvoker(() => {
@@ -512,7 +526,10 @@ namespace RTGraph
 
         private void refreshTimer_Tick(object sender, EventArgs e)
         {
-            //refreshTimer.Stop();
+            if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode) { 
+                refreshTimer.Stop();
+            }
+
             if (comm.GrabDataQueue.Count <= 0) return;
 
             int touch = 0;
@@ -522,7 +539,7 @@ namespace RTGraph
             }
             else if (comm.GrabMode == RTGraphComm.GrabModeEnum.TriggerMode)
             {
-                //touch = refreshTriggerMode();
+                touch = refreshTriggerMode();
             }
 
             if (touch > 0)
